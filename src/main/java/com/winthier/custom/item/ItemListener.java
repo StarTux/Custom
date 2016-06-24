@@ -13,6 +13,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -78,9 +79,26 @@ public class ItemListener implements Listener {
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         Boolean ret;
         ret = handleEvent(event, event.getInventory().getItem(ANVIL_INPUT_SLOT_1));
-        if (ret != null && ret == false) event.setResult(null);
+        if (ret != null && ret == false) {
+            event.setResult(null);
+            return;
+        }
         ret = handleEvent(event, event.getInventory().getItem(ANVIL_INPUT_SLOT_2));
-        if (ret != null && ret == false) event.setResult(null);
+        if (ret != null && ret == false) {
+            event.setResult(null);
+            return;
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPrepareItemCraft(PrepareItemCraftEvent event) {
+        for (ItemStack item: event.getInventory().getMatrix()) {
+            Boolean ret = handleEvent(event, item);
+            if (ret != null && ret == false) {
+                event.getInventory().setResult(null);
+                return;
+            }
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
