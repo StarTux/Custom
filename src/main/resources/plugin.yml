@@ -1,0 +1,14 @@
+name: Custom
+description: Custom item frameworkd
+author: StarTux
+version: 0.1
+main: com.winthier.custom.CustomPlugin
+depend: []
+commands:
+  custom:
+    description: Admin interface
+    permission: custom.custom  
+permissions:
+  custom.custom:
+    description: Use /custom
+    default: op
