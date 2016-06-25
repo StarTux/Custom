@@ -1,6 +1,9 @@
 package com.winthier.custom.item;
 
 import com.winthier.custom.CustomPlugin;
+import java.util.ArrayList;
+import java.util.List;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -24,14 +27,23 @@ public class ItemRegisterEvent extends Event {
 
     // My Stuff
 
+    @Getter
+    final List<Item> items = new ArrayList<>();
+    @Getter
+    private final List<CraftingRecipe> recipes = new ArrayList<>();
+
     public void registerItem(Item item) {
-        if (!CustomPlugin.getInstance().getItemRegistry().registerItem(item)) {
-            throw new RuntimeException("Duplicate custom item ID: " + item.getId());
-        }
+        items.add(item);
     }
 
-    static void call() {
-        Bukkit.getServer().getPluginManager().callEvent(new ItemRegisterEvent());
+    public void registerRecipe(CraftingRecipe recipe) {
+        recipes.add(recipe);
+    }
+
+    static ItemRegisterEvent call() {
+        ItemRegisterEvent event = new ItemRegisterEvent();
+        Bukkit.getServer().getPluginManager().callEvent(event);
+        return event;
     }
 }
 
