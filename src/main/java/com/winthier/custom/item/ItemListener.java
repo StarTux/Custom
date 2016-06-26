@@ -27,15 +27,26 @@ public class ItemListener implements Listener {
     final static int ANVIL_INPUT_SLOT_2 = 1;
     final static int ANVIL_OUTPUT_SLOT = 2;
 
-    Boolean handleEvent(Event event, ItemStack itemStack) {
+    ItemContext handleEvent(Event event, ItemStack itemStack) {
         if (itemStack == null) return null;
         ItemContext itemContext = CustomPlugin.getInstance().getItemRegistry().findItemContext(itemStack);
         if (itemContext == null) return null;
-        boolean result = itemContext.item.handleEvent(event, itemContext);
-        if (!result && event instanceof Cancellable) {
+        itemContext.setHandled(itemContext.item.handleEvent(event, itemContext));
+        if (!itemContext.isHandled() && event instanceof Cancellable) {
             ((Cancellable)event).setCancelled(true);
         }
-        return result;
+        return itemContext;
+    }
+
+    void setItem(Player player, EquipmentSlot slot, ItemStack item) {
+        switch (slot) {
+        case HAND:
+            player.getInventory().setItemInMainHand(item);
+            return;
+        case OFF_HAND:
+            player.getInventory().setItemInOffHand(item);
+            return;
+        }
     }
 
     ItemStack getItem(Player player, EquipmentSlot slot) {
@@ -48,7 +59,12 @@ public class ItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        handleEvent(event, event.getItem());
+        ItemContext itemContext = handleEvent(event, event.getItem());
+        if (itemContext != null && itemContext.isHandled()) {
+            if (itemContext.getReplaceItem() != null) {
+                setItem(event.getPlayer(), event.getHand(), itemContext.getReplaceItem());
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -78,14 +94,14 @@ public class ItemListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPrepareAnvil(PrepareAnvilEvent event) {
-        Boolean ret;
+        ItemContext ret;
         ret = handleEvent(event, event.getInventory().getItem(ANVIL_INPUT_SLOT_1));
-        if (ret != null && ret == false) {
+        if (ret != null && !ret.isHandled()) {
             event.setResult(null);
             return;
         }
         ret = handleEvent(event, event.getInventory().getItem(ANVIL_INPUT_SLOT_2));
-        if (ret != null && ret == false) {
+        if (ret != null && !ret.isHandled()) {
             event.setResult(null);
             return;
         }

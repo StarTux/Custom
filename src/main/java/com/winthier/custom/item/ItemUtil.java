@@ -6,11 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.ChatColor;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.simple.JSONValue;
 
-public class Util {
+public class ItemUtil {
     public static final String MAGIC = "" + ChatColor.RESET + ChatColor.BLACK + ChatColor.MAGIC;
 
     public static String jsonToString(Object json) {
@@ -65,6 +66,12 @@ public class Util {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Map<Enchantment, Integer> getDefaultEnchantments() {
+        Map<Enchantment, Integer> result = new HashMap<>();
+        result.put(Enchantment.DURABILITY, 1);
+        return result;
     }
 
     public static ItemStack updateJson(ItemStack itemStack, Map<String, Object> json) {

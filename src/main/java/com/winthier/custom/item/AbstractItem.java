@@ -25,7 +25,7 @@ public abstract class AbstractItem implements Item {
         meta.setDisplayName(ChatColor.RESET + getDisplayName());
         List<String> lore = getLore();
         if (lore.isEmpty()) lore.add("");
-        lore.set(0, lore.get(0) + Util.MAGIC + Util.hideJson(getJson()));
+        lore.set(0, lore.get(0) + ItemUtil.MAGIC + ItemUtil.hideJson(getJson()));
         meta.setLore(lore);
         result.setItemMeta(meta);
         result.setAmount(amount);
@@ -56,12 +56,6 @@ public abstract class AbstractItem implements Item {
     @Override
     public Map<Enchantment, Integer> getEnchantments() {
         return null;
-    }
-
-    protected Map<Enchantment, Integer> defaultEnchantments() {
-        Map<Enchantment, Integer> result = new HashMap<>();
-        result.put(Enchantment.DURABILITY, 1);
-        return result;
     }
 
     @Override
