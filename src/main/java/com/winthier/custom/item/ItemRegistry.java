@@ -1,7 +1,6 @@
 package com.winthier.custom.item;
 
 import com.winthier.custom.CustomPlugin;
-import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,9 +62,9 @@ public class ItemRegistry {
         List<String> lore = meta.getLore();
         if (lore == null || lore.isEmpty()) return null;
         String firstLine = lore.get(0);
-        String[] arr = firstLine.split(Msg.MAGIC, 2);
+        String[] arr = firstLine.split(Util.MAGIC, 2);
         if (arr.length != 2) return null;
-        Map<String, Object> json = Msg.unhideJson(arr[1]);
+        Map<String, Object> json = Util.unhideJson(arr[1]);
         if (json == null) return null;
         if (!json.containsKey("id")) return null;
         String id = json.get("id").toString();

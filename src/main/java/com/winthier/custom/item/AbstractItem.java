@@ -1,6 +1,5 @@
 package com.winthier.custom.item;
 
-import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,7 @@ public abstract class AbstractItem implements Item {
         meta.setDisplayName(ChatColor.RESET + getDisplayName());
         List<String> lore = getLore();
         if (lore.isEmpty()) lore.add("");
-        lore.set(0, lore.get(0) + Msg.MAGIC + Msg.hideJson(getJson()));
+        lore.set(0, lore.get(0) + Util.MAGIC + Util.hideJson(getJson()));
         meta.setLore(lore);
         result.setItemMeta(meta);
         result.setAmount(amount);
