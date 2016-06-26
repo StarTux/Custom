@@ -84,7 +84,7 @@ public class CraftingRecipe {
             pos += 1;
         }
         String shape = sb.toString();
-        ShapedRecipe recipe = new ShapedRecipe(getResultItem().spawnItemStack());
+        ShapedRecipe recipe = new ShapedRecipe(getResultItem().spawnItemStack(1));
         recipe.shape(shape.substring(0, 3), shape.substring(3, 6), shape.substring(6, 9));
         for (Map.Entry<Character, MaterialData> entry: ingredientMap.entrySet()) {
             recipe.setIngredient(entry.getKey(), entry.getValue());

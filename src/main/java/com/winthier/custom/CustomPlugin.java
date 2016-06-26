@@ -33,13 +33,13 @@ public class CustomPlugin extends JavaPlugin {
     public ItemStack spawnItem(String id) {
         Item item = getItemRegistry().findItem(id);
         if (item == null) return null;
-        return item.spawnItemStack();
+        return item.spawnItemStack(1);
     }
 
-    public boolean giveItem(Player player, String itemId) {
+    public boolean giveItem(Player player, String itemId, int amount) {
         Item item = getItemRegistry().findItem(itemId);
         if (item == null) return false;
-        for (ItemStack drop: player.getInventory().addItem(item.spawnItemStack()).values()) {
+        for (ItemStack drop: player.getInventory().addItem(item.spawnItemStack(amount)).values()) {
             player.getWorld().dropItem(player.getEyeLocation(), drop).setPickupDelay(0);
         }
         return true;

@@ -17,15 +17,19 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 public abstract class AbstractItem implements Item {
     @Override
-    public ItemStack spawnItemStack() {
+    public ItemStack spawnItemStack(int amount) {
         ItemStack result = new ItemStack(getMaterial(), 1, getDurability());
         if (getEnchantments() != null) {
             result.addUnsafeEnchantments(getEnchantments());
         }
         ItemMeta meta = result.getItemMeta();
         meta.setDisplayName(ChatColor.RESET + getDisplayName());
-        meta.setLore(getLore());
+        List<String> lore = getLore();
+        if (lore.isEmpty()) lore.add("");
+        lore.set(0, lore.get(0) + Msg.MAGIC + Msg.hideJson(getJson()));
+        meta.setLore(lore);
         result.setItemMeta(meta);
+        result.setAmount(amount);
         return result;
     }
 
@@ -47,8 +51,6 @@ public abstract class AbstractItem implements Item {
                 lore.add(line);
             }
         }
-        if (lore.isEmpty()) lore.add("");
-        lore.set(0, lore.get(0) + Msg.MAGIC + Msg.hideJson(getJson()));
         return lore;
     }
 

@@ -25,7 +25,7 @@ public interface Item {
     
     // Creation
     
-    ItemStack spawnItemStack();
+    ItemStack spawnItemStack(int amount);
 
     // Appearance
 

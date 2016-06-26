@@ -100,7 +100,7 @@ public class ItemListener implements Listener {
     public void onPrepareItemCraft(PrepareItemCraftEvent event) {
         for (CraftingRecipe craftingRecipe: CustomPlugin.getInstance().getItemRegistry().getRegisteredRecipes()) {
             if (craftingRecipe.matches(event.getInventory().getMatrix())) {
-                event.getInventory().setResult(craftingRecipe.getResultItem().spawnItemStack());
+                event.getInventory().setResult(craftingRecipe.getResultItem().spawnItemStack(1));
                 return;
             }
         }

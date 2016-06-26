@@ -70,6 +70,11 @@ public class ItemRegistry {
         if (!json.containsKey("id")) return null;
         String id = json.get("id").toString();
         Item item = registeredItems.get(id);
+        if (item == null) {
+            CustomPlugin.getInstance().getLogger().warning("Found custom item with unknown ID: " + id);
+            item = new DummyItem(id, id, itemStack.getType());
+            registeredItems.put(id, item);
+        }
         return new ItemContext(item, itemStack, json);
     }
 
