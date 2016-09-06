@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -90,5 +91,9 @@ public class Msg {
             sb.append(tok.substring(1).toLowerCase());
         }
         return sb.toString();
+    }
+
+    public static String wrap(String string, int lineLength) {
+        return WordUtils.wrap(string, lineLength);
     }
 }

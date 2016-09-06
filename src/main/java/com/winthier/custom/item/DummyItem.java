@@ -1,17 +1,22 @@
 package com.winthier.custom.item;
 
-import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemStack;
 
 @Getter
 @RequiredArgsConstructor
 public class DummyItem extends AbstractItem {
     final String id;
-    final String displayName;
-    final Material material;
-    final String description;
-    final Map<Enchantment, Integer> enchantments;
+
+    @Override
+    public ItemStack createRawItemStack(int amount, ItemJson json) {
+        return new ItemStack(Material.STONE, amount);
+    }
+
+    @Override
+    public String getDisplayName(ItemJson json) {
+        return id;
+    }
 }

@@ -1,9 +1,5 @@
 package com.winthier.custom.item;
 
-import java.util.List;
-import java.util.Map;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,25 +15,29 @@ import org.bukkit.inventory.ItemStack;
  * this interface, and only override the required methods.
  */
 public interface Item {
-    // Identifier to this Framework
-
+    /**
+     * Identifier to this Framework.  It will be put in the JSON
+     * and then hidden in the lore.  It is recommended to leave
+     * the heavy lifting to AbstractItem.getJson() and
+     * AbstractItem.spawnItemStack().
+     */
     String getId();
     
     // Creation
-    
+
+    /**
+     * Create a new item stack with the given amount and JSON
+     * information.
+     */
+    ItemStack spawnItemStack(int amount, ItemJson json);
+
+    /**
+     * Convenience functions for the above.
+     */
     ItemStack spawnItemStack(int amount);
+    ItemStack spawnItemStack();
 
-    // Appearance
-
-    String getDisplayName();
-    Material getMaterial();
-    short getDurability();
-    String getDescription();
-    List<String> getLore();
-    Map<Enchantment, Integer> getEnchantments();
-    Map<String, Object> getJson();
-
-    // Use
+    // Evant Handling
 
     /**
      * An event happened involving an item of this type.

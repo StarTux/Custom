@@ -31,8 +31,8 @@ public class ItemListener implements Listener {
         if (itemStack == null) return null;
         ItemContext itemContext = CustomPlugin.getInstance().getItemRegistry().findItemContext(itemStack);
         if (itemContext == null) return null;
-        itemContext.setHandled(itemContext.item.handleEvent(event, itemContext));
-        if (!itemContext.isHandled() && event instanceof Cancellable) {
+        final boolean handled = itemContext.item.handleEvent(event, itemContext);
+        if (!handled && event instanceof Cancellable) {
             ((Cancellable)event).setCancelled(true);
         }
         return itemContext;
@@ -60,11 +60,6 @@ public class ItemListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
         ItemContext itemContext = handleEvent(event, event.getItem());
-        if (itemContext != null && itemContext.isHandled()) {
-            if (itemContext.getReplaceItem() != null) {
-                setItem(event.getPlayer(), event.getHand(), itemContext.getReplaceItem());
-            }
-        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -96,15 +91,7 @@ public class ItemListener implements Listener {
     public void onPrepareAnvil(PrepareAnvilEvent event) {
         ItemContext ret;
         ret = handleEvent(event, event.getInventory().getItem(ANVIL_INPUT_SLOT_1));
-        if (ret != null && !ret.isHandled()) {
-            event.setResult(null);
-            return;
-        }
         ret = handleEvent(event, event.getInventory().getItem(ANVIL_INPUT_SLOT_2));
-        if (ret != null && !ret.isHandled()) {
-            event.setResult(null);
-            return;
-        }
     }
 
     // Apparently it is enough to set the result in this event,
@@ -116,7 +103,7 @@ public class ItemListener implements Listener {
     public void onPrepareItemCraft(PrepareItemCraftEvent event) {
         for (CraftingRecipe craftingRecipe: CustomPlugin.getInstance().getItemRegistry().getRegisteredRecipes()) {
             if (craftingRecipe.matches(event.getInventory().getMatrix())) {
-                event.getInventory().setResult(craftingRecipe.getResultItem().spawnItemStack(1));
+                event.getInventory().setResult(craftingRecipe.getResult());
                 return;
             }
         }

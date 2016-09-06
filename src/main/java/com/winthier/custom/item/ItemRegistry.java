@@ -31,19 +31,24 @@ public class ItemRegistry {
                 e.printStackTrace();
             }
         }
+        int recipeSuccessCount = 0;
+        int recipeFailCount = 0;
         for (CraftingRecipe craftingRecipe: event.getRecipes()) {
             try {
-                Recipe recipe = craftingRecipe.getRecipe();
+                Recipe recipe = craftingRecipe.getBukkitRecipe();
                 boolean ret = Bukkit.getServer().addRecipe(recipe);
                 registeredRecipes.add(craftingRecipe);
-                CustomPlugin.getInstance().getLogger().info("Registered Recipe: " + craftingRecipe.getName());
                 if (!ret) {
-                    CustomPlugin.getInstance().getLogger().warning("Item Registry: Could not register recipe: " + craftingRecipe.getName());
+                    recipeFailCount += 1;
+                } else {
+                    recipeSuccessCount += 1;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                recipeFailCount += 1;
             }
         }
+        CustomPlugin.getInstance().getLogger().info("Registered " + recipeSuccessCount + " recipes. Failed to register " + recipeFailCount);
     }
 
     public boolean registerItem(Item item) {
@@ -71,10 +76,10 @@ public class ItemRegistry {
         Item item = registeredItems.get(id);
         if (item == null) {
             CustomPlugin.getInstance().getLogger().warning("Found custom item with unknown ID: " + id);
-            item = new DummyItem(id, id, itemStack.getType(), null, null);
+            item = new DummyItem(id);
             registeredItems.put(id, item);
         }
-        return new ItemContext(item, itemStack, json);
+        return new ItemContext(item, itemStack, new ItemJson(json));
     }
 
     public Item findItem(String id) {

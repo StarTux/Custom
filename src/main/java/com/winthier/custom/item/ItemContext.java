@@ -11,7 +11,5 @@ import org.bukkit.inventory.ItemStack;
 public class ItemContext {
     final Item item;
     final ItemStack itemStack;
-    final Map<String, Object> json;
-    @Setter ItemStack replaceItem = null;
-    @Setter boolean handled = false;
+    final ItemJson json;
 }

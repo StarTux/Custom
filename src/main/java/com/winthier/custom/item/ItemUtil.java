@@ -2,13 +2,12 @@ package com.winthier.custom.item;
 
 import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.json.simple.JSONValue;
 
 public class ItemUtil {
@@ -74,17 +73,7 @@ public class ItemUtil {
         return result;
     }
 
-    public static ItemStack updateJson(ItemStack itemStack, Map<String, Object> json) {
-        itemStack = itemStack.clone();
-        ItemMeta meta = itemStack.getItemMeta();
-        List<String> lore = meta.getLore();
-        if (lore == null) lore = new ArrayList<>();
-        if (lore.isEmpty()) lore.add("");
-        String firstLine = lore.get(0);
-        String[] arr = firstLine.split(MAGIC, 2);
-        lore.set(0, arr[0] + MAGIC + hideJson(json));
-        meta.setLore(lore);
-        itemStack.setItemMeta(meta);
-        return itemStack;
+    public static List<String> makeBukkitLore(String lore) {
+        return Arrays.asList(lore.split("\n"));
     }
 }
