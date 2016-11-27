@@ -34,8 +34,7 @@ public class Msg {
         to.sendMessage(format("&r[&cCustom&r] &c") + format(msg, args));
     }
 
-    static void consoleCommand(String cmd, Object... args)
-    {
+    static void consoleCommand(String cmd, Object... args) {
         if (args.length > 0) cmd = String.format(cmd, args);
         // if (CustomPlugin.getInstance().debugMode) {
         //     ChstomPlugin.getInstance().getLogger().info("Running console command: " + cmd);
@@ -43,8 +42,7 @@ public class Msg {
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
     }
 
-    public static void raw(Player player, Object... obj)
-    {
+    public static void raw(Player player, Object... obj) {
         if (obj.length == 0) return;
         if (obj.length == 1) {
             consoleCommand("minecraft:tellraw %s %s", player.getName(), JSONValue.toJSONString(obj[0]));
@@ -95,5 +93,13 @@ public class Msg {
 
     public static String wrap(String string, int lineLength) {
         return WordUtils.wrap(string, lineLength);
+    }
+
+    public static Object parseJson(String s) {
+        return JSONValue.parse(s);
+    }
+
+    public static String toJsonString(Object o) {
+        return JSONValue.toJSONString(o);
     }
 }

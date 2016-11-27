@@ -1,7 +1,8 @@
 package com.winthier.custom;
 
-import com.winthier.custom.item.Item;
+import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.util.Msg;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,7 +10,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+@RequiredArgsConstructor
 public class CustomCommand implements CommandExecutor {
+    final CustomPlugin plugin;
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = sender instanceof Player ? (Player)sender : null;
@@ -33,11 +37,19 @@ public class CustomCommand implements CommandExecutor {
                 }
                 if (amount < 1) amount = 1;
             }
-            if (!CustomPlugin.getInstance().giveItem(target, itemId, amount)) {
+            CustomItem customItem = CustomPlugin.getInstance().getItemRegistry().findItem(itemId);
+            if (customItem == null) {
                 Msg.warn(player, "Item not found: %s.", itemId);
-            } else {
-                Msg.info(player, "Item spawned for %s.", target.getName());
+                return true;
             }
+            CustomConfig config = new CustomConfig(itemId, (String)null);
+            ItemStack item = customItem.spawnItemStack(amount, config);
+            item = config.save(item);
+            player.getWorld().dropItemNaturally(player.getEyeLocation(), item).setPickupDelay(0);
+            Msg.info(player, "Item spawned for %s.", target.getName());
+        } else if (firstArg.equals("reload") && args.length >= 1) {
+            plugin.reload();
+            sender.sendMessage("Custom Plugin Reloaded");
         }
         return true;
     }

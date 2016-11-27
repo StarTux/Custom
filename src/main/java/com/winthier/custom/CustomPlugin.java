@@ -1,7 +1,8 @@
 package com.winthier.custom;
 
-import com.winthier.custom.item.Item;
-import com.winthier.custom.item.ItemListener;
+import com.winthier.custom.event.CustomRegisterEvent;
+import com.winthier.custom.event.EventManager;
+import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemRegistry;
 import lombok.Getter;
 import org.bukkit.entity.Player;
@@ -12,36 +13,24 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Getter
 public class CustomPlugin extends JavaPlugin {
     @Getter static CustomPlugin instance = null;
-    final ItemRegistry itemRegistry = new ItemRegistry();
+    @Getter ItemRegistry itemRegistry;
+    @Getter EventManager eventManager = new EventManager(this);
     
     @Override
     public void onEnable() {
         instance = this;
-        getCommand("custom").setExecutor(new CustomCommand());
-        getServer().getPluginManager().registerEvents(new ItemListener(), this);
+        getCommand("custom").setExecutor(new CustomCommand(this));
         new BukkitRunnable() {
             @Override public void run() {
-                itemRegistry.reload();
+                reload();
             }
         }.runTask(this);
     }
 
-    public Item findItem(String id) {
-        return getItemRegistry().findItem(id);
-    }
-
-    public ItemStack spawnItem(String id) {
-        Item item = getItemRegistry().findItem(id);
-        if (item == null) return null;
-        return item.spawnItemStack(1);
-    }
-
-    public boolean giveItem(Player player, String itemId, int amount) {
-        Item item = getItemRegistry().findItem(itemId);
-        if (item == null) return false;
-        for (ItemStack drop: player.getInventory().addItem(item.spawnItemStack(amount)).values()) {
-            player.getWorld().dropItem(player.getEyeLocation(), drop).setPickupDelay(0);
-        }
-        return true;
+    void reload() {
+        itemRegistry = new ItemRegistry(this);
+        getServer().getPluginManager().registerEvents(itemRegistry, this);
+        CustomRegisterEvent event = new CustomRegisterEvent();
+        getServer().getPluginManager().callEvent(event);
     }
 }
