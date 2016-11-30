@@ -1,5 +1,6 @@
 package com.winthier.custom;
 
+import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
 import com.winthier.custom.item.CustomItem;
@@ -15,6 +16,7 @@ public class CustomPlugin extends JavaPlugin {
     @Getter static CustomPlugin instance = null;
     @Getter ItemRegistry itemRegistry;
     @Getter EventManager eventManager = new EventManager(this);
+    @Getter EntityManager entityManager = new EntityManager(this);
     
     @Override
     public void onEnable() {

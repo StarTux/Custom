@@ -5,16 +5,19 @@ import java.lang.reflect.Method;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-@RequiredArgsConstructor
+@Getter @RequiredArgsConstructor
 public class EventManager {
     private final CustomPlugin plugin;
     private final Map<Class<? extends Event>, Map<EventPriority, EventDispatcher>> eventMap = new HashMap<>();
+    private final Map<Event, ItemEventContext> itemContextMap = new WeakHashMap<>();
 
     private EventDispatcher createEventDispatcher(Class<? extends Event> event, EventPriority priority) {
         EventDispatcher result = new EventDispatcher(this, event, priority);

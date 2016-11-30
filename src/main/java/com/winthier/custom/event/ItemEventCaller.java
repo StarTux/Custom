@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
@@ -22,11 +23,11 @@ abstract class ItemEventCaller {
     final EventDispatcher dispatcher;
     abstract void callEvent(Event event);
 
-    protected void callWithItemInHand(Event event, Player player, EquipmentSlot slot) {
+    protected void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
         ItemStack item;
-        if (slot == EquipmentSlot.HAND) {
+        if (hand == EquipmentSlot.HAND) {
             item = player.getInventory().getItemInMainHand();
-        } else if (slot == EquipmentSlot.OFF_HAND) {
+        } else if (hand == EquipmentSlot.OFF_HAND) {
             item = player.getInventory().getItemInOffHand();
         } else {
             return;
@@ -35,11 +36,14 @@ abstract class ItemEventCaller {
         if (config == null) return;
         CustomItem customItem = CustomPlugin.getInstance().getItemRegistry().findItem(config);
         if (customItem == null) return;
+        ItemEventContext context = new ItemEventContext(player, item, hand, config);
+        context.save(event);
         for (HandlerCaller caller: dispatcher.itemCallers) {
             if (caller.listener == customItem) {
                 caller.call(event);
             }
         }
+        context.remove(event);
     }
 
     static ItemEventCaller of(EventDispatcher dispatcher, Event event) {
@@ -102,6 +106,14 @@ abstract class ItemEventCaller {
                         return; // ???
                     }
                     callWithItemInHand(event, player, hand);
+                }
+            };
+        } else if (event instanceof PlayerSwapHandItemsEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void callEvent(Event ev) {
+                    PlayerSwapHandItemsEvent event = (PlayerSwapHandItemsEvent)ev;
+                    callWithItemInHand(event, event.getPlayer(), EquipmentSlot.HAND);
+                    callWithItemInHand(event, event.getPlayer(), EquipmentSlot.OFF_HAND);
                 }
             };
         } else {

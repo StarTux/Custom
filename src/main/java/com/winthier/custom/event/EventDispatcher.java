@@ -4,6 +4,7 @@ import com.winthier.custom.item.CustomItem;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
@@ -15,9 +16,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 /**
  * Listen for one specific event with one priority.
  */
-@RequiredArgsConstructor
+@Getter @RequiredArgsConstructor
 class EventDispatcher implements Listener, EventExecutor {
-    final EventManager manager;
+    final EventManager eventManager;
     final Class<? extends Event> event;
     final EventPriority priority;
 
