@@ -18,6 +18,7 @@ public class EventManager {
     private final CustomPlugin plugin;
     private final Map<Class<? extends Event>, Map<EventPriority, EventDispatcher>> eventMap = new HashMap<>();
     private final Map<Event, ItemEventContext> itemContextMap = new WeakHashMap<>();
+    private final Map<Event, EntityEventContext> entityContextMap = new WeakHashMap<>();
 
     private EventDispatcher createEventDispatcher(Class<? extends Event> event, EventPriority priority) {
         EventDispatcher result = new EventDispatcher(this, event, priority);

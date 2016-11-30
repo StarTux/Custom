@@ -1,5 +1,6 @@
 package com.winthier.custom.event;
 
+import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.item.CustomItem;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +31,14 @@ public class CustomRegisterEvent extends Event {
 
     @Getter
     final List<CustomItem> items = new ArrayList<>();
-    // @Getter
-    // private final List<CraftingRecipe> recipes = new ArrayList<>();
+    @Getter
+    final List<CustomEntity> entities = new ArrayList<>();
 
     public void addItem(CustomItem item) {
         items.add(item);
     }
 
-    // public void addRecipe(CraftingRecipe recipe) {
-    //     recipes.add(recipe);
-    // }
+    public void addEntity(CustomEntity entity) {
+        entities.add(entity);
+    }
 }
