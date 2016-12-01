@@ -144,6 +144,7 @@ public final class CustomConfig {
                 break;
             }
         }
+        if (tag == null) return null;
         String[] tokens = tag.split(KEY_ENTITY_SEPARATOR, 3);
         String id = tokens[1];
         String json = tokens.length == 3 ? tokens[2] : null;

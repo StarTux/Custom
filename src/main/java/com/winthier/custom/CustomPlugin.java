@@ -14,9 +14,9 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Getter
 public class CustomPlugin extends JavaPlugin {
     @Getter static CustomPlugin instance = null;
-    @Getter ItemRegistry itemRegistry;
     @Getter EventManager eventManager = new EventManager(this);
-    @Getter EntityManager entityManager = new EntityManager(this);
+    @Getter ItemRegistry itemRegistry;
+    @Getter EntityManager entityManager;
     
     @Override
     public void onEnable() {
@@ -30,9 +30,12 @@ public class CustomPlugin extends JavaPlugin {
     }
 
     void reload() {
+        eventManager.clear();
         itemRegistry = new ItemRegistry(this);
-        getServer().getPluginManager().registerEvents(itemRegistry, this);
+        entityManager = new EntityManager(this);
         CustomRegisterEvent event = new CustomRegisterEvent();
         getServer().getPluginManager().callEvent(event);
+        itemRegistry.onCustomRegister(event);
+        entityManager.onCustomRegister(event);
     }
 }

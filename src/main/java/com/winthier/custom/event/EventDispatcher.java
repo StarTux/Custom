@@ -25,6 +25,7 @@ class EventDispatcher implements Listener, EventExecutor {
 
     final List<HandlerCaller> itemCallers = new ArrayList<>();
     final List<HandlerCaller> entityCallers = new ArrayList<>();
+    final List<HandlerCaller> systemCallers = new ArrayList<>(); // No custom thing
     ItemEventCaller itemEventCaller = null;
     EntityEventCaller entityEventCaller = null;
 
@@ -37,11 +38,14 @@ class EventDispatcher implements Listener, EventExecutor {
         if (!this.event.isInstance(event)) return; // Happens sometimes
         if (!itemCallers.isEmpty()) {
             if (itemEventCaller == null) itemEventCaller = ItemEventCaller.of(this, event);
-            itemEventCaller.callEvent(event);
+            itemEventCaller.call(event);
         }
         if (!entityCallers.isEmpty()) {
             if (entityEventCaller == null) entityEventCaller = EntityEventCaller.of(this, event);
             entityEventCaller.call(event);
+        }
+        if (!systemCallers.isEmpty()) {
+            for (HandlerCaller caller: systemCallers) caller.call(event);
         }
     }
 
@@ -49,13 +53,19 @@ class EventDispatcher implements Listener, EventExecutor {
         HandlerCaller caller = new HandlerCaller(event, listener, method, ignoreCancelled);
         if (listener instanceof CustomItem) {
             itemCallers.add(caller);
-        }
-        if (listener instanceof CustomEntity) {
+        } else if (listener instanceof CustomEntity) {
             entityCallers.add(caller);
+        // } else if (listener instanceof CustomBlock) {
+        } else {
+            systemCallers.add(caller);
         }
     }
 
     void clear() {
         itemCallers.clear();
+        entityCallers.clear();
+        systemCallers.clear();
+        itemEventCaller = null;
+        entityEventCaller = null;
     }
 }

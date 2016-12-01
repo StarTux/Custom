@@ -10,17 +10,13 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
 @RequiredArgsConstructor
-public class ItemRegistry implements Listener {
+public class ItemRegistry {
     final CustomPlugin plugin;
     final Map<String, CustomItem> registeredItems = new HashMap<>();
     // @Getter final List<CraftingRecipe> registeredRecipes = new ArrayList<>();
 
-    @EventHandler(priority = EventPriority.MONITOR)
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomItem item: event.getItems()) {
             if (registeredItems.containsKey(item.getCustomId())) {

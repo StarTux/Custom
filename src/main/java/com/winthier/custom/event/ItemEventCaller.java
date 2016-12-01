@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 @RequiredArgsConstructor
 abstract class ItemEventCaller {
     final EventDispatcher dispatcher;
-    abstract void callEvent(Event event);
+    abstract void call(Event event);
 
     protected void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
         ItemStack item;
@@ -49,21 +49,21 @@ abstract class ItemEventCaller {
     static ItemEventCaller of(EventDispatcher dispatcher, Event event) {
         if (event instanceof PlayerInteractEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     PlayerInteractEvent event = (PlayerInteractEvent)ev;
                     callWithItemInHand(event, event.getPlayer(), event.getHand());
                 }
             };
         } else if (event instanceof PlayerInteractEntityEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     PlayerInteractEntityEvent event = (PlayerInteractEntityEvent)ev;
                     callWithItemInHand(event, event.getPlayer(), event.getHand());
                 }
             };
         } else if (event instanceof EntityDamageByEntityEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     EntityDamageByEntityEvent event = (EntityDamageByEntityEvent)ev;
                     if (!(event.getDamager() instanceof Player)) return;
                     callWithItemInHand(event, (Player)event.getDamager(), EquipmentSlot.HAND);
@@ -71,28 +71,28 @@ abstract class ItemEventCaller {
             };
         } else if (event instanceof BlockDamageEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     BlockDamageEvent event = (BlockDamageEvent)ev;
                     callWithItemInHand(event, event.getPlayer(), EquipmentSlot.HAND);
                 }
             };
         } else if (event instanceof BlockBreakEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     BlockBreakEvent event = (BlockBreakEvent)ev;
                     callWithItemInHand(event, event.getPlayer(), EquipmentSlot.HAND);
                 }
             };
         } else if (event instanceof BlockPlaceEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     BlockPlaceEvent event = (BlockPlaceEvent)ev;
                     callWithItemInHand(event, event.getPlayer(), event.getHand());
                 }
             };
         } else if (event instanceof EntityShootBowEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     EntityShootBowEvent event = (EntityShootBowEvent)ev;
                     if (!(event.getEntity() instanceof Player)) return;
                     Player player = (Player)event.getEntity();
@@ -110,15 +110,16 @@ abstract class ItemEventCaller {
             };
         } else if (event instanceof PlayerSwapHandItemsEvent) {
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event ev) {
+                @Override public void call(Event ev) {
                     PlayerSwapHandItemsEvent event = (PlayerSwapHandItemsEvent)ev;
                     callWithItemInHand(event, event.getPlayer(), EquipmentSlot.HAND);
                     callWithItemInHand(event, event.getPlayer(), EquipmentSlot.OFF_HAND);
                 }
             };
         } else {
+            CustomPlugin.getInstance().getLogger().warning("No ItemEventCaller found for " + event.getEventName());
             return new ItemEventCaller(dispatcher) {
-                @Override public void callEvent(Event event) {
+                @Override public void call(Event event) {
                     // Do nothing
                 }
             };

@@ -8,6 +8,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.spigotmc.event.entity.EntityDismountEvent;
+import org.spigotmc.event.entity.EntityMountEvent;
 
 @RequiredArgsConstructor
 abstract class EntityEventCaller {
@@ -20,11 +23,11 @@ abstract class EntityEventCaller {
         EntityWatcher entityWatcher = CustomPlugin.getInstance().getEntityManager().getEntityWatcher(entity);
         if (entityWatcher == null) return;
         EntityEventContext context = new EntityEventContext(position, entity, entityWatcher);
-        dispatcher.getEventManager().getEntityContextMap().put(event, context);
+        context.save(event);
         for (HandlerCaller caller: dispatcher.getEntityCallers()) {
             caller.call(event);
         }
-        dispatcher.getEventManager().getEntityContextMap().remove(event);
+        context.remove(event);
     }
 
     protected void callWithEntity(Event event, Entity entity) {
@@ -45,10 +48,21 @@ abstract class EntityEventCaller {
                     // check?
                     if (event instanceof EntityDamageByEntityEvent) {
                         callWithEntity(event, ((EntityDamageByEntityEvent)event).getDamager(), EntityEventContext.Position.DAMAGER);
+                    } else if (event instanceof EntityMountEvent) {
+                        callWithEntity(event, ((EntityMountEvent)event).getMount(), EntityEventContext.Position.MOUNT);
+                    } else if (event instanceof EntityDismountEvent) {
+                        callWithEntity(event, ((EntityDismountEvent)event).getDismounted(), EntityEventContext.Position.MOUNT);
                     }
                 }
             };
+        } else if (event instanceof PlayerInteractEntityEvent) {
+            return new EntityEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    callWithEntity(event, ((PlayerInteractEntityEvent)ev).getRightClicked());
+                }
+            };
         } else {
+            CustomPlugin.getInstance().getLogger().warning("No EntityEventCaller found for " + event.getEventName());
             return new EntityEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     // Do nothing

@@ -8,18 +8,14 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 
 @RequiredArgsConstructor
-public class EntityManager implements Listener {
+public class EntityManager {
     final CustomPlugin plugin;
 
     final Map<String, CustomEntity> customEntityMap = new HashMap<>();
     final Map<UUID, EntityWatcher> entityWatcherMap = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.MONITOR)
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomEntity customEntity: event.getEntities()) {
             if (customEntityMap.containsKey(customEntity.getCustomId())) {
@@ -46,7 +42,7 @@ public class EntityManager implements Listener {
         }
         CustomConfig config = CustomConfig.of(entity);
         if (config != null) {
-            CustomEntity customEntity = customEntityMap.get(config.getCustomId());
+            CustomEntity customEntity = findEntity(config);
             if (customEntity == null) {
                 plugin.getLogger().warning("Encountered unknown custom entity with ID '" + config.getCustomId() + "'");
                 customEntity = new DefaultCustomEntity(customEntity.getCustomId());
@@ -59,5 +55,17 @@ public class EntityManager implements Listener {
             return watcher;
         }
         return null;
+    }
+
+    public CustomEntity findEntity(CustomConfig config) {
+        return findEntity(config.getCustomId());
+    }
+
+    public CustomEntity findEntity(String id) {
+        return customEntityMap.get(id);
+    }
+
+    public void watchEntity(EntityWatcher watcher) {
+        entityWatcherMap.put(watcher.getEntity().getUniqueId(), watcher);
     }
 }

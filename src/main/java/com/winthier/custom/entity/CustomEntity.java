@@ -15,8 +15,8 @@ public interface CustomEntity extends Listener {
     /**
      * Spawn a new entity of this type at the given location, with
      * the given configuration.  This function is not expected to
-     * actually store the config in the entity.  The caller should
-     * take care of that.
+     * actually store the config in the entity.  The caller is
+     * responsible to save the config and call watchEntity().
      */
     Entity spawnEntity(Location location, CustomConfig config);
 

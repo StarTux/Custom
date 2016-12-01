@@ -1,5 +1,8 @@
 package com.winthier.custom;
 
+import com.winthier.custom.entity.CustomEntity;
+import com.winthier.custom.entity.DefaultEntityWatcher;
+import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.util.Msg;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -47,9 +51,27 @@ public class CustomCommand implements CommandExecutor {
             item = config.save(item);
             player.getWorld().dropItemNaturally(player.getEyeLocation(), item).setPickupDelay(0);
             Msg.info(player, "Item spawned for %s.", target.getName());
-        } else if (firstArg.equals("reload") && args.length >= 1) {
+        } else if (firstArg.equals("summon") && args.length == 2) {
+            String name = args[1];
+            CustomEntity customEntity = plugin.getEntityManager().findEntity(name);
+            if (customEntity == null) {
+                Msg.warn(sender, "Custom entity not found: %s.", name);
+                return true;
+            }
+            CustomConfig config = new CustomConfig(customEntity.getCustomId(), (String)null);
+            Entity entity = customEntity.spawnEntity(player.getLocation(), config);
+            if (entity == null) {
+                Msg.warn(sender, "Failed to spawn custom entity: %s.", name);
+                return true;
+            }
+            config.save(entity);
+            EntityWatcher watcher = customEntity.watchEntity(entity, config);
+            if (watcher == null) watcher = new DefaultEntityWatcher(entity, customEntity, config);
+            plugin.getEntityManager().watchEntity(watcher);
+            Msg.info(sender, "Custom entity spawned: %s.", customEntity.getCustomId());
+        } else if (firstArg.equals("reload") && args.length == 1) {
             plugin.reload();
-            sender.sendMessage("Custom Plugin Reloaded");
+            Msg.info(sender, "Custom Plugin Reloaded");
         }
         return true;
     }

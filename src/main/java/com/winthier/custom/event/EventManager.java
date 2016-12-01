@@ -84,8 +84,6 @@ public class EventManager {
             for (EventDispatcher dispatcher : priorityMap.values()) {
                 dispatcher.clear();
             }
-            priorityMap.clear();
         }
-        eventMap.clear();
     }
 }
