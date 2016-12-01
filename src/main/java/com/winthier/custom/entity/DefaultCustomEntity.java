@@ -1,11 +1,12 @@
 package com.winthier.custom.entity;
 
 import com.winthier.custom.CustomConfig;
+import com.winthier.custom.event.EntityEventContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreeperPowerEvent;
@@ -152,6 +153,13 @@ public class DefaultCustomEntity implements CustomEntity {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPotionSplash(PotionSplashEvent event) {
-        event.setCancelled(true);
+        EntityEventContext context = EntityEventContext.of(event);
+        switch (context.getPosition()) {
+        case SPLASHED:
+            ((PotionSplashEvent)event).setIntensity((LivingEntity)context.getEntity(), 0.0);
+            break;
+        default:
+            event.setCancelled(true);
+        }
     }
 }

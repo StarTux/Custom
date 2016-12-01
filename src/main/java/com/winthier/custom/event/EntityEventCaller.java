@@ -5,9 +5,11 @@ import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.entity.EntityWatcher;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
@@ -24,8 +26,11 @@ abstract class EntityEventCaller {
         if (entityWatcher == null) return;
         EntityEventContext context = new EntityEventContext(position, entity, entityWatcher);
         context.save(event);
+        CustomEntity customEntity = entityWatcher.getCustomEntity();
         for (HandlerCaller caller: dispatcher.getEntityCallers()) {
-            caller.call(event);
+            if (caller.listener == customEntity) {
+                caller.call(event);
+            }
         }
         context.remove(event);
     }
@@ -52,6 +57,11 @@ abstract class EntityEventCaller {
                         callWithEntity(event, ((EntityMountEvent)event).getMount(), EntityEventContext.Position.MOUNT);
                     } else if (event instanceof EntityDismountEvent) {
                         callWithEntity(event, ((EntityDismountEvent)event).getDismounted(), EntityEventContext.Position.MOUNT);
+                    } else if (event instanceof PotionSplashEvent) {
+                        PotionSplashEvent splashEvent = (PotionSplashEvent)event;
+                        for (LivingEntity affected: splashEvent.getAffectedEntities()) {
+                            callWithEntity(event, affected, EntityEventContext.Position.SPLASHED);
+                        }
                     }
                 }
             };

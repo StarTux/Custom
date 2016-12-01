@@ -13,6 +13,7 @@ public class EntityEventContext {
         ENTITY,
         DAMAGER, // EntityDamageByEntityEvent.getDamager()
         MOUNT, // Entity(Mount/Dismount)Event.get(Mount/Dismounted)()
+        SPLASHED, // PotionSplashEvent.getAffectedEntities()
     }
 
     final Position position;
