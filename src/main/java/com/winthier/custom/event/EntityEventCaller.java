@@ -10,6 +10,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
@@ -57,10 +58,14 @@ abstract class EntityEventCaller {
                         callWithEntity(event, ((EntityMountEvent)event).getMount(), EntityEventContext.Position.MOUNT);
                     } else if (event instanceof EntityDismountEvent) {
                         callWithEntity(event, ((EntityDismountEvent)event).getDismounted(), EntityEventContext.Position.MOUNT);
-                    } else if (event instanceof PotionSplashEvent) {
-                        PotionSplashEvent splashEvent = (PotionSplashEvent)event;
-                        for (LivingEntity affected: splashEvent.getAffectedEntities()) {
-                            callWithEntity(event, affected, EntityEventContext.Position.SPLASHED);
+                    } else if (event instanceof ProjectileHitEvent) {
+                        Entity hitEntity = ((ProjectileHitEvent)event).getHitEntity();
+                        if (hitEntity != null) callWithEntity(event, hitEntity, EntityEventContext.Position.PROJECTILE_TARGET);
+                        if (event instanceof PotionSplashEvent) {
+                            PotionSplashEvent splashEvent = (PotionSplashEvent)event;
+                            for (LivingEntity affected: splashEvent.getAffectedEntities()) {
+                                callWithEntity(event, affected, EntityEventContext.Position.SPLASHED);
+                            }
                         }
                     }
                 }
