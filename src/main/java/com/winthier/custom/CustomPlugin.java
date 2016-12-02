@@ -1,5 +1,6 @@
 package com.winthier.custom;
 
+import com.winthier.custom.entity.EntityFinder;
 import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
@@ -17,6 +18,7 @@ public class CustomPlugin extends JavaPlugin {
     @Getter EventManager eventManager = new EventManager(this);
     @Getter ItemRegistry itemRegistry;
     @Getter EntityManager entityManager;
+    final EntityFinder entityFinder = new EntityFinder(this);
     
     @Override
     public void onEnable() {
@@ -35,6 +37,7 @@ public class CustomPlugin extends JavaPlugin {
         entityManager = new EntityManager(this);
         CustomRegisterEvent event = new CustomRegisterEvent();
         getServer().getPluginManager().callEvent(event);
+        eventManager.registerEvents(entityFinder);
         itemRegistry.onCustomRegister(event);
         entityManager.onCustomRegister(event);
     }
