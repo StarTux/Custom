@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 @RequiredArgsConstructor
@@ -42,9 +43,11 @@ public class EntityManager {
         }
         CustomConfig config = CustomConfig.of(entity);
         if (config != null) {
+            Location loc = entity.getLocation();
+            plugin.getLogger().info(String.format("Found custom entity '%s' at %s,%d,%d,%d", config.getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             CustomEntity customEntity = findEntity(config);
             if (customEntity == null) {
-                plugin.getLogger().warning("Encountered unknown custom entity with ID '" + config.getCustomId() + "'");
+                plugin.getLogger().warning("Encountered unknown custom entity '" + config.getCustomId() + "'");
                 customEntity = new DefaultCustomEntity(customEntity.getCustomId());
                 customEntityMap.put(config.getCustomId(), customEntity);
                 plugin.getEventManager().registerEvents(customEntity);
