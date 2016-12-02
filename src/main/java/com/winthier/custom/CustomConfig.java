@@ -139,7 +139,7 @@ public final class CustomConfig {
     public static CustomConfig of(Entity entity) {
         String tag = null;
         for (String aTag: entity.getScoreboardTags()) {
-            if (tag.startsWith(KEY_ENTITY_CUSTOM)) {
+            if (aTag.startsWith(KEY_ENTITY_CUSTOM)) {
                 tag = aTag;
                 break;
             }
