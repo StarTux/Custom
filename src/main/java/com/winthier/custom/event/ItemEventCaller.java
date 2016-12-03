@@ -5,6 +5,7 @@ import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.item.CustomItem;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -12,11 +13,22 @@ import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+
+import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
+import org.bukkit.event.enchantment.EnchantItemEvent;
+
+import org.bukkit.event.inventory.PrepareAnvilEvent;
+
+import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 
 @RequiredArgsConstructor
 abstract class ItemEventCaller {
@@ -25,18 +37,22 @@ abstract class ItemEventCaller {
 
     protected void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
         ItemStack item;
+        ItemEventContext.Position position;
         if (hand == EquipmentSlot.HAND) {
             item = player.getInventory().getItemInMainHand();
+            position = ItemEventContext.Position.HAND;
         } else if (hand == EquipmentSlot.OFF_HAND) {
             item = player.getInventory().getItemInOffHand();
+            position = ItemEventContext.Position.OFF_HAND;
         } else {
             return;
         }
+        if (item == null || item.getType() == Material.AIR) return;
         CustomConfig config = CustomConfig.of(item);
         if (config == null) return;
         CustomItem customItem = CustomPlugin.getInstance().getItemRegistry().findItem(config);
         if (customItem == null) return;
-        ItemEventContext context = new ItemEventContext(player, item, hand, config);
+        ItemEventContext context = new ItemEventContext(player, item, position, config);
         context.save(event);
         for (HandlerCaller caller: dispatcher.itemCallers) {
             if (caller.listener == customItem) {
@@ -45,6 +61,23 @@ abstract class ItemEventCaller {
         }
         context.remove(event);
     }
+
+    // Items not in anyone's hand
+    protected void callWithItem(Event event, Player player, ItemStack item, ItemEventContext.Position position) {
+        if (item == null || item.getType() == Material.AIR) return;
+        CustomConfig config = CustomConfig.of(item);
+        if (config == null) return;
+        CustomItem customItem = CustomPlugin.getInstance().getItemRegistry().findItem(config);
+        if (customItem == null) return;
+        ItemEventContext context = new ItemEventContext(player, item, position, config);
+        context.save(event);
+        for (HandlerCaller caller: dispatcher.itemCallers) {
+            if (caller.listener == customItem) {
+                caller.call(event);
+            }
+        }
+        context.remove(event);
+    }    
 
     static ItemEventCaller of(EventDispatcher dispatcher, Event event) {
         if (event instanceof PlayerInteractEvent) {
@@ -114,6 +147,66 @@ abstract class ItemEventCaller {
                     PlayerSwapHandItemsEvent event = (PlayerSwapHandItemsEvent)ev;
                     callWithItemInHand(event, event.getPlayer(), EquipmentSlot.HAND);
                     callWithItemInHand(event, event.getPlayer(), EquipmentSlot.OFF_HAND);
+                }
+            };
+        } else if (event instanceof InventoryPickupItemEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    InventoryPickupItemEvent event = (InventoryPickupItemEvent)ev;
+                    callWithItem(event, null, event.getItem().getItemStack(), ItemEventContext.Position.ITEM);
+                }
+            };
+        } else if (event instanceof PlayerPickupItemEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PlayerPickupItemEvent event = (PlayerPickupItemEvent)ev;
+                    callWithItem(event, event.getPlayer(), event.getItem().getItemStack(), ItemEventContext.Position.ITEM);
+                }
+            };
+        } else if (event instanceof EnchantItemEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    EnchantItemEvent event = (EnchantItemEvent)ev;
+                    callWithItem(event, event.getEnchanter(), event.getItem(), ItemEventContext.Position.ITEM);
+                }
+            };
+        } else if (event instanceof PrepareItemEnchantEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PrepareItemEnchantEvent event = (PrepareItemEnchantEvent)ev;
+                    callWithItem(event, event.getEnchanter(), event.getItem(), ItemEventContext.Position.ITEM);
+                }
+            };
+        } else if (event instanceof PrepareAnvilEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PrepareAnvilEvent event = (PrepareAnvilEvent)ev;
+                    Player player = event.getViewers().isEmpty() ? null : (Player)event.getViewers().get(0);
+                    callWithItem(event, player, event.getInventory().getItem(0), ItemEventContext.Position.ANVIL_LEFT);
+                    callWithItem(event, player, event.getInventory().getItem(1), ItemEventContext.Position.ANVIL_RIGHT);
+                }
+            };
+        } else if (event instanceof PrepareItemCraftEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PrepareItemCraftEvent event = (PrepareItemCraftEvent)ev;
+                    InventoryHolder holder = event.getInventory().getHolder();
+                    Player player = holder instanceof Player ? (Player)holder : null;
+                    for (ItemStack item: event.getInventory().getMatrix()) {
+                        callWithItem(event, player, item, ItemEventContext.Position.CRAFTING_MATRIX);
+                    }
+                }
+            };
+        } else if (event instanceof CraftItemEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    CraftItemEvent event = (CraftItemEvent)ev;
+                    System.out.println(event.getEventName());
+                    InventoryHolder holder = event.getInventory().getHolder();
+                    Player player = holder instanceof Player ? (Player)holder : null;
+                    for (ItemStack item: event.getInventory().getMatrix()) {
+                        callWithItem(event, player, item, ItemEventContext.Position.CRAFTING_MATRIX);
+                    }
                 }
             };
         } else {

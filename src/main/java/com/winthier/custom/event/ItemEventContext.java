@@ -12,9 +12,18 @@ import org.bukkit.inventory.ItemStack;
 
 @Getter @Setter @RequiredArgsConstructor
 public class ItemEventContext {
+    public static enum Position {
+        HAND,
+        OFF_HAND,
+        ITEM, // Main item of the event
+        ANVIL_LEFT,
+        ANVIL_RIGHT,
+        CRAFTING_MATRIX,
+    }
+
     final Player player;
     final ItemStack item;
-    final EquipmentSlot hand;
+    final Position position;
     final CustomConfig config;
 
     void save(Event event) {
