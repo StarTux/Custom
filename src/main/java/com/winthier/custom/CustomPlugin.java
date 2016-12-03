@@ -5,7 +5,7 @@ import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
 import com.winthier.custom.item.CustomItem;
-import com.winthier.custom.item.ItemRegistry;
+import com.winthier.custom.item.ItemManager;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class CustomPlugin extends JavaPlugin {
     @Getter static CustomPlugin instance = null;
     @Getter EventManager eventManager = new EventManager(this);
-    @Getter ItemRegistry itemRegistry;
+    @Getter ItemManager itemManager;
     @Getter EntityManager entityManager;
     final EntityFinder entityFinder = new EntityFinder(this);
     
@@ -33,12 +33,12 @@ public class CustomPlugin extends JavaPlugin {
 
     void reload() {
         eventManager.clear();
-        itemRegistry = new ItemRegistry(this);
+        itemManager = new ItemManager(this);
         entityManager = new EntityManager(this);
         CustomRegisterEvent event = new CustomRegisterEvent();
         getServer().getPluginManager().callEvent(event);
         eventManager.registerEvents(entityFinder);
-        itemRegistry.onCustomRegister(event);
+        itemManager.onCustomRegister(event);
         entityManager.onCustomRegister(event);
     }
 }

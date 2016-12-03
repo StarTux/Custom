@@ -47,7 +47,7 @@ abstract class ItemEventCaller {
         if (item == null || item.getType() == Material.AIR) return;
         CustomConfig config = CustomConfig.of(item);
         if (config == null) return;
-        CustomItem customItem = CustomPlugin.getInstance().getItemRegistry().findItem(config);
+        CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
         if (customItem == null) return;
         ItemEventContext context = new ItemEventContext(player, item, position, config);
         context.save(event);
@@ -64,7 +64,7 @@ abstract class ItemEventCaller {
         if (item == null || item.getType() == Material.AIR) return;
         CustomConfig config = CustomConfig.of(item);
         if (config == null) return;
-        CustomItem customItem = CustomPlugin.getInstance().getItemRegistry().findItem(config);
+        CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
         if (customItem == null) return;
         ItemEventContext context = new ItemEventContext(player, item, position, config);
         context.save(event);

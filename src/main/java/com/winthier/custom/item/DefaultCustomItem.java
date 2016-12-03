@@ -19,7 +19,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * Abstract version of CustomItem that cancels all relevant
+ * Default version of CustomItem that cancels all relevant
  * events.  Use this and overwrite any event that you would like
  * to handle yourself of let pass through.
  */

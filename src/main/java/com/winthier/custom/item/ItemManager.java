@@ -12,39 +12,20 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ItemRegistry {
+public class ItemManager {
     final CustomPlugin plugin;
     final Map<String, CustomItem> registeredItems = new HashMap<>();
-    // @Getter final List<CraftingRecipe> registeredRecipes = new ArrayList<>();
 
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomItem item: event.getItems()) {
             if (registeredItems.containsKey(item.getCustomId())) {
-                CustomPlugin.getInstance().getLogger().warning("Item Registry: Duplicate Item ID: " + item.getCustomId());
+                CustomPlugin.getInstance().getLogger().warning("Item Manager: Duplicate Item ID: " + item.getCustomId());
             } else {
                 registeredItems.put(item.getCustomId(), item);
                 plugin.getEventManager().registerEvents(item);
                 CustomPlugin.getInstance().getLogger().info("Registered Item: " + item.getCustomId());
             }
         }
-        // int recipeSuccessCount = 0;
-        // int recipeFailCount = 0;
-        // for (CraftingRecipe craftingRecipe: event.getRecipes()) {
-        //     try {
-        //         Recipe recipe = craftingRecipe.getBukkitRecipe();
-        //         boolean ret = plugin.getServer().addRecipe(recipe);
-        //         registeredRecipes.add(craftingRecipe);
-        //         if (!ret) {
-        //             recipeFailCount += 1;
-        //         } else {
-        //             recipeSuccessCount += 1;
-        //         }
-        //     } catch (Exception e) {
-        //         e.printStackTrace();
-        //         recipeFailCount += 1;
-        //     }
-        // }
-        // CustomPlugin.getInstance().getLogger().info("Registered " + recipeSuccessCount + " recipes. Failed to register " + recipeFailCount);
     }
 
     public CustomItem findItem(String id) {
@@ -53,5 +34,16 @@ public class ItemRegistry {
 
     public CustomItem findItem(CustomConfig config) {
         return findItem(config.getCustomId());
+    }
+
+    public CustomItem getItem(CustomConfig config) {
+        String id = config.getCustomId();
+        CustomItem result = findItem(id);
+        if (result == null) {
+            plugin.getLogger().warning("Encountered unknown custom item '" + config.getCustomId() + "'");
+            result = new DefaultCustomItem(id);
+            registeredItems.put(id, result);
+        }
+        return result;
     }
 }

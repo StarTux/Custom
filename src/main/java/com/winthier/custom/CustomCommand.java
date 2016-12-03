@@ -41,7 +41,7 @@ public class CustomCommand implements CommandExecutor {
                 }
                 if (amount < 1) amount = 1;
             }
-            CustomItem customItem = CustomPlugin.getInstance().getItemRegistry().findItem(itemId);
+            CustomItem customItem = CustomPlugin.getInstance().getItemManager().findItem(itemId);
             if (customItem == null) {
                 Msg.warn(player, "Item not found: %s.", itemId);
                 return true;
