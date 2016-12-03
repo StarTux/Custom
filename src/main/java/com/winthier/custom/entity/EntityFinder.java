@@ -32,7 +32,6 @@ import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
@@ -187,12 +186,8 @@ public class EntityFinder implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onChunkLoad(final ChunkLoadEvent event) {
-        new BukkitRunnable() {
-            @Override public void run() {
-                for (Entity entity: event.getChunk().getEntities()) {
-                    checkEntity(entity);
-                }
-            }
-        }.runTask(plugin);
+        for (Entity entity: event.getChunk().getEntities()) {
+            checkEntity(entity);
+        }
     }
 }
