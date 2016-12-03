@@ -11,9 +11,14 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -21,14 +26,6 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-
-import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
-import org.bukkit.event.enchantment.EnchantItemEvent;
-
-import org.bukkit.event.inventory.PrepareAnvilEvent;
-
-import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.inventory.PrepareItemCraftEvent;
 
 @RequiredArgsConstructor
 abstract class ItemEventCaller {
@@ -201,7 +198,6 @@ abstract class ItemEventCaller {
             return new ItemEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     CraftItemEvent event = (CraftItemEvent)ev;
-                    System.out.println(event.getEventName());
                     InventoryHolder holder = event.getInventory().getHolder();
                     Player player = holder instanceof Player ? (Player)holder : null;
                     for (ItemStack item: event.getInventory().getMatrix()) {
