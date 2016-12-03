@@ -11,7 +11,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.world.ChunkEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
@@ -83,6 +85,20 @@ abstract class EntityEventCaller {
                     for (Entity entity: ((ChunkEvent)ev).getChunk().getEntities()) {
                         callWithEntity(event, entity);
                     }
+                }
+            };
+        } else if (event instanceof InventoryPickupItemEvent) {
+            return new EntityEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    InventoryPickupItemEvent event = (InventoryPickupItemEvent)ev;
+                    callWithEntity(event, event.getItem());
+                }
+            };
+        } else if (event instanceof PlayerPickupItemEvent) {
+            return new EntityEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PlayerPickupItemEvent event = (PlayerPickupItemEvent)ev;
+                    callWithEntity(event, event.getItem());
                 }
             };
         } else {
