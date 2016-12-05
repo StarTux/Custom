@@ -18,7 +18,6 @@ public class CustomPlugin extends JavaPlugin {
     @Getter EventManager eventManager = new EventManager(this);
     @Getter ItemManager itemManager;
     @Getter EntityManager entityManager;
-    final EntityFinder entityFinder = new EntityFinder(this);
     
     @Override
     public void onEnable() {
@@ -35,9 +34,9 @@ public class CustomPlugin extends JavaPlugin {
         eventManager.clear();
         itemManager = new ItemManager(this);
         entityManager = new EntityManager(this);
+        eventManager.registerEvents(new EntityFinder());
         CustomRegisterEvent event = new CustomRegisterEvent();
         getServer().getPluginManager().callEvent(event);
-        eventManager.registerEvents(entityFinder);
         itemManager.onCustomRegister(event);
         entityManager.onCustomRegister(event);
     }

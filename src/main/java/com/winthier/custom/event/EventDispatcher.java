@@ -1,5 +1,6 @@
 package com.winthier.custom.event;
 
+import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.item.CustomItem;
 import java.lang.reflect.Method;
@@ -25,7 +26,6 @@ class EventDispatcher implements Listener, EventExecutor {
 
     final List<HandlerCaller> itemCallers = new ArrayList<>();
     final List<HandlerCaller> entityCallers = new ArrayList<>();
-    final List<HandlerCaller> systemCallers = new ArrayList<>(); // No custom thing
     ItemEventCaller itemEventCaller = null;
     EntityEventCaller entityEventCaller = null;
 
@@ -44,9 +44,6 @@ class EventDispatcher implements Listener, EventExecutor {
             if (entityEventCaller == null) entityEventCaller = EntityEventCaller.of(this, event);
             entityEventCaller.call(event);
         }
-        if (!systemCallers.isEmpty()) {
-            for (HandlerCaller caller: systemCallers) caller.call(event);
-        }
     }
 
     void registerEvent(Listener listener, Method method, boolean ignoreCancelled) {
@@ -57,14 +54,13 @@ class EventDispatcher implements Listener, EventExecutor {
             entityCallers.add(caller);
         // } else if (listener instanceof CustomBlock) {
         } else {
-            systemCallers.add(caller);
+            CustomPlugin.getInstance().getLogger().warning("EventDispatcher does not recognize class " + listener.getClass().getName());
         }
     }
 
     void clear() {
         itemCallers.clear();
         entityCallers.clear();
-        systemCallers.clear();
         itemEventCaller = null;
         entityEventCaller = null;
     }

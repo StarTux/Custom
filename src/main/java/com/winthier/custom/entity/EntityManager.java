@@ -48,7 +48,7 @@ public class EntityManager {
             CustomEntity customEntity = findEntity(config);
             if (customEntity == null) {
                 plugin.getLogger().warning("Encountered unknown custom entity '" + config.getCustomId() + "'");
-                customEntity = new DefaultCustomEntity(customEntity.getCustomId());
+                customEntity = new DefaultCustomEntity(config.getCustomId());
                 customEntityMap.put(config.getCustomId(), customEntity);
                 plugin.getEventManager().registerEvents(customEntity);
             }
