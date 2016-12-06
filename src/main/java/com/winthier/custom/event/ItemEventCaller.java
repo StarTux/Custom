@@ -19,6 +19,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
@@ -202,6 +203,18 @@ abstract class ItemEventCaller {
                     Player player = holder instanceof Player ? (Player)holder : null;
                     for (ItemStack item: event.getInventory().getMatrix()) {
                         callWithItem(event, player, item, ItemEventContext.Position.CRAFTING_MATRIX);
+                    }
+                }
+            };
+        } else if (event instanceof PlayerFishEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PlayerFishEvent event = (PlayerFishEvent)ev;
+                    Player player = event.getPlayer();
+                    if (player.getInventory().getItemInMainHand().getType() == Material.FISHING_ROD) {
+                        callWithItemInHand(event, player, EquipmentSlot.HAND);
+                    } else if (player.getInventory().getItemInOffHand().getType() == Material.FISHING_ROD) {
+                        callWithItemInHand(event, player, EquipmentSlot.OFF_HAND);
                     }
                 }
             };
