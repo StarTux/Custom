@@ -28,13 +28,13 @@ public class CustomPlugin extends JavaPlugin {
                 reload();
             }
         }.runTask(this);
+        getServer().getPluginManager().registerEvents(new EntityFinder(this), this);
     }
 
     void reload() {
         eventManager.clear();
         itemManager = new ItemManager(this);
         entityManager = new EntityManager(this);
-        eventManager.registerEvents(new EntityFinder());
         CustomRegisterEvent event = new CustomRegisterEvent();
         getServer().getPluginManager().callEvent(event);
         itemManager.onCustomRegister(event);

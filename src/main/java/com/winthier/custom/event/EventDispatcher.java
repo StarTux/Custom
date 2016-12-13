@@ -1,11 +1,12 @@
 package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
-import com.winthier.custom.entity.CustomEntity;
+import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.item.CustomItem;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Event;
@@ -24,8 +25,8 @@ class EventDispatcher implements Listener, EventExecutor {
     final Class<? extends Event> event;
     final EventPriority priority;
 
-    final List<HandlerCaller> itemCallers = new ArrayList<>();
-    final List<HandlerCaller> entityCallers = new ArrayList<>();
+    final Map<String, HandlerCaller> items = new HashMap<>();
+    final Map<UUID, HandlerCaller> entities = new HashMap<>();
     ItemEventCaller itemEventCaller = null;
     EntityEventCaller entityEventCaller = null;
 
@@ -36,11 +37,11 @@ class EventDispatcher implements Listener, EventExecutor {
     @Override
     public void execute(Listener listener, Event event) {
         if (!this.event.isInstance(event)) return; // Happens sometimes
-        if (!itemCallers.isEmpty()) {
+        if (!items.isEmpty()) {
             if (itemEventCaller == null) itemEventCaller = ItemEventCaller.of(this, event);
             itemEventCaller.call(event);
         }
-        if (!entityCallers.isEmpty()) {
+        if (!entities.isEmpty()) {
             if (entityEventCaller == null) entityEventCaller = EntityEventCaller.of(this, event);
             entityEventCaller.call(event);
         }
@@ -49,18 +50,18 @@ class EventDispatcher implements Listener, EventExecutor {
     void registerEvent(Listener listener, Method method, boolean ignoreCancelled) {
         HandlerCaller caller = new HandlerCaller(event, listener, method, ignoreCancelled);
         if (listener instanceof CustomItem) {
-            itemCallers.add(caller);
-        } else if (listener instanceof CustomEntity) {
-            entityCallers.add(caller);
-        // } else if (listener instanceof CustomBlock) {
-        } else {
-            CustomPlugin.getInstance().getLogger().warning("EventDispatcher does not recognize class " + listener.getClass().getName());
+            CustomItem customItem = (CustomItem)listener;
+            items.put(customItem.getCustomId(), caller);
+        }
+        if (listener instanceof EntityWatcher) {
+            EntityWatcher entityWatcher = (EntityWatcher)listener;
+            entities.put(entityWatcher.getEntity().getUniqueId(), caller);
         }
     }
 
     void clear() {
-        itemCallers.clear();
-        entityCallers.clear();
+        items.clear();
+        entities.clear();
         itemEventCaller = null;
         entityEventCaller = null;
     }

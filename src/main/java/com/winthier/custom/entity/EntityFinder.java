@@ -1,6 +1,5 @@
 package com.winthier.custom.entity;
 
-import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,142 +41,165 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
-/**
- * The point of this void entity is that all events are listened
- * to so the EventDispatcher will scan them all for custom
- * entities.
- */
 @Getter @RequiredArgsConstructor
-public class EntityFinder implements CustomEntity {
-    final String customId = "EntityFinder";
+public class EntityFinder implements Listener {
+    final CustomPlugin plugin;
 
-    @Override
-    public Entity spawnEntity(Location location, CustomConfig config) {
-        return null;
+    private void findEntity(Entity entity) {
+        if (entity == null) return;
+        plugin.getEntityManager().getEntityWatcher(entity);
     }
 
-    @Override
-    public EntityWatcher watchEntity(Entity entity, CustomConfig config) {
-        return null;
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
+        findEntity(event.getRightClicked());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
+        findEntity(event.getRightClicked());
     }
     
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        findEntity(event.getEntity());
+        findEntity(event.getDamager());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityDamage(EntityDamageEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityPortalEnter(EntityPortalEnterEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityPortal(EntityPortalEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityTeleport(EntityTeleportEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityExplode(EntityExplodeEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityRegainHealth(EntityRegainHealthEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onCreeperPower(CreeperPowerEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityCombust(EntityCombustEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityDeath(EntityDeathEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
-    public void onEntityDismount(EntityDismountEvent event) {
-    }
-
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityInteract(EntityInteractEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityMount(EntityMountEvent event) {
+        findEntity(event.getMount());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onEntityDismount(EntityDismountEvent event) {
+        findEntity(event.getDismounted());
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityShootBow(EntityShootBowEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityTame(EntityTameEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityTarget(EntityTargetEvent event) {
+        findEntity(event.getEntity());
+        findEntity(event.getTarget());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onEntityUnleash(EntityUnleashEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onExplosionPrime(ExplosionPrimeEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPigZap(PigZapEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onSheepDyeWool(SheepDyeWoolEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onSheepRegrowWool(SheepRegrowWoolEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onSlimeSplit(SlimeSplitEvent event) {
+        findEntity(event.getEntity());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPotionSplash(PotionSplashEvent event) {
+        findEntity(event.getEntity());
+        for (Entity entity: event.getAffectedEntities()) findEntity(entity);
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        findEntity(event.getItem());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onInventoryPickupItem(InventoryPickupItemEvent event) {
+        findEntity(event.getItem());
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     public void onChunkLoad(ChunkLoadEvent event) {
+        for (Entity entity: event.getChunk().getEntities()) findEntity(entity);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onChunkUnload(ChunkUnloadEvent event) {
+        // TODO
     }
 }

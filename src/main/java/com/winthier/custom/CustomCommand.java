@@ -65,7 +65,7 @@ public class CustomCommand implements CommandExecutor {
                 return true;
             }
             config.save(entity);
-            EntityWatcher watcher = customEntity.watchEntity(entity, config);
+            EntityWatcher watcher = customEntity.createEntityWatcher(entity, config);
             if (watcher == null) watcher = new DefaultEntityWatcher(entity, customEntity, config);
             plugin.getEntityManager().watchEntity(watcher);
             Msg.info(sender, "Custom entity spawned: %s.", customEntity.getCustomId());

@@ -33,7 +33,7 @@ abstract class ItemEventCaller {
     final EventDispatcher dispatcher;
     abstract void call(Event event);
 
-    protected void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
+    protected final void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
         ItemStack item;
         ItemEventContext.Position position;
         if (hand == EquipmentSlot.HAND) {
@@ -50,30 +50,26 @@ abstract class ItemEventCaller {
         if (config == null) return;
         CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
         if (customItem == null) return;
+        HandlerCaller handlerCaller = dispatcher.items.get(customItem.getCustomId());
+        if (handlerCaller == null) return;
         ItemEventContext context = new ItemEventContext(player, item, position, config);
         context.save(event);
-        for (HandlerCaller caller: dispatcher.itemCallers) {
-            if (caller.listener == customItem) {
-                caller.call(event);
-            }
-        }
+        handlerCaller.call(event);
         context.remove(event);
     }
 
     // Items not in anyone's hand
-    protected void callWithItem(Event event, Player player, ItemStack item, ItemEventContext.Position position) {
+    protected final void callWithItem(Event event, Player player, ItemStack item, ItemEventContext.Position position) {
         if (item == null || item.getType() == Material.AIR) return;
         CustomConfig config = CustomConfig.of(item);
         if (config == null) return;
         CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
         if (customItem == null) return;
+        HandlerCaller handlerCaller = dispatcher.items.get(customItem.getCustomId());
+        if (handlerCaller == null) return;
         ItemEventContext context = new ItemEventContext(player, item, position, config);
         context.save(event);
-        for (HandlerCaller caller: dispatcher.itemCallers) {
-            if (caller.listener == customItem) {
-                caller.call(event);
-            }
-        }
+        handlerCaller.call(event);
         context.remove(event);
     }    
 

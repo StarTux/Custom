@@ -28,14 +28,12 @@ abstract class EntityEventCaller {
         if (entity == null) return;
         EntityWatcher entityWatcher = CustomPlugin.getInstance().getEntityManager().getEntityWatcher(entity);
         if (entityWatcher == null) return;
-        EntityEventContext context = new EntityEventContext(position, entity, entityWatcher);
-        context.save(event);
         CustomEntity customEntity = entityWatcher.getCustomEntity();
-        for (HandlerCaller caller: dispatcher.getEntityCallers()) {
-            if (caller.listener == customEntity) {
-                caller.call(event);
-            }
-        }
+        HandlerCaller handlerCaller = dispatcher.entities.get(entity.getUniqueId());
+        if (handlerCaller == null) return;
+        EntityEventContext context = new EntityEventContext(position);
+        context.save(event);
+        handlerCaller.call(event);
         context.remove(event);
     }
 

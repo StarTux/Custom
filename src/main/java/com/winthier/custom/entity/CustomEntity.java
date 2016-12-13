@@ -4,9 +4,8 @@ import com.winthier.custom.CustomConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 
-public interface CustomEntity extends Listener {
+public interface CustomEntity {
     /**
      * Custom identifier to this Framework.
      */
@@ -31,5 +30,5 @@ public interface CustomEntity extends Listener {
      * existing entity with a valid CustomConfig in the world, or
      * when a new entity is created.
      */
-    EntityWatcher watchEntity(Entity entity, CustomConfig config);
+    EntityWatcher createEntityWatcher(Entity entity, CustomConfig config);
 }

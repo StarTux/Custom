@@ -18,8 +18,6 @@ public class EntityEventContext {
     }
 
     final Position position;
-    final Entity entity;
-    final EntityWatcher entityWatcher;
 
     void save(Event event) {
         CustomPlugin.getInstance().getEventManager().getEntityContextMap().put(event, this);
