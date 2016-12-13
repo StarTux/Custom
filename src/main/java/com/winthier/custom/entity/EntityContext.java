@@ -1,4 +1,4 @@
-package com.winthier.custom.event;
+package com.winthier.custom.entity;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.entity.EntityWatcher;
@@ -8,7 +8,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
 @Getter @RequiredArgsConstructor
-public class EntityEventContext {
+public class EntityContext {
     public static enum Position {
         ENTITY,
         DAMAGER, // EntityDamageByEntityEvent.getDamager()
@@ -19,15 +19,15 @@ public class EntityEventContext {
 
     final Position position;
 
-    void save(Event event) {
+    public void save(Event event) {
         CustomPlugin.getInstance().getEventManager().getEntityContextMap().put(event, this);
     }
 
-    void remove(Event event) {
+    public void remove(Event event) {
         CustomPlugin.getInstance().getEventManager().getEntityContextMap().remove(event);
     }
 
-    public static EntityEventContext of(Event event) {
+    public static EntityContext of(Event event) {
         return CustomPlugin.getInstance().getEventManager().getEntityContextMap().get(event);
     }
 }

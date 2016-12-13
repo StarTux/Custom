@@ -2,6 +2,7 @@ package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.entity.CustomEntity;
+import com.winthier.custom.entity.EntityContext;
 import com.winthier.custom.entity.EntityWatcher;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
@@ -24,21 +25,21 @@ abstract class EntityEventCaller {
 
     abstract void call(Event event);
 
-    protected void callWithEntity(Event event, Entity entity, EntityEventContext.Position position) {
+    protected void callWithEntity(Event event, Entity entity, EntityContext.Position position) {
         if (entity == null) return;
         EntityWatcher entityWatcher = CustomPlugin.getInstance().getEntityManager().getEntityWatcher(entity);
         if (entityWatcher == null) return;
         CustomEntity customEntity = entityWatcher.getCustomEntity();
         HandlerCaller handlerCaller = dispatcher.entities.get(entity.getUniqueId());
         if (handlerCaller == null) return;
-        EntityEventContext context = new EntityEventContext(position);
+        EntityContext context = new EntityContext(position);
         context.save(event);
         handlerCaller.call(event);
         context.remove(event);
     }
 
     protected void callWithEntity(Event event, Entity entity) {
-        callWithEntity(event, entity, EntityEventContext.Position.ENTITY);
+        callWithEntity(event, entity, EntityContext.Position.ENTITY);
     }
     
     static EntityEventCaller of(EventDispatcher dispatcher, Event event) {
@@ -54,18 +55,18 @@ abstract class EntityEventCaller {
                     // Perhaps replace instanceof with the Class
                     // check?
                     if (event instanceof EntityDamageByEntityEvent) {
-                        callWithEntity(event, ((EntityDamageByEntityEvent)event).getDamager(), EntityEventContext.Position.DAMAGER);
+                        callWithEntity(event, ((EntityDamageByEntityEvent)event).getDamager(), EntityContext.Position.DAMAGER);
                     } else if (event instanceof EntityMountEvent) {
-                        callWithEntity(event, ((EntityMountEvent)event).getMount(), EntityEventContext.Position.MOUNT);
+                        callWithEntity(event, ((EntityMountEvent)event).getMount(), EntityContext.Position.MOUNT);
                     } else if (event instanceof EntityDismountEvent) {
-                        callWithEntity(event, ((EntityDismountEvent)event).getDismounted(), EntityEventContext.Position.MOUNT);
+                        callWithEntity(event, ((EntityDismountEvent)event).getDismounted(), EntityContext.Position.MOUNT);
                     } else if (event instanceof ProjectileHitEvent) {
                         Entity hitEntity = ((ProjectileHitEvent)event).getHitEntity();
-                        if (hitEntity != null) callWithEntity(event, hitEntity, EntityEventContext.Position.PROJECTILE_TARGET);
+                        if (hitEntity != null) callWithEntity(event, hitEntity, EntityContext.Position.PROJECTILE_TARGET);
                         if (event instanceof PotionSplashEvent) {
                             PotionSplashEvent splashEvent = (PotionSplashEvent)event;
                             for (LivingEntity affected: splashEvent.getAffectedEntities()) {
-                                callWithEntity(event, affected, EntityEventContext.Position.SPLASHED);
+                                callWithEntity(event, affected, EntityContext.Position.SPLASHED);
                             }
                         }
                     }

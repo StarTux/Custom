@@ -1,6 +1,8 @@
 package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
+import com.winthier.custom.entity.EntityContext;
+import com.winthier.custom.item.ItemContext;
 import java.lang.reflect.Method;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -17,8 +19,8 @@ import org.bukkit.event.Listener;
 public class EventManager {
     private final CustomPlugin plugin;
     private final Map<Class<? extends Event>, Map<EventPriority, EventDispatcher>> eventMap = new HashMap<>();
-    private final Map<Event, ItemEventContext> itemContextMap = new WeakHashMap<>();
-    private final Map<Event, EntityEventContext> entityContextMap = new WeakHashMap<>();
+    private final Map<Event, ItemContext> itemContextMap = new WeakHashMap<>();
+    private final Map<Event, EntityContext> entityContextMap = new WeakHashMap<>();
 
     private EventDispatcher createEventDispatcher(Class<? extends Event> event, EventPriority priority) {
         EventDispatcher result = new EventDispatcher(this, event, priority);

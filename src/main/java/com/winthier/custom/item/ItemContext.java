@@ -1,4 +1,4 @@
-package com.winthier.custom.event;
+package com.winthier.custom.item;
 
 import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
@@ -11,7 +11,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 @Getter @Setter @RequiredArgsConstructor
-public class ItemEventContext {
+public class ItemContext {
     public static enum Position {
         HAND,
         OFF_HAND,
@@ -26,15 +26,15 @@ public class ItemEventContext {
     final Position position;
     final CustomConfig config;
 
-    void save(Event event) {
+    public void save(Event event) {
         CustomPlugin.getInstance().getEventManager().getItemContextMap().put(event, this);
     }
 
-    void remove(Event event) {
+    public void remove(Event event) {
         CustomPlugin.getInstance().getEventManager().getItemContextMap().remove(event);
     }
 
-    public static ItemEventContext of(Event event) {
+    public static ItemContext of(Event event) {
         return CustomPlugin.getInstance().getEventManager().getItemContextMap().get(event);
     }
 }

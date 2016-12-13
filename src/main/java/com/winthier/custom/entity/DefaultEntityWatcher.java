@@ -1,7 +1,7 @@
 package com.winthier.custom.entity;
 
 import com.winthier.custom.CustomConfig;
-import com.winthier.custom.event.EntityEventContext;
+import com.winthier.custom.entity.EntityContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
@@ -144,7 +144,7 @@ public class DefaultEntityWatcher implements EntityWatcher {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPotionSplash(PotionSplashEvent event) {
-        EntityEventContext context = EntityEventContext.of(event);
+        EntityContext context = EntityContext.of(event);
         switch (context.getPosition()) {
         case SPLASHED:
             ((PotionSplashEvent)event).setIntensity((LivingEntity)entity, 0.0);

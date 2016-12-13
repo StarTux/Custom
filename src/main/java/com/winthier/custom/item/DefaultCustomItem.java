@@ -1,7 +1,6 @@
 package com.winthier.custom.item;
 
 import com.winthier.custom.CustomConfig;
-import com.winthier.custom.event.ItemEventContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
