@@ -72,6 +72,14 @@ public class EventManager {
         }
     }
 
+    public void unregisterEvents(Listener listener) {
+        for (Map<EventPriority, EventDispatcher> priorityMap : eventMap.values()) {
+            for (EventDispatcher dispatcher : priorityMap.values()) {
+                dispatcher.unregisterEvent(listener);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private Class<? extends Event> getEvent(Method method) {
         if (Void.TYPE != method.getReturnType()) return null;

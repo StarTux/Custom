@@ -32,7 +32,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
 @Getter @RequiredArgsConstructor
-public class DefaultEntityWatcher implements EntityWatcher {
+public class DefaultEntityWatcher extends AbstractEntityWatcher {
     final Entity entity;
     final CustomEntity customEntity;
     final CustomConfig customConfig;

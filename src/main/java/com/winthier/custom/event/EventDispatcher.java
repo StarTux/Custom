@@ -59,6 +59,13 @@ class EventDispatcher implements Listener, EventExecutor {
         }
     }
 
+    void unregisterEvent(Listener listener) {
+        if (listener instanceof EntityWatcher) {
+            EntityWatcher entityWatcher = (EntityWatcher)listener;
+            entities.remove(entityWatcher.getEntity().getUniqueId());
+        }
+    }
+
     void clear() {
         items.clear();
         entities.clear();

@@ -46,6 +46,7 @@ public class EntityManager {
             EntityWatcher watcher = customEntity.createEntityWatcher(entity, config);
             if (watcher == null) watcher = new DefaultEntityWatcher(entity, customEntity, config);
             watchEntity(watcher);
+            watcher.didDiscoverEntity();
             return watcher;
         }
         return null;
@@ -62,5 +63,10 @@ public class EntityManager {
     public void watchEntity(EntityWatcher watcher) {
         entityWatcherMap.put(watcher.getEntity().getUniqueId(), watcher);
         plugin.getEventManager().registerEvents(watcher);
+    }
+
+    public void removeEntity(EntityWatcher watcher) {
+        entityWatcherMap.remove(watcher.getEntity().getUniqueId());
+        plugin.getEventManager().unregisterEvents(watcher);
     }
 }
