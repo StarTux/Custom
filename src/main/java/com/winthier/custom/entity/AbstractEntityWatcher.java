@@ -6,4 +6,7 @@ public abstract class AbstractEntityWatcher implements EntityWatcher {
 
     @Override
     public void willUnloadEntity() {}
+
+    @Override
+    public void didUnloadEntity() {}
 }

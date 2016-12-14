@@ -1,5 +1,6 @@
 package com.winthier.custom;
 
+import com.winthier.custom.entity.EntityCrawler;
 import com.winthier.custom.entity.EntityFinder;
 import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
@@ -15,9 +16,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 @Getter
 public class CustomPlugin extends JavaPlugin {
     @Getter static CustomPlugin instance = null;
-    @Getter EventManager eventManager = new EventManager(this);
-    @Getter ItemManager itemManager;
-    @Getter EntityManager entityManager;
+    EventManager eventManager = new EventManager(this);
+    ItemManager itemManager;
+    EntityManager entityManager;
+    EntityCrawler entityCrawler;
     
     @Override
     public void onEnable() {
@@ -31,13 +33,22 @@ public class CustomPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityFinder(this), this);
     }
 
+    @Override
+    public void onDisable() {
+        entityCrawler.stop();
+    }
+
     void reload() {
         eventManager.clear();
+        if (entityCrawler != null) entityCrawler.stop();
         itemManager = new ItemManager(this);
         entityManager = new EntityManager(this);
         CustomRegisterEvent event = new CustomRegisterEvent();
         getServer().getPluginManager().callEvent(event);
         itemManager.onCustomRegister(event);
         entityManager.onCustomRegister(event);
+        entityCrawler = new EntityCrawler(this);
+        entityCrawler.checkAll();
+        entityCrawler.start();
     }
 }

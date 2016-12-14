@@ -36,7 +36,7 @@ public class EntityManager {
         CustomConfig config = CustomConfig.of(entity);
         if (config != null) {
             Location loc = entity.getLocation();
-            plugin.getLogger().info(String.format("Found custom entity '%s' at %s,%d,%d,%d", config.getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+            plugin.getLogger().info(String.format("Discovered custom entity '%s' at %s %d %d %d", config.getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             CustomEntity customEntity = findEntity(config);
             if (customEntity == null) {
                 plugin.getLogger().warning("Encountered unknown custom entity '" + config.getCustomId() + "'");

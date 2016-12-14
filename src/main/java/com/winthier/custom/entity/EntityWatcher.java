@@ -30,8 +30,18 @@ public interface EntityWatcher extends Listener {
     void didDiscoverEntity();
 
     /**
-     * Called right before an entity is unloaded, whilt it is
-     * still valid.
+     * Called right before an entity is unloaded.  The Entity it
+     * is still valid.  This method is not guaranteed to be called
+     * every time the Entity disappears from the world.  It will
+     * be omitted if an entity despawns, dies, or is removed by a
+     * plugin.
      */
     void willUnloadEntity();
+
+    /**
+     * Called when the entity has been unloaded.  The
+     * EntityWatcher is no longer registered with EntityManager.
+     * The Entity is not necessarily valid.
+     */
+    void didUnloadEntity();
 }
