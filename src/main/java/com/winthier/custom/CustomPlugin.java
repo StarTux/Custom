@@ -1,5 +1,6 @@
 package com.winthier.custom;
 
+import com.winthier.custom.block.BlockManager;
 import com.winthier.custom.entity.EntityCrawler;
 import com.winthier.custom.entity.EntityFinder;
 import com.winthier.custom.entity.EntityManager;
@@ -19,6 +20,7 @@ public class CustomPlugin extends JavaPlugin {
     EventManager eventManager = new EventManager(this);
     ItemManager itemManager;
     EntityManager entityManager;
+    BlockManager blockManager;
     EntityCrawler entityCrawler;
     
     @Override
@@ -35,18 +37,24 @@ public class CustomPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        entityCrawler.stop();
+        unload();
+    }
+
+    void unload() {
+        eventManager.clear();
+        if (entityCrawler != null) entityCrawler.stop();
     }
 
     void reload() {
-        eventManager.clear();
-        if (entityCrawler != null) entityCrawler.stop();
+        unload();
         itemManager = new ItemManager(this);
         entityManager = new EntityManager(this);
+        blockManager = new BlockManager(this);
         CustomRegisterEvent event = new CustomRegisterEvent();
         getServer().getPluginManager().callEvent(event);
         itemManager.onCustomRegister(event);
         entityManager.onCustomRegister(event);
+        blockManager.onCustomRegister(event);
         entityCrawler = new EntityCrawler(this);
         entityCrawler.checkAll();
         entityCrawler.start();

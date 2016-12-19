@@ -97,7 +97,7 @@ public final class CustomConfig {
 
     // Serialization
 
-    public String serialize() {
+    public String getJsonString() {
         if (getRaw() == null) return null;
         return Msg.toJsonString(getRaw());
     }
@@ -116,7 +116,7 @@ public final class CustomConfig {
                 entity.removeScoreboardTag(tag);
             }
         }
-        String json = serialize();
+        String json = getJsonString();
         String tag;
         if (json != null) {
             tag = KEY_ENTITY_CUSTOM + KEY_ENTITY_SEPARATOR + getCustomId() + KEY_ENTITY_SEPARATOR + json;

@@ -48,7 +48,7 @@ public class Dirty {
             }
             NBTTagCompound tag = nmsItem.getTag().getCompound(KEY_ITEM_CUSTOM);
             tag.setString(KEY_ITEM_ID, config.getCustomId());
-            String json = config.serialize();
+            String json = config.getJsonString();
             if (json != null) {
                 tag.setString(KEY_ITEM_TAG, json);
             } else {
