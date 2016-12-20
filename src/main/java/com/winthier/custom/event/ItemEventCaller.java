@@ -23,6 +23,7 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -130,7 +131,6 @@ abstract class ItemEventCaller {
                     } else if (event.getBow().equals(player.getInventory().getItemInOffHand())) {
                         hand = EquipmentSlot.OFF_HAND;
                     } else {
-                        player.sendMessage("OOO");
                         return; // ???
                     }
                     callWithItemInHand(event, player, hand);
@@ -213,6 +213,22 @@ abstract class ItemEventCaller {
                     } else if (player.getInventory().getItemInOffHand().getType() == Material.FISHING_ROD) {
                         callWithItemInHand(event, player, EquipmentSlot.OFF_HAND);
                     }
+                }
+            };
+        } else if (event instanceof PlayerItemConsumeEvent) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PlayerItemConsumeEvent event = (PlayerItemConsumeEvent)ev;
+                    final Player player = event.getPlayer();
+                    EquipmentSlot hand;
+                    if (event.getItem().equals(player.getInventory().getItemInMainHand())) {
+                        hand = EquipmentSlot.HAND;
+                    } else if (event.getItem().equals(player.getInventory().getItemInOffHand())) {
+                        hand = EquipmentSlot.OFF_HAND;
+                    } else {
+                        return;
+                    }
+                    callWithItemInHand(event, player, hand);
                 }
             };
         } else {
