@@ -4,12 +4,15 @@ import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter @RequiredArgsConstructor
 public class BlockManager {
@@ -17,6 +20,7 @@ public class BlockManager {
     final Map<String, CustomBlock> customBlockMap = new HashMap<>();
     final Map<String, BlockWorld> worlds = new HashMap<>();
     final TreeSet<BlockRegion> regionSaveList = new TreeSet<>(BlockRegion.LAST_SAVE_COMPARATOR);
+    BukkitRunnable task = null;
 
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomBlock block: event.getBlocks()) {
@@ -28,6 +32,32 @@ public class BlockManager {
                 plugin.getLogger().info("Registered block: " + id);
             }
         }
+    }
+
+    public void onEnable() {
+        task = new BukkitRunnable() {
+            @Override public void run() {
+                tick();
+            }
+        };
+        task.runTaskTimer(plugin, 1, 1);
+    }
+
+    public void onDisable() {
+        saveAll();
+        try {
+            task.cancel();
+        } catch (IllegalStateException ise) {}
+        task = null;
+    }
+
+    void tick() {
+        for (World world: plugin.getServer().getWorlds()) {
+            List<Player> players = world.getPlayers();
+            if (players.isEmpty()) continue;
+            getBlockWorld(world).tick(players);
+        }
+        saveOldest();
     }
 
     BlockWorld getBlockWorld(World world) {
@@ -52,9 +82,17 @@ public class BlockManager {
     }
 
     public void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
+        // Implies setDirty()
         getBlockWorld(block.getWorld()).setBlockWatcher(block, blockWatcher);
     }
 
+    public void setDirty(Block block) {
+        getBlockWorld(block.getWorld()).getBlockChunk(block).setDirty();
+    }
+
+    /**
+     * Incremental save function.
+     */
     boolean saveOldest() {
         if (regionSaveList.isEmpty()) return false;
         BlockRegion region = regionSaveList.first();
@@ -66,7 +104,12 @@ public class BlockManager {
         return true;
     }
 
-    void saveAll() {
+    /**
+     * Internal use only!
+     *
+     * Save all regions to disk.
+     */
+    public void saveAll() {
         long now = System.currentTimeMillis();
         for (BlockRegion region: regionSaveList) {
             region.save();

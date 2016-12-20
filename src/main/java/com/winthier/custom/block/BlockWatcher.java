@@ -10,4 +10,8 @@ public interface BlockWatcher extends Listener {
     CustomBlock getCustomBlock();
 
     CustomConfig getCustomConfig();
+
+    void didDiscoverBlock();
+
+    void blockWillUnload();
 }

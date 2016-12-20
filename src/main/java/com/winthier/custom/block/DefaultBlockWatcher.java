@@ -6,8 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.block.Block;
 import org.bukkit.event.Listener;
 
+@Getter @RequiredArgsConstructor
 public class DefaultBlockWatcher extends AbstractBlockWatcher {
-    public DefaultBlockWatcher(Block block, CustomBlock customBlock, CustomConfig config) {
-        super(block, customBlock, config);
-    }
+    final Block block;
+    final CustomBlock customBlock;
+    final CustomConfig customConfig;
 }

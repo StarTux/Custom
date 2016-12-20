@@ -39,6 +39,7 @@ public class CustomPlugin extends JavaPlugin {
     void unload() {
         eventManager.clear();
         if (entityManager != null) entityManager.onDisable();
+        if (blockManager != null) blockManager.onDisable();
     }
 
     void reload() {
@@ -52,5 +53,6 @@ public class CustomPlugin extends JavaPlugin {
         entityManager.onCustomRegister(event);
         blockManager.onCustomRegister(event);
         entityManager.onEnable();
+        blockManager.onEnable();
     }
 }

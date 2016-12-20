@@ -29,16 +29,16 @@ public class BlockRegion {
     static class Vector {
         int x, z;
 
-        final static int ofBlock(int v) {
+        final static int ofChunk(int v) {
             if (v < 0) {
-                return (v + 1) / 512 - 1;
+                return (v + 1) / 32 - 1;
             } else {
-                return v / 512;
+                return v / 32;
             }
         }
 
-        static Vector of(Block block) {
-            return new Vector(ofBlock(block.getX()), ofBlock(block.getZ()));
+        static Vector of(BlockChunk.Vector chunk) {
+            return new Vector(ofChunk(chunk.getX()), ofChunk(chunk.getZ()));
         }
     }
 
@@ -63,9 +63,9 @@ public class BlockRegion {
 
     void load() {
         File dir = new File(blockWorld.world.getWorldFolder(), FOLDER);
-        if (!dir.isDirectory()) return;
         File file = new File(dir, getFileName());
         if (!file.isFile()) return;
+        if (!dir.isDirectory()) return;
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
             String line;
@@ -78,6 +78,7 @@ public class BlockRegion {
                     int z = Integer.parseInt(tokens[2]);
                     BlockChunk.Vector chunkPosition = new BlockChunk.Vector(x, z);
                     chunk = new BlockChunk(blockWorld, this, chunkPosition);
+                    chunks.put(chunkPosition, chunk);
                 } else if (line.startsWith("Block;")) {
                     String[] tokens = line.split(";", 6);
                     int x = Integer.parseInt(tokens[1]);
@@ -102,6 +103,7 @@ public class BlockRegion {
         try {
             PrintStream out = new PrintStream(file);
             for (BlockChunk chunk: chunks.values()) {
+                if (chunk.configs.isEmpty()) continue;
                 out.format("Chunk;%d;%d\n", chunk.position.getX(), chunk.position.getZ());
                 for (Map.Entry<BlockVector, CustomConfig> entry: chunk.configs.entrySet()) {
                     BlockVector vector = entry.getKey();

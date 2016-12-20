@@ -126,10 +126,6 @@ public final class CustomConfig {
         entity.addScoreboardTag(tag);
     }
 
-    public void save(Block block) {
-        // TODO
-    }
-
     // Deserialization
 
     public static CustomConfig of(ItemStack item) {
@@ -149,10 +145,5 @@ public final class CustomConfig {
         String id = tokens[1];
         String json = tokens.length == 3 ? tokens[2] : null;
         return new CustomConfig(id, json);
-    }
-
-    public static CustomConfig of(Block block) {
-        // TODO
-        return null;
     }
 }

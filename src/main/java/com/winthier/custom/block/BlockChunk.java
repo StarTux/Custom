@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 
 @RequiredArgsConstructor
@@ -25,6 +26,15 @@ class BlockChunk {
         static Vector of(Block block) {
             return new Vector(ofBlock(block.getX()), ofBlock(block.getZ()));
         }
+
+        static Vector of(Chunk chunk) {
+            return new Vector(chunk.getX(), chunk.getZ());
+        }
+
+        Vector relative(int x, int z) {
+            if (x == 0 && z == 0) return this;
+            return new Vector(this.x + x, this.z + z);
+        }
     }
 
     final BlockWorld blockWorld;
@@ -32,6 +42,7 @@ class BlockChunk {
     final Vector position;
     final Map<BlockVector, CustomConfig> configs = new HashMap<>();
     Map<Block, BlockWatcher> blocks = null;
+    long lastUsed = 0;
 
     Map<Block, BlockWatcher> getBlocks() {
         if (blocks == null) {
@@ -58,5 +69,27 @@ class BlockChunk {
         getBlocks().put(block, blockWatcher);
         configs.put(BlockVector.of(block), blockWatcher.getCustomConfig());
         blockRegion.setDirty();
+    }
+
+    void setDirty() {
+        blockRegion.setDirty();
+    }
+
+    void setUsed() {
+        lastUsed = System.currentTimeMillis();
+    }
+
+    void load() {
+        for (BlockWatcher blockWatcher: getBlocks().values()) {
+            blockWatcher.didDiscoverBlock();
+        }
+    }
+
+    void unload() {
+        if (blocks == null) return;
+        for (BlockWatcher blockWatcher: blocks.values()) {
+            blockWatcher.blockWillUnload();
+        }
+        blocks = null;
     }
 }
