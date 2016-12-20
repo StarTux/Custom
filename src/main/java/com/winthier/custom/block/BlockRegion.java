@@ -45,8 +45,7 @@ public class BlockRegion {
     final BlockWorld blockWorld;
     final Vector position;
     final Map<BlockChunk.Vector, BlockChunk> chunks = new HashMap<>();
-
-    @Getter @Setter transient long lastSave = System.currentTimeMillis();
+    long lastSave = 0;
 
     BlockChunk getBlockChunk(BlockChunk.Vector position) {
         BlockChunk result = chunks.get(position);

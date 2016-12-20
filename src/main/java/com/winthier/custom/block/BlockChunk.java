@@ -75,10 +75,6 @@ class BlockChunk {
         blockRegion.setDirty();
     }
 
-    void setUsed() {
-        lastUsed = System.currentTimeMillis();
-    }
-
     void load() {
         for (BlockWatcher blockWatcher: getBlocks().values()) {
             blockWatcher.didDiscoverBlock();

@@ -97,10 +97,10 @@ public class BlockManager {
         if (regionSaveList.isEmpty()) return false;
         BlockRegion region = regionSaveList.first();
         long now = System.currentTimeMillis();
-        if (region.getLastSave() + 10000 > now) return false;
+        if (region.lastSave + 10000 > now) return false;
         regionSaveList.remove(region);
         region.save();
-        region.setLastSave(now);
+        region.lastSave = now;
         return true;
     }
 
@@ -113,7 +113,7 @@ public class BlockManager {
         long now = System.currentTimeMillis();
         for (BlockRegion region: regionSaveList) {
             region.save();
-            region.setLastSave(now);
+            region.lastSave = now;
         }
         regionSaveList.clear();
     }

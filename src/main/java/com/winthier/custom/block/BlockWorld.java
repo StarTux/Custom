@@ -74,11 +74,11 @@ class BlockWorld {
                 }
             }
         }
+        long now = System.currentTimeMillis();
         for (BlockChunk.Vector vec: chunksToLoad) {
-            getBlockChunk(vec).setUsed();
+            getBlockChunk(vec).lastUsed = now;
         }
         // Unload obsolete chunks
-        long now = System.currentTimeMillis();
         for (BlockChunk chunk: new ArrayList<>(chunks.values())) {
             if (chunk.lastUsed + 1000*60 < now) {
                 chunk.unload();
