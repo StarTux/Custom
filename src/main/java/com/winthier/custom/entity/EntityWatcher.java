@@ -24,8 +24,15 @@ public interface EntityWatcher extends Listener {
     CustomConfig getCustomConfig();
 
     /**
+     * Called right after this entity was created.  It has been
+     * registered with the framework and is ready to operate.
+     */
+    void didSpawnEntity();
+
+    /**
      * Called right after this entity was discovered in the wild,
-     * as opposed to spawned in.
+     * as opposed to spawned in.  It has been registered with the
+     * framework and is ready to operate.
      */
     void didDiscoverEntity();
 
@@ -36,12 +43,12 @@ public interface EntityWatcher extends Listener {
      * be omitted if an entity despawns, dies, or is removed by a
      * plugin.
      */
-    void willUnloadEntity();
+    void entityWillUnload();
 
     /**
      * Called when the entity has been unloaded.  The
      * EntityWatcher is no longer registered with EntityManager.
      * The Entity is not necessarily valid.
      */
-    void didUnloadEntity();
+    void entityDidUnload();
 }

@@ -1,6 +1,5 @@
 package com.winthier.custom.entity;
 
-import com.winthier.custom.CustomPlugin;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -40,13 +39,23 @@ import org.bukkit.event.world.ChunkUnloadEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+/**
+ * An instance of this class will attempt to find new entities in
+ * the wild.  It does so by listening to all conceivable
+ * EntityEvents and PlayerEvents with the lowest priority, and
+ * ChunkLoadEvent with monitor priority.
+ *
+ * Furthermore, it will try to identify discovered entities which
+ * are about to be unloaded and call the appropriate hooks, by
+ * listening to the ChunkUnloadEvent.
+ */
 @Getter @RequiredArgsConstructor
-public class EntityFinder implements Listener {
-    final CustomPlugin plugin;
+class EntityFinder implements Listener {
+    final EntityManager entityManager;
 
     private void findEntity(Entity entity) {
         if (entity == null) return;
-        plugin.getEntityManager().getEntityWatcher(entity);
+        entityManager.getEntityWatcher(entity);
     }
 
     @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
@@ -200,11 +209,11 @@ public class EntityFinder implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onChunkUnload(ChunkUnloadEvent event) {
         for (Entity entity: event.getChunk().getEntities()) {
-            EntityWatcher entityWatcher = plugin.getEntityManager().getEntityWatcher(entity);
+            EntityWatcher entityWatcher = entityManager.getEntityWatcher(entity);
             if (entityWatcher == null) continue;
-            entityWatcher.willUnloadEntity();
-            plugin.getEntityManager().removeEntity(entityWatcher);
-            entityWatcher.didUnloadEntity();
+            entityWatcher.entityWillUnload();
+            entityManager.removeEntity(entityWatcher);
+            entityWatcher.entityDidUnload();
         }
     }
 }

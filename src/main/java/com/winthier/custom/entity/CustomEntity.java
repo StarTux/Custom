@@ -13,18 +13,19 @@ public interface CustomEntity {
 
     /**
      * Spawn a new entity of this type at the given location, with
-     * the given configuration.  This function is not expected to
-     * actually store the config in the entity.  The caller is
-     * responsible to save the config and call watchEntity().
+     * the given configuration.  This function shall not actually
+     * store the config in the entity, wrap it via
+     * createEntityWatcher(), or register the entity with the
+     * framework.  Leave these tasks to the caller!
      */
     Entity spawnEntity(Location location, CustomConfig config);
 
     /**
      * Wrap around a discovered or created entity with the given
-     * config.  This function should do nothing but create a new
-     * EntityWatcher and then return it.  Return null to use the
-     * DefaultEntityWatcher instead.  The caller is responsible
-     * for registering the result with EntityManager.
+     * config.  That is, return a new EntityWatcher with the given
+     * entity, CustomEntity, and CustomConfig.  This function
+     * shall not register the result with the framework.  Leave
+     * this task to the caller!
      *
      * This function is called by the framework discovers an
      * existing entity with a valid CustomConfig in the world, or

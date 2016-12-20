@@ -57,7 +57,7 @@ public class CustomCommand implements CommandExecutor {
             Msg.info(player, "Item spawned for %s.", target.getName());
         } else if (firstArg.equals("summon") && args.length == 2) {
             String name = args[1];
-            CustomEntity customEntity = plugin.getEntityManager().findEntity(name);
+            CustomEntity customEntity = plugin.getEntityManager().getCustomEntity(name);
             if (customEntity == null) {
                 Msg.warn(sender, "Custom entity not found: %s.", name);
                 return true;

@@ -1,6 +1,5 @@
 package com.winthier.custom.entity;
 
-import com.winthier.custom.CustomPlugin;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -13,8 +12,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter @RequiredArgsConstructor
-public class EntityCrawler {
-    final CustomPlugin plugin;
+class EntityCrawler {
+    final EntityManager entityManager;
     Iterator<Entity> serverEntities;
     Iterator<UUID> customEntities;
     static enum State {
@@ -24,9 +23,9 @@ public class EntityCrawler {
     BukkitRunnable task;
 
     public void checkAll() {
-        for (World world: plugin.getServer().getWorlds()) {
+        for (World world: entityManager.plugin.getServer().getWorlds()) {
             for (Entity entity: world.getEntities()) {
-                plugin.getEntityManager().getEntityWatcher(entity);
+                entityManager.getEntityWatcher(entity);
             }
         }
     }
@@ -38,7 +37,7 @@ public class EntityCrawler {
                 tick();
             }
         };
-        task.runTaskTimer(plugin, 1, 1);
+        task.runTaskTimer(entityManager.plugin, 1, 1);
     }
 
     public void stop() {
@@ -53,7 +52,7 @@ public class EntityCrawler {
         if (state == State.SERVER) {
             if (serverEntities == null) {
                 List<Entity> list = new ArrayList<>();
-                for (World world: plugin.getServer().getWorlds()) {
+                for (World world: entityManager.plugin.getServer().getWorlds()) {
                     for (Entity entity: world.getEntities()) {
                         list.add(entity);
                     }
@@ -64,7 +63,7 @@ public class EntityCrawler {
                     if (serverEntities.hasNext()) {
                         Entity entity = serverEntities.next();
                         if (entity.isValid()) {
-                            plugin.getEntityManager().getEntityWatcher(entity);
+                            entityManager.getEntityWatcher(entity);
                         }
                     } else {
                         serverEntities = null;
@@ -75,18 +74,18 @@ public class EntityCrawler {
             }
         } else if (state == State.CUSTOM) {
             if (customEntities == null) {
-                List<UUID> list = new ArrayList<>(plugin.getEntityManager().entityWatcherMap.keySet());
+                List<UUID> list = new ArrayList<>(entityManager.entityWatcherMap.keySet());
                 customEntities = list.iterator();
             } else {
                 for (int i = 0; i < 100; ++i) {
                     if (customEntities.hasNext()) {
                         UUID uuid = customEntities.next();
-                        EntityWatcher entityWatcher = plugin.getEntityManager().entityWatcherMap.get(uuid);
+                        EntityWatcher entityWatcher = entityManager.entityWatcherMap.get(uuid);
                         if (entityWatcher != null && !entityWatcher.getEntity().isValid()) {
-                            plugin.getEntityManager().removeEntity(entityWatcher);
-                            entityWatcher.didUnloadEntity();
+                            entityManager.removeEntity(entityWatcher);
+                            entityWatcher.entityDidUnload();
                             Location loc = entityWatcher.getEntity().getLocation();
-                            plugin.getLogger().warning(String.format("Custom entity %s did disappear at %s %d %d %d", entityWatcher.getCustomEntity().getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                            entityManager.plugin.getLogger().warning(String.format("Custom entity %s did disappear at %s %d %d %d", entityWatcher.getCustomEntity().getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
                         }
                     } else {
                         customEntities = null;

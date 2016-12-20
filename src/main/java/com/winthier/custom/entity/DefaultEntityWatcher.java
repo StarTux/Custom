@@ -31,6 +31,12 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
 
+/**
+ * The default implementation of EntityWatcher which attempts to
+ * cancel or otherwise modify all events in a way that the entity
+ * does not change or act in a relevant way.  The expected use
+ * case is that a CustomEntity is temporarily unavailable.
+ */
 @Getter @RequiredArgsConstructor
 public class DefaultEntityWatcher extends AbstractEntityWatcher {
     final Entity entity;

@@ -13,10 +13,18 @@ import org.bukkit.entity.Entity;
 @RequiredArgsConstructor
 public class EntityManager {
     final CustomPlugin plugin;
+    final EntityCrawler entityCrawler = new EntityCrawler(this);
 
     final Map<String, CustomEntity> customEntityMap = new HashMap<>();
     final Map<UUID, EntityWatcher> entityWatcherMap = new HashMap<>();
 
+    /**
+     * Internal use only!
+     *
+     * Call the CustomRegisterEvent to give all clients a chance
+     * to register their custom entities, then give it to this
+     * function.
+     */
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomEntity customEntity: event.getEntities()) {
             if (customEntityMap.containsKey(customEntity.getCustomId())) {
@@ -28,6 +36,38 @@ public class EntityManager {
         }
     }
 
+    /**
+     * Internal use only!
+     *
+     * Call this once, after entities have been registered via
+     * onCustomRegister(), so this manager instance can do its
+     * work.
+     */
+    public void onEnable() {
+        plugin.getServer().getPluginManager().registerEvents(new EntityFinder(this), plugin);
+        entityCrawler.checkAll();
+        entityCrawler.start();
+    }
+
+    /**
+     * Internal use only!
+     *
+     * Call this once when the task of this instance is over.
+     */
+    public void onDisable() {
+        entityCrawler.stop();
+    }
+
+    /**
+     * Find the corresponding EntityWatcher for any entity.  If
+     * the entity is customized but the EntityWatcher does not
+     * exist yet, it will be created and all the appropriate hooks
+     * called.  If the entity is not customized, nothing happens
+     * and null is returned.
+     *
+     * @return The corresponding EntityWatcher or null if the
+     * entity is not customized.
+     */
     public EntityWatcher getEntityWatcher(Entity entity) {
         UUID uuid = entity.getUniqueId();
         EntityWatcher result;
@@ -37,7 +77,7 @@ public class EntityManager {
         if (config != null) {
             Location loc = entity.getLocation();
             plugin.getLogger().info(String.format("Discovered custom entity '%s' at %s %d %d %d", config.getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-            CustomEntity customEntity = findEntity(config);
+            CustomEntity customEntity = getCustomEntity(config);
             if (customEntity == null) {
                 plugin.getLogger().warning("Encountered unknown custom entity '" + config.getCustomId() + "'");
                 customEntity = new DefaultCustomEntity(config.getCustomId());
@@ -52,19 +92,43 @@ public class EntityManager {
         return null;
     }
 
-    public CustomEntity findEntity(CustomConfig config) {
-        return findEntity(config.getCustomId());
+    /**
+     * Get a CustomEntity registerd under the ID in the config.
+     *
+     * @return The CustomEntity with the ID in the config, or null
+     * if none exists.
+     */
+    public CustomEntity getCustomEntity(CustomConfig config) {
+        return getCustomEntity(config.getCustomId());
     }
 
-    public CustomEntity findEntity(String id) {
+    /**
+     * Get a CustomEntity registerd under the ID.
+     *
+     * @return The CustomEntity with the given ID, or null if none
+     * exists.
+     */
+    public CustomEntity getCustomEntity(String id) {
         return customEntityMap.get(id);
     }
 
+    /**
+     * Internal use only!
+     *
+     * Register an EntityWatcher with the framework.  It will be
+     * returned by getEntityWatcher() and listen to all handled
+     * events until it is unregistered with the function below.
+     */
     public void watchEntity(EntityWatcher watcher) {
         entityWatcherMap.put(watcher.getEntity().getUniqueId(), watcher);
         plugin.getEventManager().registerEvents(watcher);
     }
 
+    /**
+     * Internal use only!
+     *
+     * Remove an EntityWatcher from the framework.
+     */
     public void removeEntity(EntityWatcher watcher) {
         entityWatcherMap.remove(watcher.getEntity().getUniqueId());
         plugin.getEventManager().unregisterEvents(watcher);
