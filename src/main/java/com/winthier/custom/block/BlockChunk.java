@@ -77,6 +77,7 @@ class BlockChunk {
 
     void load() {
         for (BlockWatcher blockWatcher: getBlocks().values()) {
+            CustomPlugin.getInstance().getEventManager().registerEvents(blockWatcher);
             blockWatcher.didDiscoverBlock();
         }
     }
@@ -85,6 +86,7 @@ class BlockChunk {
         if (blocks == null) return;
         for (BlockWatcher blockWatcher: blocks.values()) {
             blockWatcher.blockWillUnload();
+            CustomPlugin.getInstance().getEventManager().unregisterEvents(blockWatcher);
         }
         blocks = null;
     }

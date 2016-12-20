@@ -10,9 +10,9 @@ import org.bukkit.event.Listener;
  * Call one EventHandler routine.
  */
 @RequiredArgsConstructor
-public class HandlerCaller {
+public class HandlerCaller<L extends Listener> {
     final Class<? extends Event> event;
-    final Listener listener;
+    final L listener;
     final Method method;
     final boolean ignoreCancelled;
 

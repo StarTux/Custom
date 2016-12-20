@@ -1,7 +1,6 @@
 package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
-import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.entity.EntityContext;
 import com.winthier.custom.entity.EntityWatcher;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +28,9 @@ abstract class EntityEventCaller {
         if (entity == null) return;
         EntityWatcher entityWatcher = CustomPlugin.getInstance().getEntityManager().getEntityWatcher(entity);
         if (entityWatcher == null) return;
-        CustomEntity customEntity = entityWatcher.getCustomEntity();
-        HandlerCaller handlerCaller = dispatcher.entities.get(entity.getUniqueId());
+        HandlerCaller<EntityWatcher> handlerCaller = dispatcher.entities.get(entity.getUniqueId());
         if (handlerCaller == null) return;
+        if (handlerCaller.listener != entityWatcher) return;
         EntityContext context = new EntityContext(position);
         context.save(event);
         handlerCaller.call(event);

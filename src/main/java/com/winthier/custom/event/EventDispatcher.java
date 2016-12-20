@@ -1,6 +1,7 @@
 package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
+import com.winthier.custom.block.BlockWatcher;
 import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.item.CustomItem;
 import java.lang.reflect.Method;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,10 +27,12 @@ class EventDispatcher implements Listener, EventExecutor {
     final Class<? extends Event> event;
     final EventPriority priority;
 
-    final Map<String, HandlerCaller> items = new HashMap<>();
-    final Map<UUID, HandlerCaller> entities = new HashMap<>();
+    final Map<String, HandlerCaller<CustomItem>> items = new HashMap<>();
+    final Map<UUID, HandlerCaller<EntityWatcher>> entities = new HashMap<>();
+    final Map<Block, HandlerCaller<BlockWatcher>> blocks = new HashMap<>();
     ItemEventCaller itemEventCaller = null;
     EntityEventCaller entityEventCaller = null;
+    BlockEventCaller blockEventCaller = null;
 
     void enable(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvent(event, this, priority, this, plugin);
@@ -45,17 +49,27 @@ class EventDispatcher implements Listener, EventExecutor {
             if (entityEventCaller == null) entityEventCaller = EntityEventCaller.of(this, event);
             entityEventCaller.call(event);
         }
+        if (!blocks.isEmpty()) {
+            if (blockEventCaller == null) blockEventCaller = BlockEventCaller.of(this, event);
+            blockEventCaller.call(event);
+        }
     }
 
     void registerEvent(Listener listener, Method method, boolean ignoreCancelled) {
-        HandlerCaller caller = new HandlerCaller(event, listener, method, ignoreCancelled);
         if (listener instanceof CustomItem) {
             CustomItem customItem = (CustomItem)listener;
+            HandlerCaller<CustomItem> caller = new HandlerCaller<>(event, customItem, method, ignoreCancelled);
             items.put(customItem.getCustomId(), caller);
         }
         if (listener instanceof EntityWatcher) {
             EntityWatcher entityWatcher = (EntityWatcher)listener;
+            HandlerCaller<EntityWatcher> caller = new HandlerCaller<>(event, entityWatcher, method, ignoreCancelled);
             entities.put(entityWatcher.getEntity().getUniqueId(), caller);
+        }
+        if (listener instanceof BlockWatcher) {
+            BlockWatcher blockWatcher = (BlockWatcher)listener;
+            HandlerCaller<BlockWatcher> caller = new HandlerCaller<>(event, blockWatcher, method, ignoreCancelled);
+            blocks.put(blockWatcher.getBlock(), caller);
         }
     }
 
@@ -64,11 +78,16 @@ class EventDispatcher implements Listener, EventExecutor {
             EntityWatcher entityWatcher = (EntityWatcher)listener;
             entities.remove(entityWatcher.getEntity().getUniqueId());
         }
+        if (listener instanceof BlockWatcher) {
+            BlockWatcher blockWatcher = (BlockWatcher)listener;
+            blocks.remove(blockWatcher.getBlock());
+        }
     }
 
     void clear() {
         items.clear();
         entities.clear();
+        blocks.clear();
         itemEventCaller = null;
         entityEventCaller = null;
     }
