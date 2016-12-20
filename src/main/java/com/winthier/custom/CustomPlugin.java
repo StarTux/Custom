@@ -38,7 +38,7 @@ public class CustomPlugin extends JavaPlugin {
 
     void unload() {
         eventManager.clear();
-        entityManager.onDisable();
+        if (entityManager != null) entityManager.onDisable();
     }
 
     void reload() {
