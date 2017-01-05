@@ -20,7 +20,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Default version of CustomItem that cancels all relevant
  * events.  Use this and overwrite any event that you would like
- * to handle yourself of let pass through.
+ * to handle yourself or let pass through.
  */
 @Getter @RequiredArgsConstructor
 public class DefaultCustomItem implements CustomItem {
