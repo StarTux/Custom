@@ -5,7 +5,7 @@
   <artifactId>custom</artifactId>
   <packaging>jar</packaging>
   <version>0.1</version>
-  <name>custom</name>
+  <name>Custom</name>
   <url>http://www.winthier.com</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
