@@ -47,6 +47,11 @@ public final class CustomConfig {
         return raw;
     }
 
+    Map<String, Object> getRawP() {
+        if (getRaw() == null) raw = new HashMap<>();
+        return raw;
+    }
+
     public String getString(String path, String dfl) {
         Object o = findItem(path);
         if (o == null) {
@@ -73,6 +78,15 @@ public final class CustomConfig {
                 return dfl;
             }
         }
+    }
+
+    public void set(String path, Object o) {
+        getRawP().put(path, o);
+    }
+
+    public void remove(String path) {
+        Map<String, Object> raw = getRaw();
+        if (raw != null) raw.remove(path);
     }
 
     // Getter Utility
