@@ -1,5 +1,6 @@
 package com.winthier.custom.entity;
 
+import com.winthier.custom.CustomPlugin;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -50,11 +51,12 @@ import org.spigotmc.event.entity.EntityMountEvent;
  * listening to the ChunkUnloadEvent.
  */
 @Getter @RequiredArgsConstructor
-class EntityFinder implements Listener {
-    final EntityManager entityManager;
+public class EntityFinder implements Listener {
+    final CustomPlugin plugin;
 
     private void findEntity(Entity entity) {
         if (entity == null) return;
+        EntityManager entityManager = plugin.getEntityManager();
         entityManager.getEntityWatcher(entity);
     }
 
@@ -208,6 +210,8 @@ class EntityFinder implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onChunkUnload(ChunkUnloadEvent event) {
+        EntityManager entityManager = plugin.getEntityManager();
+        if (entityManager == null) return;
         for (Entity entity: event.getChunk().getEntities()) {
             EntityWatcher entityWatcher = entityManager.getEntityWatcher(entity);
             if (entityWatcher == null) continue;

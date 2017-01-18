@@ -1,6 +1,7 @@
 package com.winthier.custom;
 
 import com.winthier.custom.block.BlockManager;
+import com.winthier.custom.entity.EntityFinder;
 import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
@@ -29,6 +30,7 @@ public class CustomPlugin extends JavaPlugin {
                 reload();
             }
         }.runTask(this);
+        getServer().getPluginManager().registerEvents(new EntityFinder(this), this);
     }
 
     @Override

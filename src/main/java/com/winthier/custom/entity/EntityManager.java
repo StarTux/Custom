@@ -44,7 +44,6 @@ public class EntityManager {
      * work.
      */
     public void onEnable() {
-        plugin.getServer().getPluginManager().registerEvents(new EntityFinder(this), plugin);
         entityCrawler.checkAll();
         entityCrawler.start();
     }
