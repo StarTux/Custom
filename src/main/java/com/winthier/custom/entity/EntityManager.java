@@ -81,8 +81,8 @@ public class EntityManager {
             if (customEntity == null) {
                 plugin.getLogger().warning("Encountered unknown custom entity '" + config.getCustomId() + "'");
                 customEntity = new DefaultCustomEntity(config.getCustomId());
-                customEntityMap.put(config.getCustomId(), customEntity);
             }
+            customEntityMap.put(customEntity.getCustomId(), customEntity);
             EntityWatcher watcher = customEntity.createEntityWatcher(entity, config);
             if (watcher == null) watcher = new DefaultEntityWatcher(entity, customEntity, config);
             watchEntity(watcher);
