@@ -53,7 +53,7 @@ public class CustomCommand implements CommandExecutor {
             CustomConfig config = new CustomConfig(itemId, (String)null);
             ItemStack item = customItem.spawnItemStack(amount, config);
             item = config.save(item);
-            player.getWorld().dropItemNaturally(player.getEyeLocation(), item).setPickupDelay(0);
+            target.getWorld().dropItemNaturally(target.getEyeLocation(), item).setPickupDelay(0);
             Msg.info(player, "Item spawned for %s.", target.getName());
         } else if (firstArg.equals("summon") && args.length == 2) {
             String name = args[1];
