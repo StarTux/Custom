@@ -5,6 +5,7 @@ import com.winthier.custom.entity.EntityFinder;
 import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
+import com.winthier.custom.inventory.InventoryManager;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemManager;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class CustomPlugin extends JavaPlugin {
     @Getter static CustomPlugin instance = null;
     EventManager eventManager = new EventManager(this);
+    InventoryManager inventoryManager = new InventoryManager(this);
     ItemManager itemManager;
     EntityManager entityManager;
     BlockManager blockManager;
@@ -31,11 +33,13 @@ public class CustomPlugin extends JavaPlugin {
             }
         }.runTask(this);
         getServer().getPluginManager().registerEvents(new EntityFinder(this), this);
+        getServer().getPluginManager().registerEvents(inventoryManager, this);
     }
 
     @Override
     public void onDisable() {
         unload();
+        inventoryManager.onDisable();
     }
 
     void unload() {
