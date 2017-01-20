@@ -34,7 +34,7 @@ public final class CustomConfig {
 
     // Getters
 
-    Map<String, Object> getRaw() {
+    public Map<String, Object> getRaw() {
         if (raw == null && json != null) {
             Object o = Msg.parseJson(json);
             json = null;
@@ -53,7 +53,8 @@ public final class CustomConfig {
     }
 
     public String getString(String path, String dfl) {
-        Object o = findItem(path);
+        if (getRaw() == null) return null;
+        Object o = raw.get(path);
         if (o == null) {
             return dfl;
         } else if (o instanceof String) {
@@ -64,7 +65,8 @@ public final class CustomConfig {
     }
 
     public Integer getInt(String path, Integer dfl) {
-        Object o = findItem(path);
+        if (getRaw() == null) return null;
+        Object o = raw.get(path);
         if (o == null) {
             return dfl;
         } else if (o instanceof Integer) {
@@ -87,26 +89,6 @@ public final class CustomConfig {
     public void remove(String path) {
         Map<String, Object> raw = getRaw();
         if (raw != null) raw.remove(path);
-    }
-
-    // Getter Utility
-
-    private Object findItem(String path) {
-        return findItem(path.split("\\."));
-    }
-
-    private Object findItem(String[] path) {
-        if (raw == null) return null;
-        Map<String, Object> current = raw;
-        for (String pathName: path) {
-            Object finding = current.get(pathName);
-            if (finding == null) return null;
-            if (!(finding instanceof Map)) return null;
-            @SuppressWarnings("unchecked")
-            final Map<String, Object> tmp = (Map<String, Object>)finding;
-            current = tmp;
-        }
-        return current;
     }
 
     // Serialization
