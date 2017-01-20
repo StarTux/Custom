@@ -54,7 +54,7 @@ abstract class ItemEventCaller {
         if (customItem == null) return;
         HandlerCaller handlerCaller = dispatcher.items.get(customItem.getCustomId());
         if (handlerCaller == null) return;
-        ItemContext context = new ItemContext(player, item, position, config);
+        ItemContext context = new ItemContext(player, customItem, item, position, config);
         context.save(event);
         handlerCaller.call(event);
         context.remove(event);
@@ -69,7 +69,7 @@ abstract class ItemEventCaller {
         if (customItem == null) return;
         HandlerCaller handlerCaller = dispatcher.items.get(customItem.getCustomId());
         if (handlerCaller == null) return;
-        ItemContext context = new ItemContext(player, item, position, config);
+        ItemContext context = new ItemContext(player, customItem, item, position, config);
         context.save(event);
         handlerCaller.call(event);
         context.remove(event);

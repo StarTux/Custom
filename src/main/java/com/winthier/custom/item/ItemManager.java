@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 public class ItemManager {
@@ -45,5 +46,25 @@ public class ItemManager {
             registeredItems.put(id, result);
         }
         return result;
+    }
+
+    /**
+     * For public use.
+     *
+     * Returns an ItemContext instance with the following fields
+     * filled: customItem, itemStack, config.  It will set the
+     * following fields to null: player, position.  Returns null
+     * if the item stack is not a custom item, or the custom item
+     * cannot be found.  Use this if you must find out if a random
+     * item is custom.  Do not use this in lieu of EventHandlers
+     * in your CustomItem subclass!
+     */
+    public ItemContext getItemContext(ItemStack item) {
+        if (item == null) return null;
+        CustomConfig config = CustomConfig.of(item);
+        if (config == null) return null;
+        CustomItem customItem = findItem(config);
+        if (customItem == null) return null;
+        return new ItemContext(null, customItem, item, null, config);
     }
 }

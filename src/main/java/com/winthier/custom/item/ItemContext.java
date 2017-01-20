@@ -22,19 +22,36 @@ public class ItemContext {
     }
 
     final Player player;
-    final ItemStack item;
+    final CustomItem customItem;
+    final ItemStack itemStack;
     final Position position;
     final CustomConfig config;
 
+    /**
+     * Internal use only!
+     */
     public void save(Event event) {
         CustomPlugin.getInstance().getEventManager().getItemContextMap().put(event, this);
     }
 
+    /**
+     * Internal use only!
+     */
     public void remove(Event event) {
         CustomPlugin.getInstance().getEventManager().getItemContextMap().remove(event);
     }
 
+    /**
+     * For public use.
+     */
     public static ItemContext of(Event event) {
         return CustomPlugin.getInstance().getEventManager().getItemContextMap().get(event);
+    }
+
+    /**
+     * For public use.
+     */
+    public static ItemContext of(ItemStack item) {
+        return CustomPlugin.getInstance().getItemManager().getItemContext(item);
     }
 }
