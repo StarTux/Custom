@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -91,15 +90,43 @@ public class Msg {
         return sb.toString();
     }
 
-    public static String wrap(String string, int lineLength) {
-        return WordUtils.wrap(string, lineLength);
-    }
-
     public static Object parseJson(String s) {
         return JSONValue.parse(s);
     }
 
     public static String toJsonString(Object o) {
         return JSONValue.toJSONString(o);
+    }
+
+    public static List<String> wrap(String what, int maxLineLength) {
+        String[] words = what.split(" ");
+        List<String> lines = new ArrayList<>();
+        if (words.length == 0) return lines;
+        StringBuilder line = new StringBuilder(words[0]);
+        int i = 1;
+        while (i < words.length) {
+            String word = words[i++];
+            if (line.length() + word.length() > maxLineLength) {
+                lines.add(line.toString());
+                line = new StringBuilder(word);
+            } else {
+                line.append(" ");
+                line.append(word);
+            }
+        }
+        if (line.length() > 0) lines.add(line.toString());
+        return lines;
+    }
+
+    public static String wrap(String what, int maxLineLength, String endl) {
+        List<String> lines = wrap(what, maxLineLength);
+        return fold(lines, endl);
+    }
+
+    public static String fold(List<String> ls, String glue) {
+        if (ls.isEmpty()) return "";
+        StringBuilder sb = new StringBuilder(ls.get(0));
+        for (int i = 1; i < ls.size(); ++i) sb.append(glue).append(ls.get(i));
+        return sb.toString();
     }
 }
