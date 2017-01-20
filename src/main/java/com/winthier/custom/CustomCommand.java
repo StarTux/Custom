@@ -7,6 +7,7 @@ import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.entity.DefaultEntityWatcher;
 import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.item.CustomItem;
+import com.winthier.custom.item.ItemContext;
 import com.winthier.custom.util.Msg;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -98,6 +99,11 @@ public class CustomCommand implements CommandExecutor {
         } else if (firstArg.equals("reload") && args.length == 1) {
             plugin.reload();
             Msg.info(sender, "Custom Plugin Reloaded");
+        } else if (firstArg.equals("debug")) {
+            ItemContext context = plugin.getItemManager().getItemContext(player.getItemInHand());
+            if (context == null) return true;
+            CustomConfig config = context.getConfig();
+            player.sendMessage(config.getCustomId() + " " + config.getRaw());
         }
         return true;
     }
