@@ -7,7 +7,7 @@ depend: []
 commands:
   custom:
     description: Admin interface
-    permission: custom.custom  
+    permission: custom.custom
 permissions:
   custom.custom:
     description: Use /custom

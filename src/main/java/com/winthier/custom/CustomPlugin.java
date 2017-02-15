@@ -22,7 +22,7 @@ public class CustomPlugin extends JavaPlugin {
     ItemManager itemManager;
     EntityManager entityManager;
     BlockManager blockManager;
-    
+
     @Override
     public void onEnable() {
         instance = this;
