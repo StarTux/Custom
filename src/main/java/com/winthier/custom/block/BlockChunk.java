@@ -80,7 +80,7 @@ final class BlockChunk {
     void load() {
         for (BlockWatcher blockWatcher: getBlocks().values()) {
             CustomPlugin.getInstance().getEventManager().registerEvents(blockWatcher);
-            blockWatcher.didDiscoverBlock();
+            blockWatcher.blockWasDiscovered();
         }
     }
 

@@ -22,6 +22,48 @@ public final class BlockManager {
     private final TreeSet<BlockRegion> regionSaveList = new TreeSet<>(BlockRegion.LAST_SAVE_COMPARATOR);
     private BukkitRunnable task = null;
 
+    // Public use methods
+
+    public CustomBlock getCustomBlock(String id) {
+        return customBlockMap.get(id);
+    }
+
+    public CustomBlock getCustomBlock(CustomConfig config) {
+        return getCustomBlock(config.getCustomId());
+    }
+
+    public BlockWatcher getBlockWatcher(Block block) {
+        return getBlockWorld(block.getWorld()).getBlockChunk(block).getBlockWatcher(block);
+    }
+
+    <T extends BlockWatcher> T getBlockWatcher(Block block, Class<T> clazz) {
+        BlockWatcher result = getBlockWatcher(block);
+        if (result == null) return null;
+        if (!clazz.isInstance(result)) return null;
+        return clazz.cast(result);
+    }
+
+    public BlockWatcher setBlock(Block block, CustomConfig config) {
+        CustomBlock customBlock = getCustomBlock(config);
+        if (customBlock == null) return null;
+        customBlock.setBlock(block, config);
+        BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
+        addBlockWatcher(blockWatcher);
+        return blockWatcher;
+    }
+
+    public BlockWatcher setBlock(Block block, String customId) {
+        return setBlock(block, new CustomConfig(customId, (String)null));
+    }
+
+    public void removeBlock(Block block) {
+        BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
+        blockChunk.removeBlockWatcher(block);
+        regionSaveList.add(blockChunk.getBlockRegion());
+    }
+
+    // Internal use methods
+
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomBlock block: event.getBlocks()) {
             String id = block.getCustomId();
@@ -69,25 +111,15 @@ public final class BlockManager {
         return result;
     }
 
-    public BlockWatcher getBlockWatcher(Block block) {
-        return getBlockWorld(block.getWorld()).getBlockChunk(block).getBlockWatcher(block);
-    }
-
-    public CustomBlock getCustomBlock(String id) {
-        return customBlockMap.get(id);
-    }
-
-    public CustomBlock getCustomBlock(CustomConfig config) {
-        return getCustomBlock(config.getCustomId());
-    }
-
-    public void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
+    public void addBlockWatcher(BlockWatcher blockWatcher) {
+        Block block = blockWatcher.getBlock();
         BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
         blockChunk.setBlockWatcher(block, blockWatcher);
         regionSaveList.add(blockChunk.getBlockRegion());
     }
 
-    public void removeBlockWatcher(Block block) {
+    public void removeBlockWatcher(BlockWatcher blockWatcher) {
+        Block block = blockWatcher.getBlock();
         BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
         blockChunk.removeBlockWatcher(block);
         regionSaveList.add(blockChunk.getBlockRegion());
