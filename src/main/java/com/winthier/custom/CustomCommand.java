@@ -87,7 +87,7 @@ final class CustomCommand implements CommandExecutor {
             BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
             if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
             plugin.getBlockManager().addBlockWatcher(blockWatcher);
-            Msg.info(player, "No custom block '%s' created at: %d %d %d", customBlock.getCustomId(), block.getX(), block.getY(), block.getZ());
+            Msg.info(player, "Custom block '%s' created at: %d %d %d", customBlock.getCustomId(), block.getX(), block.getY(), block.getZ());
         } else if (firstArg.equals("getblock") && args.length == 1) {
             Block block = player.getLocation().getBlock();
             BlockWatcher blockWatcher = plugin.getBlockManager().getBlockWatcher(block);
