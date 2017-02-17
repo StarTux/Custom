@@ -46,14 +46,27 @@ public final class BlockManager {
     public BlockWatcher setBlock(Block block, CustomConfig config) {
         CustomBlock customBlock = getCustomBlock(config);
         if (customBlock == null) return null;
-        customBlock.setBlock(block, config);
         BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
+        if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
         addBlockWatcher(blockWatcher);
         return blockWatcher;
     }
 
     public BlockWatcher setBlock(Block block, String customId) {
         return setBlock(block, new CustomConfig(customId, (String)null));
+    }
+
+    public BlockWatcher wrapBlock(Block block, CustomConfig config) {
+        CustomBlock customBlock = getCustomBlock(config);
+        if (customBlock == null) return null;
+        BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
+        if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
+        addBlockWatcher(blockWatcher);
+        return blockWatcher;
+    }
+
+    public BlockWatcher wrapBlock(Block block, String customId) {
+        return wrapBlock(block, new CustomConfig(customId, (String)null));
     }
 
     public void removeBlock(Block block) {

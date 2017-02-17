@@ -68,12 +68,19 @@ final class BlockChunk {
     }
 
     void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
+        removeBlockWatcher(block);
         getBlocks().put(block, blockWatcher);
         configs.put(BlockVector.of(block), blockWatcher.getCustomConfig());
+        CustomPlugin.getInstance().getEventManager().registerEvents(blockWatcher);
     }
 
     void removeBlockWatcher(Block block) {
-        getBlocks().remove(block);
+        BlockWatcher blockWatcher = getBlocks().remove(block);
+        if (blockWatcher != null) {
+            blockWatcher.blockWillDisappear();
+            CustomPlugin.getInstance().getEventManager().unregisterEvents(blockWatcher);
+            blockWatcher.blockDidDisappear();
+        }
         configs.remove(BlockVector.of(block));
     }
 

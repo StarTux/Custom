@@ -14,4 +14,8 @@ public interface BlockWatcher extends Listener {
     void blockWasDiscovered();
 
     void blockWillUnload();
+
+    void blockWillDisappear();
+
+    void blockDidDisappear();
 }

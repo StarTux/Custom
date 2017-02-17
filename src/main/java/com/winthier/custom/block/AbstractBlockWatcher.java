@@ -6,4 +6,10 @@ public abstract class AbstractBlockWatcher implements BlockWatcher {
 
     @Override
     public void blockWillUnload() { }
+
+    @Override
+    public void blockWillDisappear() { }
+
+    @Override
+    public void blockDidDisappear() { }
 }
