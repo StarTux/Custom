@@ -3,19 +3,15 @@ package com.winthier.custom.item;
 import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.List;
 import java.util.Map;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
-public class ItemManager {
-    final CustomPlugin plugin;
-    final Map<String, CustomItem> registeredItems = new HashMap<>();
+public final class ItemManager {
+    private final CustomPlugin plugin;
+    private final Map<String, CustomItem> registeredItems = new HashMap<>();
 
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomItem item: event.getItems()) {

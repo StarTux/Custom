@@ -40,7 +40,7 @@ abstract class EntityEventCaller {
     protected void callWithEntity(Event event, Entity entity) {
         callWithEntity(event, entity, EntityContext.Position.ENTITY);
     }
-    
+
     static EntityEventCaller of(EventDispatcher dispatcher, Event event) {
         if (event instanceof EntityEvent) {
             return new EntityEventCaller(dispatcher) {

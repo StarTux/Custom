@@ -11,7 +11,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.json.simple.JSONValue;
 
-public class Msg {
+public final class Msg {
+    private Msg() { }
+
     public static String format(String msg, Object... args) {
         if (msg == null) return "";
         msg = ChatColor.translateAlternateColorCodes('&', msg);

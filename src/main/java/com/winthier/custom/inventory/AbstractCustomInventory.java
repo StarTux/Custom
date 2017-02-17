@@ -8,17 +8,17 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 
 public abstract class AbstractCustomInventory implements CustomInventory {
     @Override
-    public void onInventoryOpen(InventoryOpenEvent event) {}
+    public void onInventoryOpen(InventoryOpenEvent event) { }
 
     @Override
-    public void onInventoryClose(InventoryCloseEvent event) {}
+    public void onInventoryClose(InventoryCloseEvent event) { }
 
     @Override
-    public void onInventoryInteract(InventoryInteractEvent event) {}
+    public void onInventoryInteract(InventoryInteractEvent event) { }
 
     @Override
-    public void onInventoryClick(InventoryClickEvent event) {}
+    public void onInventoryClick(InventoryClickEvent event) { }
 
     @Override
-    public void onInventoryDrag(InventoryDragEvent event) {}
+    public void onInventoryDrag(InventoryDragEvent event) { }
 }

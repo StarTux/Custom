@@ -4,7 +4,6 @@ import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemContext;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,7 +31,7 @@ import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 abstract class ItemEventCaller {
-    final EventDispatcher dispatcher;
+    private final EventDispatcher dispatcher;
     abstract void call(Event event);
 
     protected final void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
@@ -73,7 +72,7 @@ abstract class ItemEventCaller {
         context.save(event);
         handlerCaller.call(event);
         context.remove(event);
-    }    
+    }
 
     static ItemEventCaller of(EventDispatcher dispatcher, Event event) {
         if (event instanceof PlayerInteractEvent) {

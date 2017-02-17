@@ -1,10 +1,8 @@
 package com.winthier.custom.entity;
 
 import com.winthier.custom.CustomPlugin;
-import com.winthier.custom.entity.EntityWatcher;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.entity.Entity;
 import org.bukkit.event.Event;
 
 /**
@@ -24,7 +22,7 @@ public class EntityContext {
      * unclear what is happening.  Use EntityContext.getPosition()
      * to make it clear.
      */
-    public static enum Position {
+    public enum Position {
         /**
          * EntityEvent.getEntity()
          */

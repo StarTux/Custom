@@ -6,7 +6,6 @@ import com.winthier.custom.item.CustomItem;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
-import org.bukkit.Bukkit;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
@@ -15,8 +14,8 @@ import org.bukkit.event.HandlerList;
  * custom things can listen to it and call the appropriate method
  * once it gets called.
  */
-public class CustomRegisterEvent extends Event {
-    // Event Stuff 
+public final class CustomRegisterEvent extends Event {
+    // Event Stuff
     private static HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlerList() {

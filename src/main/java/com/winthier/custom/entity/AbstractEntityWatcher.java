@@ -8,14 +8,14 @@ package com.winthier.custom.entity;
  */
 public abstract class AbstractEntityWatcher implements EntityWatcher {
     @Override
-    public void didSpawnEntity() {}
+    public void didSpawnEntity() { }
 
     @Override
-    public void didDiscoverEntity() {}
+    public void didDiscoverEntity() { }
 
     @Override
-    public void entityWillUnload() {}
+    public void entityWillUnload() { }
 
     @Override
-    public void entityDidUnload() {}
+    public void entityDidUnload() { }
 }

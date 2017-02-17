@@ -23,7 +23,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
  * registration.
  */
 @RequiredArgsConstructor
-public class InventoryManager implements Listener {
+public final class InventoryManager implements Listener {
     final CustomPlugin plugin;
     final Map<UUID, CustomInventory> inventories = new HashMap<>();
 

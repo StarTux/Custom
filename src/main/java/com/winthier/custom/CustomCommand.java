@@ -20,8 +20,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
-public class CustomCommand implements CommandExecutor {
-    final CustomPlugin plugin;
+final class CustomCommand implements CommandExecutor {
+    protected final CustomPlugin plugin;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -100,9 +100,9 @@ public class CustomCommand implements CommandExecutor {
             plugin.reload();
             Msg.info(sender, "Custom Plugin Reloaded");
         } else if (firstArg.equals("debug")) {
-            ItemContext context = plugin.getItemManager().getItemContext(player.getItemInHand());
+            ItemContext context = plugin.getItemManager().getItemContext(player.getInventory().getItemInMainHand());
             if (context == null) return true;
-            CustomConfig config = context.getConfig();
+            CustomConfig config = context.config;
             player.sendMessage(config.getCustomId() + " " + config.getRaw());
         }
         return true;

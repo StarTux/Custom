@@ -16,7 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
 @Getter @RequiredArgsConstructor
-public class EventManager {
+public final class EventManager {
     private final CustomPlugin plugin;
     private final Map<Class<? extends Event>, Map<EventPriority, EventDispatcher>> eventMap = new HashMap<>();
     private final Map<Event, ItemContext> itemContextMap = new WeakHashMap<>();
@@ -44,9 +44,8 @@ public class EventManager {
         EventDispatcher dispatcher;
         dispatcher = priorityMap.get(priority);
         if (dispatcher == null) {
-            if (null != (dispatcher = createEventDispatcher(event, priority))) {
-                priorityMap.put(priority, dispatcher);
-            }
+            dispatcher = createEventDispatcher(event, priority);
+            if (dispatcher != null) priorityMap.put(priority, dispatcher);
         }
         return dispatcher;
     }
@@ -58,7 +57,8 @@ public class EventManager {
             if (annotation == null) continue;
             // Get event class.
             Class<? extends Event> event;
-            if (null == (event = getEvent(method))) {
+            event = getEvent(method);
+            if (event == null) {
                 plugin.getLogger().warning("Bad event handler " + clazz.getName() + "." + method.getName() + "().");
                 continue;
             }

@@ -13,8 +13,7 @@ import org.bukkit.entity.Entity;
 @RequiredArgsConstructor
 public class EntityManager {
     final CustomPlugin plugin;
-    final EntityCrawler entityCrawler = new EntityCrawler(this);
-
+    private final EntityCrawler entityCrawler = new EntityCrawler(this);
     final Map<String, CustomEntity> customEntityMap = new HashMap<>();
     final Map<UUID, EntityWatcher> entityWatcherMap = new HashMap<>();
 

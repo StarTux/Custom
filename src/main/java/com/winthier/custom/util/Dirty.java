@@ -2,19 +2,18 @@ package com.winthier.custom.util;
 
 import com.winthier.custom.CustomConfig;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.List;
 import net.minecraft.server.v1_11_R1.*;
 import org.bukkit.craftbukkit.v1_11_R1.entity.*;
 import org.bukkit.craftbukkit.v1_11_R1.inventory.*;
 
-public class Dirty {
-    static Field fieldCraftItemStackHandle = null;
-    final static String KEY_ITEM_CUSTOM = "Winthier.Custom";
-    final static String KEY_ITEM_ID = "id";
-    final static String KEY_ITEM_TAG = "tag";
-    final static int NBT_TYPE_COMPOUND = 10;
-    final static int NBT_TYPE_STRING = 8;
+public final class Dirty {
+    private Dirty() { }
+    private static Field fieldCraftItemStackHandle = null;
+    private static final String KEY_ITEM_CUSTOM = "Winthier.Custom";
+    private static final String KEY_ITEM_ID = "id";
+    private static final String KEY_ITEM_TAG = "tag";
+    private static final int NBT_TYPE_COMPOUND = 10;
+    private static final int NBT_TYPE_STRING = 8;
 
     static Field getFieldCraftItemStackHandle() {
         if (fieldCraftItemStackHandle == null) {

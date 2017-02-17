@@ -3,7 +3,6 @@ package com.winthier.custom.entity;
 import com.winthier.custom.CustomConfig;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.event.EventHandler;
 
 public interface CustomEntity {
     /**

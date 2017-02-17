@@ -14,7 +14,7 @@ public interface CustomItem extends Listener {
      * Identifier to this Framework.
      */
     String getCustomId();
-    
+
     // Creation
 
     /**

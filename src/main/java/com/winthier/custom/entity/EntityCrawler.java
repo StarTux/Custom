@@ -13,14 +13,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter @RequiredArgsConstructor
 class EntityCrawler {
-    final EntityManager entityManager;
-    Iterator<Entity> serverEntities;
-    Iterator<UUID> customEntities;
-    static enum State {
+    private final EntityManager entityManager;
+    private Iterator<Entity> serverEntities;
+    private Iterator<UUID> customEntities;
+    enum State {
         SERVER, CUSTOM;
     }
-    State state = State.SERVER;
-    BukkitRunnable task;
+    private State state = State.SERVER;
+    private BukkitRunnable task;
 
     public void checkAll() {
         for (World world: entityManager.plugin.getServer().getWorlds()) {
@@ -44,7 +44,7 @@ class EntityCrawler {
         if (task == null) return;
         try {
             task.cancel();
-        } catch (IllegalStateException ise) {}
+        } catch (IllegalStateException ise) { }
         task = null;
     }
 

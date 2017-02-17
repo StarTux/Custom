@@ -4,21 +4,19 @@ import com.winthier.custom.util.Dirty;
 import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.Getter;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public final class CustomConfig {
-    final static String KEY_ENTITY_CUSTOM = "Winthier.Custom";
-    final static String KEY_ENTITY_SEPARATOR = ";";
+    static final String KEY_ENTITY_CUSTOM = "Winthier.Custom";
+    static final String KEY_ENTITY_SEPARATOR = ";";
 
-    @Getter final String customId;
-    Map<String, Object> raw = null; // lazy
-    String json;
+    @Getter
+    private final String customId;
+    private Map<String, Object> raw = null; // lazy
+    private String json;
 
     public CustomConfig(String customId, String json) {
         this.customId = customId;
@@ -87,8 +85,8 @@ public final class CustomConfig {
     }
 
     public void remove(String path) {
-        Map<String, Object> raw = getRaw();
-        if (raw != null) raw.remove(path);
+        Map<String, Object> thisRaw = getRaw();
+        if (thisRaw != null) thisRaw.remove(path);
     }
 
     // Serialization
@@ -112,10 +110,10 @@ public final class CustomConfig {
                 entity.removeScoreboardTag(tag);
             }
         }
-        String json = getJsonString();
+        String jsonString = getJsonString();
         String tag;
-        if (json != null) {
-            tag = KEY_ENTITY_CUSTOM + KEY_ENTITY_SEPARATOR + getCustomId() + KEY_ENTITY_SEPARATOR + json;
+        if (jsonString != null) {
+            tag = KEY_ENTITY_CUSTOM + KEY_ENTITY_SEPARATOR + getCustomId() + KEY_ENTITY_SEPARATOR + jsonString;
         } else {
             tag = KEY_ENTITY_CUSTOM + KEY_ENTITY_SEPARATOR + getCustomId();
         }

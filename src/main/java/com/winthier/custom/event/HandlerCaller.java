@@ -10,8 +10,8 @@ import org.bukkit.event.Listener;
  * Call one EventHandler routine.
  */
 @RequiredArgsConstructor
-public class HandlerCaller<L extends Listener> {
-    final Class<? extends Event> event;
+final class HandlerCaller<L extends Listener> {
+    final Class<? extends Event> eventClass;
     final L listener;
     final Method method;
     final boolean ignoreCancelled;
@@ -19,7 +19,7 @@ public class HandlerCaller<L extends Listener> {
     public void call(Event event) {
         if (ignoreCancelled && event instanceof Cancellable && ((Cancellable)event).isCancelled()) return;
         try {
-            method.invoke(listener, this.event.cast(event));
+            method.invoke(listener, eventClass.cast(event));
         } catch (Throwable t) {
             t.printStackTrace();
         }

@@ -4,18 +4,20 @@ import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 
+@Getter
 @RequiredArgsConstructor
-class BlockChunk {
+final class BlockChunk {
     @Value
-    static class Vector {
-        int x, z;
+    static final class Vector {
+        private final int x, z;
 
-        final static int ofBlock(int v) {
+        static int ofBlock(int v) {
             if (v < 0) {
                 return (v + 1) / 16 - 1;
             } else {
@@ -31,17 +33,17 @@ class BlockChunk {
             return new Vector(chunk.getX(), chunk.getZ());
         }
 
-        Vector relative(int x, int z) {
-            if (x == 0 && z == 0) return this;
-            return new Vector(this.x + x, this.z + z);
+        Vector relative(int dx, int dz) {
+            if (dx == 0 && dz == 0) return this;
+            return new Vector(x + dx, z + dz);
         }
     }
 
-    final BlockWorld blockWorld;
-    final BlockRegion blockRegion;
+    private final BlockWorld blockWorld;
+    private final BlockRegion blockRegion;
     final Vector position;
     final Map<BlockVector, CustomConfig> configs = new HashMap<>();
-    Map<Block, BlockWatcher> blocks = null;
+    private Map<Block, BlockWatcher> blocks = null;
     long lastUsed = 0;
 
     Map<Block, BlockWatcher> getBlocks() {
@@ -68,11 +70,6 @@ class BlockChunk {
     void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
         getBlocks().put(block, blockWatcher);
         configs.put(BlockVector.of(block), blockWatcher.getCustomConfig());
-        blockRegion.setDirty();
-    }
-
-    void setDirty() {
-        blockRegion.setDirty();
     }
 
     void load() {

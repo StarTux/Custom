@@ -9,27 +9,16 @@ import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.Value;
-import org.bukkit.block.Block;
 
 @RequiredArgsConstructor
-public class BlockRegion {
-    final static String FOLDER = "Winthier.Custom";
-    final static Comparator<BlockRegion> LAST_SAVE_COMPARATOR = new Comparator<BlockRegion>() {
-        @Override
-        public int compare(BlockRegion a, BlockRegion b) {
-            return Long.compare(a.lastSave, b.lastSave);
-        }
-    };
-
+final class BlockRegion {
     @Value
-    static class Vector {
-        int x, z;
+    static final class Vector {
+        private final int x, z;
 
-        final static int ofChunk(int v) {
+        static int ofChunk(int v) {
             if (v < 0) {
                 return (v + 1) / 32 - 1;
             } else {
@@ -42,21 +31,28 @@ public class BlockRegion {
         }
     }
 
-    final BlockWorld blockWorld;
-    final Vector position;
-    final Map<BlockChunk.Vector, BlockChunk> chunks = new HashMap<>();
+    static final String FOLDER = "Winthier.Custom";
+    static final Comparator<BlockRegion> LAST_SAVE_COMPARATOR = new Comparator<BlockRegion>() {
+        @Override
+        public int compare(BlockRegion a, BlockRegion b) {
+            return Long.compare(a.lastSave, b.lastSave);
+        }
+    };
+    private final BlockWorld blockWorld;
+    private final Vector position;
+    private final Map<BlockChunk.Vector, BlockChunk> chunks = new HashMap<>();
     long lastSave = 0;
 
-    BlockChunk getBlockChunk(BlockChunk.Vector position) {
-        BlockChunk result = chunks.get(position);
+    BlockChunk getBlockChunk(BlockChunk.Vector chunkPosition) {
+        BlockChunk result = chunks.get(chunkPosition);
         if (result == null) {
-            result = new BlockChunk(blockWorld, this, position);
-            chunks.put(position, result);
+            result = new BlockChunk(blockWorld, this, chunkPosition);
+            chunks.put(chunkPosition, result);
         }
         return result;
     }
 
-    final String getFileName() {
+    String getFileName() {
         return String.format("Region.%d.%d.Custom", position.x, position.z);
     }
 
@@ -71,6 +67,7 @@ public class BlockRegion {
             BlockChunk chunk = null;
             while (null != (line = in.readLine())) {
                 if (line.isEmpty()) {
+                    continue;
                 } else if (line.startsWith("Chunk;")) {
                     String[] tokens = line.split(";", 3);
                     int x = Integer.parseInt(tokens[1]);
@@ -83,11 +80,11 @@ public class BlockRegion {
                     int x = Integer.parseInt(tokens[1]);
                     int y = Integer.parseInt(tokens[2]);
                     int z = Integer.parseInt(tokens[3]);
-                    BlockVector position = BlockVector.of(x, y, z);
+                    BlockVector blockPosition = BlockVector.of(x, y, z);
                     String customId = tokens[4];
                     String json = tokens[5];
                     CustomConfig config = new CustomConfig(customId, json);
-                    chunk.configs.put(position, config);
+                    chunk.configs.put(blockPosition, config);
                 }
             }
         } catch (IOException ioe) {
@@ -114,9 +111,5 @@ public class BlockRegion {
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
-    }
-
-    void setDirty() {
-        blockWorld.blockManager.regionSaveList.add(this);
     }
 }

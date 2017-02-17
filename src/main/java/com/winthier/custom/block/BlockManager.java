@@ -15,12 +15,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter @RequiredArgsConstructor
-public class BlockManager {
-    final CustomPlugin plugin;
-    final Map<String, CustomBlock> customBlockMap = new HashMap<>();
-    final Map<String, BlockWorld> worlds = new HashMap<>();
-    final TreeSet<BlockRegion> regionSaveList = new TreeSet<>(BlockRegion.LAST_SAVE_COMPARATOR);
-    BukkitRunnable task = null;
+public final class BlockManager {
+    private final CustomPlugin plugin;
+    private final Map<String, CustomBlock> customBlockMap = new HashMap<>();
+    private final Map<String, BlockWorld> worlds = new HashMap<>();
+    private final TreeSet<BlockRegion> regionSaveList = new TreeSet<>(BlockRegion.LAST_SAVE_COMPARATOR);
+    private BukkitRunnable task = null;
 
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomBlock block: event.getBlocks()) {
@@ -47,7 +47,7 @@ public class BlockManager {
         saveAll();
         try {
             task.cancel();
-        } catch (IllegalStateException ise) {}
+        } catch (IllegalStateException ise) { }
         task = null;
     }
 
@@ -70,7 +70,7 @@ public class BlockManager {
     }
 
     public BlockWatcher getBlockWatcher(Block block) {
-        return getBlockWorld(block.getWorld()).getBlockWatcher(block);
+        return getBlockWorld(block.getWorld()).getBlockChunk(block).getBlockWatcher(block);
     }
 
     public CustomBlock getCustomBlock(String id) {
@@ -82,12 +82,14 @@ public class BlockManager {
     }
 
     public void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
-        // Implies setDirty()
-        getBlockWorld(block.getWorld()).setBlockWatcher(block, blockWatcher);
+        BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
+        blockChunk.setBlockWatcher(block, blockWatcher);
+        regionSaveList.add(blockChunk.getBlockRegion());
     }
 
     public void setDirty(Block block) {
-        getBlockWorld(block.getWorld()).getBlockChunk(block).setDirty();
+        BlockRegion blockRegion = getBlockWorld(block.getWorld()).getBlockChunk(block).getBlockRegion();
+        regionSaveList.add(blockRegion);
     }
 
     /**

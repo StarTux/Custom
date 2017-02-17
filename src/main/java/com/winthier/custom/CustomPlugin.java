@@ -6,22 +6,19 @@ import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
 import com.winthier.custom.inventory.InventoryManager;
-import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemManager;
 import lombok.Getter;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
-public class CustomPlugin extends JavaPlugin {
-    @Getter static CustomPlugin instance = null;
-    EventManager eventManager = new EventManager(this);
-    InventoryManager inventoryManager = new InventoryManager(this);
-    ItemManager itemManager;
-    EntityManager entityManager;
-    BlockManager blockManager;
+public final class CustomPlugin extends JavaPlugin {
+    @Getter private static CustomPlugin instance = null;
+    private EventManager eventManager = new EventManager(this);
+    private InventoryManager inventoryManager = new InventoryManager(this);
+    private ItemManager itemManager;
+    private EntityManager entityManager;
+    private BlockManager blockManager;
 
     @Override
     public void onEnable() {

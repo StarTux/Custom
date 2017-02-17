@@ -18,7 +18,7 @@ public interface CustomInventory {
     void onInventoryClick(InventoryClickEvent event);
     void onInventoryDrag(InventoryDragEvent event);
 
-    public static void closeInventory(final Player player) {
+    static void closeInventory(final Player player) {
         new BukkitRunnable() {
             @Override public void run() {
                 if (!player.isValid()) return;

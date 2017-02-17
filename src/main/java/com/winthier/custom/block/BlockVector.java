@@ -6,7 +6,7 @@ import org.bukkit.block.Block;
 
 @Value
 class BlockVector {
-    int x, y, z;
+    private final int x, y, z;
 
     static BlockVector of(int x, int y, int z) {
         return new BlockVector(x, y, z);

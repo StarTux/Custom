@@ -1,7 +1,6 @@
 package com.winthier.custom.entity;
 
 import com.winthier.custom.CustomConfig;
-import com.winthier.custom.entity.EntityContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
@@ -39,9 +38,9 @@ import org.spigotmc.event.entity.EntityMountEvent;
  */
 @Getter @RequiredArgsConstructor
 public class DefaultEntityWatcher extends AbstractEntityWatcher {
-    final Entity entity;
-    final CustomEntity customEntity;
-    final CustomConfig customConfig;
+    private final Entity entity;
+    private final CustomEntity customEntity;
+    private final CustomConfig customConfig;
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
@@ -52,7 +51,7 @@ public class DefaultEntityWatcher extends AbstractEntityWatcher {
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
         event.setCancelled(true);
     }
-    
+
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOW)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         event.setCancelled(true);

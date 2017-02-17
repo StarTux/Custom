@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -18,10 +17,10 @@ import org.bukkit.entity.Player;
 class BlockWorld {
     final BlockManager blockManager;
     final World world;
-    final Map<BlockRegion.Vector, BlockRegion> regions = new HashMap<>();
-    final Map<BlockChunk.Vector, BlockChunk> chunks = new HashMap<>();
-    final Set<BlockChunk.Vector> playerChunks = new HashSet<>();
-    final Set<BlockChunk.Vector> chunksToLoad = new HashSet<>();
+    private final Map<BlockRegion.Vector, BlockRegion> regions = new HashMap<>();
+    private final Map<BlockChunk.Vector, BlockChunk> chunks = new HashMap<>();
+    private final Set<BlockChunk.Vector> playerChunks = new HashSet<>();
+    private final Set<BlockChunk.Vector> chunksToLoad = new HashSet<>();
 
     BlockRegion getBlockRegion(BlockRegion.Vector position) {
         BlockRegion result = regions.get(position);
@@ -51,25 +50,17 @@ class BlockWorld {
         return result;
     }
 
-    BlockWatcher getBlockWatcher(Block block) {
-        return getBlockChunk(block).getBlockWatcher(block);
-    }
-
-    void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
-        getBlockChunk(block).setBlockWatcher(block, blockWatcher);
-    }
-
     void tick(List<Player> players) {
         playerChunks.clear();
         chunksToLoad.clear();
-        final int RADIUS = 5;
+        final int radius = 5;
         for (Player player: players) {
             if (!player.getWorld().equals(world)) continue;
             playerChunks.add(BlockChunk.Vector.of(player.getLocation().getBlock()));
         }
         for (BlockChunk.Vector vec: playerChunks) {
-            for (int z = -RADIUS; z <= RADIUS; ++z) {
-                for (int x = -RADIUS; x <= RADIUS; ++x) {
+            for (int z = -radius; z <= radius; ++z) {
+                for (int x = -radius; x <= radius; ++x) {
                     chunksToLoad.add(vec.relative(x, z));
                 }
             }
@@ -80,7 +71,7 @@ class BlockWorld {
         }
         // Unload obsolete chunks
         for (BlockChunk chunk: new ArrayList<>(chunks.values())) {
-            if (chunk.lastUsed + 1000*60 < now) {
+            if (chunk.lastUsed + 1000 * 60 < now) {
                 chunk.unload();
                 chunks.remove(chunk.position);
             }

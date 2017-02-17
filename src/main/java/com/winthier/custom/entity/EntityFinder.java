@@ -3,9 +3,7 @@ package com.winthier.custom.entity;
 import com.winthier.custom.CustomPlugin;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -52,7 +50,7 @@ import org.spigotmc.event.entity.EntityMountEvent;
  */
 @Getter @RequiredArgsConstructor
 public class EntityFinder implements Listener {
-    final CustomPlugin plugin;
+    private final CustomPlugin plugin;
 
     private void findEntity(Entity entity) {
         if (entity == null) return;
@@ -69,7 +67,7 @@ public class EntityFinder implements Listener {
     public void onPlayerInteractAtEntity(PlayerInteractAtEntityEvent event) {
         findEntity(event.getRightClicked());
     }
-    
+
     @EventHandler(ignoreCancelled = false, priority = EventPriority.LOWEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         findEntity(event.getEntity());
