@@ -72,6 +72,11 @@ final class BlockChunk {
         configs.put(BlockVector.of(block), blockWatcher.getCustomConfig());
     }
 
+    void removeBlockWatcher(Block block) {
+        getBlocks().remove(block);
+        configs.remove(BlockVector.of(block));
+    }
+
     void load() {
         for (BlockWatcher blockWatcher: getBlocks().values()) {
             CustomPlugin.getInstance().getEventManager().registerEvents(blockWatcher);

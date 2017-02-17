@@ -87,6 +87,12 @@ public final class BlockManager {
         regionSaveList.add(blockChunk.getBlockRegion());
     }
 
+    public void removeBlockWatcher(Block block) {
+        BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
+        blockChunk.removeBlockWatcher(block);
+        regionSaveList.add(blockChunk.getBlockRegion());
+    }
+
     public void setDirty(Block block) {
         BlockRegion blockRegion = getBlockWorld(block.getWorld()).getBlockChunk(block).getBlockRegion();
         regionSaveList.add(blockRegion);
