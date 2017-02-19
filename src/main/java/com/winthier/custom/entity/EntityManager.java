@@ -17,44 +17,7 @@ public class EntityManager {
     final Map<String, CustomEntity> customEntityMap = new HashMap<>();
     final Map<UUID, EntityWatcher> entityWatcherMap = new HashMap<>();
 
-    /**
-     * Internal use only!
-     *
-     * Call the CustomRegisterEvent to give all clients a chance
-     * to register their custom entities, then give it to this
-     * function.
-     */
-    public void onCustomRegister(CustomRegisterEvent event) {
-        for (CustomEntity customEntity: event.getEntities()) {
-            if (customEntityMap.containsKey(customEntity.getCustomId())) {
-                plugin.getLogger().warning("Entity Manager: Duplicate entity ID: " + customEntity.getCustomId());
-            } else {
-                customEntityMap.put(customEntity.getCustomId(), customEntity);
-                plugin.getLogger().info("Registered entity: " + customEntity.getCustomId());
-            }
-        }
-    }
-
-    /**
-     * Internal use only!
-     *
-     * Call this once, after entities have been registered via
-     * onCustomRegister(), so this manager instance can do its
-     * work.
-     */
-    public void onEnable() {
-        entityCrawler.checkAll();
-        entityCrawler.start();
-    }
-
-    /**
-     * Internal use only!
-     *
-     * Call this once when the task of this instance is over.
-     */
-    public void onDisable() {
-        entityCrawler.stop();
-    }
+    // Public use methods
 
     /**
      * Find the corresponding EntityWatcher for any entity.  If
@@ -110,6 +73,82 @@ public class EntityManager {
         return customEntityMap.get(id);
     }
 
+    public EntityWatcher wrapEntity(Entity entity, CustomConfig config) {
+        CustomEntity customEntity = getCustomEntity(config);
+        if (customEntity == null) throw new IllegalArgumentException("Unknown custom entity: " + config.getCustomId());
+        EntityWatcher entityWatcher = customEntity.createEntityWatcher(entity, config);
+        if (entityWatcher == null) entityWatcher = new DefaultEntityWatcher(entity, customEntity, config);
+        watchEntity(entityWatcher);
+        return entityWatcher;
+    }
+
+    public EntityWatcher wrapEntity(Entity entity, String customId) {
+        return wrapEntity(entity, new CustomConfig(customId, (String)null));
+    }
+
+    public EntityWatcher spawnEntity(Location location, CustomConfig config) {
+        CustomEntity customEntity = getCustomEntity(config);
+        if (customEntity == null) throw new IllegalArgumentException("Unknown custom entity: " + config.getCustomId());
+        Entity entity = customEntity.spawnEntity(location, config);
+        if (entity == null) return null;
+        EntityWatcher entityWatcher = customEntity.createEntityWatcher(entity, config);
+        if (entityWatcher == null) entityWatcher = new DefaultEntityWatcher(entity, customEntity, config);
+        watchEntity(entityWatcher);
+        return entityWatcher;
+    }
+
+    public EntityWatcher spawnEntity(Location location, String customId) {
+        return spawnEntity(location, new CustomConfig(customId, (String)null));
+    }
+
+    /**
+     * Remove an EntityWatcher from the framework.
+     */
+    public void removeEntity(EntityWatcher watcher) {
+        entityWatcherMap.remove(watcher.getEntity().getUniqueId());
+        plugin.getEventManager().unregisterEvents(watcher);
+    }
+
+    // Internal use methods
+
+    /**
+     * Internal use only!
+     *
+     * Call the CustomRegisterEvent to give all clients a chance
+     * to register their custom entities, then give it to this
+     * function.
+     */
+    public void onCustomRegister(CustomRegisterEvent event) {
+        for (CustomEntity customEntity: event.getEntities()) {
+            if (customEntityMap.containsKey(customEntity.getCustomId())) {
+                plugin.getLogger().warning("Entity Manager: Duplicate entity ID: " + customEntity.getCustomId());
+            } else {
+                customEntityMap.put(customEntity.getCustomId(), customEntity);
+                plugin.getLogger().info("Registered entity: " + customEntity.getCustomId());
+            }
+        }
+    }
+
+    /**
+     * Internal use only!
+     *
+     * Call this once, after entities have been registered via
+     * onCustomRegister(), so this manager instance can do its
+     * work.
+     */
+    public void onEnable() {
+        entityCrawler.checkAll();
+        entityCrawler.start();
+    }
+
+    /**
+     * Internal use only!
+     *
+     * Call this once when the task of this instance is over.
+     */
+    public void onDisable() {
+        entityCrawler.stop();
+    }
     /**
      * Internal use only!
      *
@@ -120,15 +159,5 @@ public class EntityManager {
     public void watchEntity(EntityWatcher watcher) {
         entityWatcherMap.put(watcher.getEntity().getUniqueId(), watcher);
         plugin.getEventManager().registerEvents(watcher);
-    }
-
-    /**
-     * Internal use only!
-     *
-     * Remove an EntityWatcher from the framework.
-     */
-    public void removeEntity(EntityWatcher watcher) {
-        entityWatcherMap.remove(watcher.getEntity().getUniqueId());
-        plugin.getEventManager().unregisterEvents(watcher);
     }
 }
