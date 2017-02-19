@@ -51,7 +51,7 @@ public final class CustomConfig {
     }
 
     public String getString(String path, String dfl) {
-        if (getRaw() == null) return null;
+        if (getRaw() == null) return dfl;
         Object o = raw.get(path);
         if (o == null) {
             return dfl;
@@ -62,8 +62,8 @@ public final class CustomConfig {
         }
     }
 
-    public Integer getInt(String path, Integer dfl) {
-        if (getRaw() == null) return null;
+    public int getInt(String path, int dfl) {
+        if (getRaw() == null) return dfl;
         Object o = raw.get(path);
         if (o == null) {
             return dfl;
