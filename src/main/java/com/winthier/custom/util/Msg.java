@@ -105,15 +105,18 @@ public final class Msg {
         List<String> lines = new ArrayList<>();
         if (words.length == 0) return lines;
         StringBuilder line = new StringBuilder(words[0]);
-        int i = 1;
-        while (i < words.length) {
-            String word = words[i++];
-            if (line.length() + word.length() > maxLineLength) {
+        int lineLength = ChatColor.stripColor(words[0]).length();
+        for (int i = 1; i < words.length; ++i) {
+            String word = words[i];
+            int wordLength = ChatColor.stripColor(word).length();
+            if (lineLength + wordLength > maxLineLength) {
                 lines.add(line.toString());
                 line = new StringBuilder(word);
+                lineLength = wordLength;
             } else {
                 line.append(" ");
                 line.append(word);
+                lineLength += wordLength + 1;
             }
         }
         if (line.length() > 0) lines.add(line.toString());
