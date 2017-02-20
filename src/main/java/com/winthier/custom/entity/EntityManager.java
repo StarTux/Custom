@@ -11,7 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 
 @RequiredArgsConstructor
-public class EntityManager {
+public final class EntityManager {
     final CustomPlugin plugin;
     private final EntityCrawler entityCrawler = new EntityCrawler(this);
     final Map<String, CustomEntity> customEntityMap = new HashMap<>();
