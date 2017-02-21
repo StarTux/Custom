@@ -30,6 +30,12 @@ public final class CustomConfig {
         this.json = null;
     }
 
+    public CustomConfig(String customId) {
+        this.customId = customId;
+        this.raw = null;
+        this.json = null;
+    }
+
     // Getters
 
     public Map<String, Object> getRaw() {

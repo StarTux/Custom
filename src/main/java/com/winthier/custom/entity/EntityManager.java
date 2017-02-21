@@ -83,7 +83,7 @@ public final class EntityManager {
     }
 
     public EntityWatcher wrapEntity(Entity entity, String customId) {
-        return wrapEntity(entity, new CustomConfig(customId, (String)null));
+        return wrapEntity(entity, new CustomConfig(customId));
     }
 
     public EntityWatcher spawnEntity(Location location, CustomConfig config) {
@@ -98,7 +98,7 @@ public final class EntityManager {
     }
 
     public EntityWatcher spawnEntity(Location location, String customId) {
-        return spawnEntity(location, new CustomConfig(customId, (String)null));
+        return spawnEntity(location, new CustomConfig(customId));
     }
 
     /**

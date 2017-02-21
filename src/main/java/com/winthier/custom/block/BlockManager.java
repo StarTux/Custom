@@ -53,7 +53,7 @@ public final class BlockManager {
     }
 
     public BlockWatcher setBlock(Block block, String customId) {
-        return setBlock(block, new CustomConfig(customId, (String)null));
+        return setBlock(block, new CustomConfig(customId));
     }
 
     public BlockWatcher wrapBlock(Block block, CustomConfig config) {
@@ -66,7 +66,7 @@ public final class BlockManager {
     }
 
     public BlockWatcher wrapBlock(Block block, String customId) {
-        return wrapBlock(block, new CustomConfig(customId, (String)null));
+        return wrapBlock(block, new CustomConfig(customId));
     }
 
     public void removeBlock(Block block) {

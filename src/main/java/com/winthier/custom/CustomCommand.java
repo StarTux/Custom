@@ -51,7 +51,7 @@ final class CustomCommand implements CommandExecutor {
                 Msg.warn(player, "Item not found: %s.", itemId);
                 return true;
             }
-            CustomConfig config = new CustomConfig(itemId, (String)null);
+            CustomConfig config = new CustomConfig(itemId);
             ItemStack item = customItem.spawnItemStack(amount, config);
             item = config.save(item);
             target.getWorld().dropItemNaturally(target.getEyeLocation(), item).setPickupDelay(0);
@@ -63,7 +63,7 @@ final class CustomCommand implements CommandExecutor {
                 Msg.warn(sender, "Custom entity not found: %s.", name);
                 return true;
             }
-            CustomConfig config = new CustomConfig(customEntity.getCustomId(), (String)null);
+            CustomConfig config = new CustomConfig(customEntity.getCustomId());
             Entity entity = customEntity.spawnEntity(player.getLocation(), config);
             if (entity == null) {
                 Msg.warn(sender, "Failed to spawn custom entity: %s.", name);
@@ -82,7 +82,7 @@ final class CustomCommand implements CommandExecutor {
                 return true;
             }
             Block block = player.getLocation().getBlock();
-            CustomConfig config = new CustomConfig(customId, (String)null);
+            CustomConfig config = new CustomConfig(customId);
             customBlock.setBlock(block, config);
             BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
             if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
