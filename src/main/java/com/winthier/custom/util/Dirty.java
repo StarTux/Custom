@@ -3,9 +3,10 @@ package com.winthier.custom.util;
 import com.winthier.custom.CustomConfig;
 import java.lang.reflect.Field;
 import java.util.UUID;
-import net.minecraft.server.v1_11_R1.*;
-import org.bukkit.craftbukkit.v1_11_R1.entity.*;
-import org.bukkit.craftbukkit.v1_11_R1.inventory.*;
+import net.minecraft.server.v1_11_R1.ItemStack;
+import net.minecraft.server.v1_11_R1.NBTTagCompound;
+import net.minecraft.server.v1_11_R1.NBTTagList;
+import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 
 public final class Dirty {
     private Dirty() { }
