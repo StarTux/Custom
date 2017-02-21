@@ -1,6 +1,7 @@
 package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
+import com.winthier.custom.block.BlockContext;
 import com.winthier.custom.entity.EntityContext;
 import com.winthier.custom.item.ItemContext;
 import java.lang.reflect.Method;
@@ -21,6 +22,7 @@ public final class EventManager {
     private final Map<Class<? extends Event>, Map<EventPriority, EventDispatcher>> eventMap = new HashMap<>();
     private final Map<Event, ItemContext> itemContextMap = new WeakHashMap<>();
     private final Map<Event, EntityContext> entityContextMap = new WeakHashMap<>();
+    private final Map<Event, BlockContext> blockContextMap = new WeakHashMap<>();
 
     private EventDispatcher createEventDispatcher(Class<? extends Event> event, EventPriority priority) {
         EventDispatcher result = new EventDispatcher(this, event, priority);
