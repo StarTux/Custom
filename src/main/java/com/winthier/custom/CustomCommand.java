@@ -3,7 +3,6 @@ package com.winthier.custom;
 import com.winthier.custom.block.BlockWatcher;
 import com.winthier.custom.block.CustomBlock;
 import com.winthier.custom.block.DefaultBlockWatcher;
-import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemContext;

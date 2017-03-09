@@ -2,11 +2,9 @@ package com.winthier.custom;
 
 import com.winthier.custom.util.Dirty;
 import com.winthier.custom.util.Msg;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 
 public final class CustomConfig {
