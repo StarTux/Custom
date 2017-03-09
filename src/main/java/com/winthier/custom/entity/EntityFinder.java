@@ -208,14 +208,13 @@ public class EntityFinder implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onChunkUnload(ChunkUnloadEvent event) {
-        EntityManager entityManager = plugin.getEntityManager();
-        if (entityManager == null) return;
         for (Entity entity: event.getChunk().getEntities()) {
-            EntityWatcher entityWatcher = entityManager.getEntityWatcher(entity);
+            EntityWatcher entityWatcher = plugin.getEntityManager().getEntityWatcher(entity);
             if (entityWatcher == null) continue;
-            entityWatcher.entityWillUnload();
-            entityManager.removeEntity(entityWatcher);
-            entityWatcher.entityDidUnload();
+            CustomEntity customEntity = entityWatcher.getCustomEntity();
+            customEntity.entityWillUnload(entityWatcher);
+            plugin.getEntityManager().removeEntity(entityWatcher);
+            customEntity.entityDidUnload(entityWatcher);
         }
     }
 }

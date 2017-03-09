@@ -86,7 +86,7 @@ public final class EventManager {
     private Class<? extends Event> getEvent(Method method) {
         if (Void.TYPE != method.getReturnType()) return null;
         Class<?>[] params = method.getParameterTypes();
-        if (params.length != 1) return null;
+        if (params.length < 1) return null;
         if (!Event.class.isAssignableFrom(params[0])) return null;
         return (Class<? extends Event>)params[0];
     }

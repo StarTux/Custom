@@ -110,40 +110,9 @@ public final class CustomConfig {
         return Dirty.saveConfig(itemStack, this);
     }
 
-    public void save(Entity entity) {
-        for (String tag: new ArrayList<>(entity.getScoreboardTags())) {
-            if (tag.startsWith(KEY_ENTITY_CUSTOM)) {
-                entity.removeScoreboardTag(tag);
-            }
-        }
-        String jsonString = getJsonString();
-        String tag;
-        if (jsonString != null) {
-            tag = KEY_ENTITY_CUSTOM + KEY_ENTITY_SEPARATOR + getCustomId() + KEY_ENTITY_SEPARATOR + jsonString;
-        } else {
-            tag = KEY_ENTITY_CUSTOM + KEY_ENTITY_SEPARATOR + getCustomId();
-        }
-        entity.addScoreboardTag(tag);
-    }
-
     // Deserialization
 
     public static CustomConfig of(ItemStack item) {
         return Dirty.loadConfig(item);
-    }
-
-    public static CustomConfig of(Entity entity) {
-        String tag = null;
-        for (String aTag: entity.getScoreboardTags()) {
-            if (aTag.startsWith(KEY_ENTITY_CUSTOM)) {
-                tag = aTag;
-                break;
-            }
-        }
-        if (tag == null) return null;
-        String[] tokens = tag.split(KEY_ENTITY_SEPARATOR, 3);
-        String id = tokens[1];
-        String json = tokens.length == 3 ? tokens[2] : null;
-        return new CustomConfig(id, json);
     }
 }

@@ -4,7 +4,6 @@ import com.winthier.custom.block.BlockWatcher;
 import com.winthier.custom.block.CustomBlock;
 import com.winthier.custom.block.DefaultBlockWatcher;
 import com.winthier.custom.entity.CustomEntity;
-import com.winthier.custom.entity.DefaultEntityWatcher;
 import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemContext;
@@ -15,7 +14,6 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -57,23 +55,13 @@ final class CustomCommand implements CommandExecutor {
             target.getWorld().dropItemNaturally(target.getEyeLocation(), item).setPickupDelay(0);
             Msg.info(player, "Item spawned for %s.", target.getName());
         } else if (firstArg.equals("summon") && args.length == 2) {
-            String name = args[1];
-            CustomEntity customEntity = plugin.getEntityManager().getCustomEntity(name);
-            if (customEntity == null) {
-                Msg.warn(sender, "Custom entity not found: %s.", name);
+            String customId = args[1];
+            EntityWatcher entityWatcher = plugin.getEntityManager().spawnEntity(player.getLocation(), customId);
+            if (entityWatcher == null) {
+                Msg.warn(sender, "Failed to spawn custom entity: %s.", customId);
                 return true;
             }
-            CustomConfig config = new CustomConfig(customEntity.getCustomId());
-            Entity entity = customEntity.spawnEntity(player.getLocation(), config);
-            if (entity == null) {
-                Msg.warn(sender, "Failed to spawn custom entity: %s.", name);
-                return true;
-            }
-            config.save(entity);
-            EntityWatcher watcher = customEntity.createEntityWatcher(entity, config);
-            if (watcher == null) watcher = new DefaultEntityWatcher(entity, customEntity, config);
-            plugin.getEntityManager().watchEntity(watcher);
-            Msg.info(sender, "Custom entity spawned: %s.", customEntity.getCustomId());
+            Msg.info(sender, "Custom entity spawned: %s.", customId);
         } else if (firstArg.equals("setblock") && args.length == 2) {
             String customId = args[1];
             CustomBlock customBlock = plugin.getBlockManager().getCustomBlock(customId);

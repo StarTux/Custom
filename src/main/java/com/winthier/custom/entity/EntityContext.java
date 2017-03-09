@@ -1,26 +1,23 @@
 package com.winthier.custom.entity;
 
-import com.winthier.custom.CustomPlugin;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.event.Event;
+import org.bukkit.entity.Entity;
 
 /**
  * Store additional event information not contained in the event
- * itself.  The EventManager or its worker classes will create an
- * instance of this class for each event and store it.  The
- * CustomEntity can retrieve it within the EventHandler by calling
- * the static of() method.
+ * itself.  The EntityEventCaller will create an instance of this
+ * class for each event and give it to the EventHandler method as the
+ * second parameter.
  */
 @Getter @RequiredArgsConstructor
 public class EntityContext {
     /**
-     * The position of the customized entity.  Most EntityEvents
-     * have nothing but the main entity found in getEntity(), in
-     * which case this will return ENTITY.  However, some events
-     * pertain to more than one entity, in which case it can be
-     * unclear what is happening.  Use EntityContext.getPosition()
-     * to make it clear.
+     * The position of the customized entity.  Most EntityEvents have
+     * nothing but the main entity found in getEntity(), in which case
+     * this will return ENTITY.  However, some events pertain to more
+     * than one entity, in which case it can be unclear which entity
+     * the specific event call is referring to.
      */
     public enum Position {
         /**
@@ -45,26 +42,8 @@ public class EntityContext {
         SPLASHED,
     }
 
-    final Position position;
-
-    /**
-     * Internal use only!
-     */
-    public void save(Event event) {
-        CustomPlugin.getInstance().getEventManager().getEntityContextMap().put(event, this);
-    }
-
-    /**
-     * Internal use only!
-     */
-    public void remove(Event event) {
-        CustomPlugin.getInstance().getEventManager().getEntityContextMap().remove(event);
-    }
-
-    /**
-     * Retrieve the stored context for the given event.
-     */
-    public static EntityContext of(Event event) {
-        return CustomPlugin.getInstance().getEventManager().getEntityContextMap().get(event);
-    }
+    private final Entity entity;
+    private final CustomEntity customEntity;
+    private final EntityWatcher entityWatcher;
+    private final Position position;
 }

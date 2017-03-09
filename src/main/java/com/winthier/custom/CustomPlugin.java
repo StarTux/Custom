@@ -37,6 +37,7 @@ public final class CustomPlugin extends JavaPlugin {
     public void onDisable() {
         unload();
         inventoryManager.onDisable();
+        instance = null;
     }
 
     void unload() {

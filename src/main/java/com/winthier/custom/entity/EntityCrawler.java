@@ -83,7 +83,7 @@ class EntityCrawler {
                         EntityWatcher entityWatcher = entityManager.entityWatcherMap.get(uuid);
                         if (entityWatcher != null && !entityWatcher.getEntity().isValid()) {
                             entityManager.removeEntity(entityWatcher);
-                            entityWatcher.entityDidUnload();
+                            entityWatcher.getCustomEntity().entityDidUnload(entityWatcher);
                             Location loc = entityWatcher.getEntity().getLocation();
                             entityManager.plugin.getLogger().warning(String.format("Custom entity %s did disappear at %s %d %d %d", entityWatcher.getCustomEntity().getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
                         }
