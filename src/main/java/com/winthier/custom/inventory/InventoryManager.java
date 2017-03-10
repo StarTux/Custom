@@ -24,8 +24,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
  */
 @RequiredArgsConstructor
 public final class InventoryManager implements Listener {
-    final CustomPlugin plugin;
-    final Map<UUID, CustomInventory> inventories = new HashMap<>();
+    private final CustomPlugin plugin;
+    private final Map<UUID, CustomInventory> inventories = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOW)
     void onInventoryOpen(InventoryOpenEvent event) {

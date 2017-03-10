@@ -7,5 +7,5 @@ import org.bukkit.inventory.Inventory;
 @Getter
 @RequiredArgsConstructor
 public class DefaultCustomInventory extends AbstractCustomInventory {
-    final Inventory inventory;
+    private final Inventory inventory;
 }
