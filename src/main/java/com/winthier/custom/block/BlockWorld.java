@@ -15,8 +15,8 @@ import org.bukkit.entity.Player;
 
 @Getter @RequiredArgsConstructor
 class BlockWorld {
-    final BlockManager blockManager;
-    final World world;
+    private final BlockManager blockManager;
+    private final World world;
     private final Map<BlockRegion.Vector, BlockRegion> regions = new HashMap<>();
     private final Map<BlockChunk.Vector, BlockChunk> chunks = new HashMap<>();
     private final Set<BlockChunk.Vector> playerChunks = new HashSet<>();
@@ -45,7 +45,6 @@ class BlockWorld {
         if (result == null) {
             result = getBlockRegion(BlockRegion.Vector.of(position)).getBlockChunk(position);
             chunks.put(position, result);
-            result.load();
         }
         return result;
     }
@@ -67,13 +66,14 @@ class BlockWorld {
         }
         long now = System.currentTimeMillis();
         for (BlockChunk.Vector vec: chunksToLoad) {
-            getBlockChunk(vec).lastUsed = now;
+            getBlockChunk(vec).getBlockWatchers();
+            getBlockChunk(vec).setLastUsed(now);
         }
         // Unload obsolete chunks
         for (BlockChunk chunk: new ArrayList<>(chunks.values())) {
-            if (chunk.lastUsed + 1000 * 60 < now) {
+            if (chunk.getLastUsed() + 1000 * 60 < now) {
                 chunk.unload();
-                chunks.remove(chunk.position);
+                chunks.remove(chunk.getPosition());
             }
         }
     }

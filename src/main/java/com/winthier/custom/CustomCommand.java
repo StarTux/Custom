@@ -1,8 +1,6 @@
 package com.winthier.custom;
 
 import com.winthier.custom.block.BlockWatcher;
-import com.winthier.custom.block.CustomBlock;
-import com.winthier.custom.block.DefaultBlockWatcher;
 import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemContext;
@@ -18,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 final class CustomCommand implements CommandExecutor {
-    protected final CustomPlugin plugin;
+    private final CustomPlugin plugin;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -63,18 +61,9 @@ final class CustomCommand implements CommandExecutor {
             Msg.info(sender, "Custom entity spawned: %s.", customId);
         } else if (firstArg.equals("setblock") && args.length == 2) {
             String customId = args[1];
-            CustomBlock customBlock = plugin.getBlockManager().getCustomBlock(customId);
-            if (customBlock == null) {
-                Msg.warn(player, "Custom block not found: %s", customId);
-                return true;
-            }
             Block block = player.getLocation().getBlock();
-            CustomConfig config = new CustomConfig(customId);
-            customBlock.setBlock(block, config);
-            BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
-            if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
-            plugin.getBlockManager().addBlockWatcher(blockWatcher);
-            Msg.info(player, "Custom block '%s' created at: %d %d %d", customBlock.getCustomId(), block.getX(), block.getY(), block.getZ());
+            BlockWatcher blockWatcher = plugin.getBlockManager().setBlock(block, customId);
+            Msg.info(player, "Custom block '%s' created at: %d %d %d", blockWatcher.getCustomBlock().getCustomId(), block.getX(), block.getY(), block.getZ());
         } else if (firstArg.equals("getblock") && args.length == 1) {
             Block block = player.getLocation().getBlock();
             BlockWatcher blockWatcher = plugin.getBlockManager().getBlockWatcher(block);

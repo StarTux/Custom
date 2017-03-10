@@ -9,11 +9,11 @@ import org.bukkit.event.Listener;
  * Call one EventHandler routine.
  */
 final class HandlerCaller<L extends Listener> {
-    final Class<? extends Event> eventClass;
-    final L listener;
-    final Method method;
-    final boolean ignoreCancelled;
-    final boolean withContextArg;
+    private final Class<? extends Event> eventClass;
+    private final L listener;
+    private final Method method;
+    private final boolean ignoreCancelled;
+    private final boolean withContextArg;
 
     HandlerCaller(Class<? extends Event> eventClass, L listener, Method method, boolean ignoreCancelled) {
         this.eventClass = eventClass;

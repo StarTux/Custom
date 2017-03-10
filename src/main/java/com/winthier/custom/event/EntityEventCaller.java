@@ -21,7 +21,7 @@ import org.spigotmc.event.entity.EntityMountEvent;
 
 @RequiredArgsConstructor
 abstract class EntityEventCaller {
-    final EventDispatcher dispatcher;
+    private final EventDispatcher dispatcher;
 
     abstract void call(Event event);
 
@@ -30,7 +30,7 @@ abstract class EntityEventCaller {
         EntityWatcher entityWatcher = CustomPlugin.getInstance().getEntityManager().getEntityWatcher(entity);
         if (entityWatcher == null) return;
         CustomEntity customEntity = entityWatcher.getCustomEntity();
-        HandlerCaller<CustomEntity> handlerCaller = dispatcher.entities.get(customEntity.getCustomId());
+        HandlerCaller<CustomEntity> handlerCaller = dispatcher.getEntities().get(customEntity.getCustomId());
         if (handlerCaller == null) return;
         EntityContext context = new EntityContext(entity, customEntity, entityWatcher, position);
         handlerCaller.call(event, context);

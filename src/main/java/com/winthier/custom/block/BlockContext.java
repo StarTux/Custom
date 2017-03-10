@@ -1,10 +1,10 @@
 package com.winthier.custom.block;
 
-import com.winthier.custom.CustomPlugin;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.event.Event;
+import org.bukkit.block.Block;
 
-@RequiredArgsConstructor
+@Getter @RequiredArgsConstructor
 public final class BlockContext {
     public enum Position {
         /**
@@ -21,26 +21,8 @@ public final class BlockContext {
         EXPLODE_LIST,
     }
 
-    public final Position position;
-
-    /**
-     * Internal use only!
-     */
-    public void save(Event event) {
-        CustomPlugin.getInstance().getEventManager().getBlockContextMap().put(event, this);
-    }
-
-    /**
-     * Internal use only!
-     */
-    public void remove(Event event) {
-        CustomPlugin.getInstance().getEventManager().getBlockContextMap().remove(event);
-    }
-
-    /**
-     * For public use.
-     */
-    public static BlockContext of(Event event) {
-        return CustomPlugin.getInstance().getEventManager().getBlockContextMap().get(event);
-    }
+    private final Block block;
+    private final CustomBlock customBlock;
+    private final BlockWatcher blockWatcher;
+    private final Position position;
 }

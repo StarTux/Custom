@@ -30,11 +30,11 @@ public final class CustomRegisterEvent extends Event {
     // My Stuff
 
     @Getter
-    final List<CustomItem> items = new ArrayList<>();
+    private final List<CustomItem> items = new ArrayList<>();
     @Getter
-    final List<CustomEntity> entities = new ArrayList<>();
+    private final List<CustomEntity> entities = new ArrayList<>();
     @Getter
-    final List<CustomBlock> blocks = new ArrayList<>();
+    private final List<CustomBlock> blocks = new ArrayList<>();
 
     public void addItem(CustomItem item) {
         items.add(item);

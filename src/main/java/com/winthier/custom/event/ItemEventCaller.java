@@ -51,7 +51,7 @@ abstract class ItemEventCaller {
         if (config == null) return;
         CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
         if (customItem == null) return;
-        HandlerCaller handlerCaller = dispatcher.items.get(customItem.getCustomId());
+        HandlerCaller handlerCaller = dispatcher.getItems().get(customItem.getCustomId());
         if (handlerCaller == null) return;
         ItemContext context = new ItemContext(player, customItem, item, position, config);
         context.save(event);
@@ -66,7 +66,7 @@ abstract class ItemEventCaller {
         if (config == null) return;
         CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
         if (customItem == null) return;
-        HandlerCaller handlerCaller = dispatcher.items.get(customItem.getCustomId());
+        HandlerCaller handlerCaller = dispatcher.getItems().get(customItem.getCustomId());
         if (handlerCaller == null) return;
         ItemContext context = new ItemContext(player, customItem, item, position, config);
         context.save(event);

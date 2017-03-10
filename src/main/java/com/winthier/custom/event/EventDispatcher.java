@@ -1,6 +1,6 @@
 package com.winthier.custom.event;
 
-import com.winthier.custom.block.BlockWatcher;
+import com.winthier.custom.block.CustomBlock;
 import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.item.CustomItem;
 import java.lang.reflect.Method;
@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.block.Block;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,9 +22,9 @@ class EventDispatcher implements Listener, EventExecutor {
     private final EventManager eventManager;
     private final Class<? extends Event> eventClass;
     private final EventPriority priority;
-    final Map<String, HandlerCaller<CustomItem>> items = new HashMap<>();
-    final Map<String, HandlerCaller<CustomEntity>> entities = new HashMap<>();
-    final Map<Block, HandlerCaller<BlockWatcher>> blocks = new HashMap<>();
+    private final Map<String, HandlerCaller<CustomItem>> items = new HashMap<>();
+    private final Map<String, HandlerCaller<CustomEntity>> entities = new HashMap<>();
+    private final Map<String, HandlerCaller<CustomBlock>> blocks = new HashMap<>();
     private ItemEventCaller itemEventCaller = null;
     private EntityEventCaller entityEventCaller = null;
     private BlockEventCaller blockEventCaller = null;
@@ -62,17 +61,10 @@ class EventDispatcher implements Listener, EventExecutor {
             HandlerCaller<CustomEntity> caller = new HandlerCaller<>(eventClass, customEntity, method, ignoreCancelled);
             entities.put(customEntity.getCustomId(), caller);
         }
-        if (listener instanceof BlockWatcher) {
-            BlockWatcher blockWatcher = (BlockWatcher)listener;
-            HandlerCaller<BlockWatcher> caller = new HandlerCaller<>(eventClass, blockWatcher, method, ignoreCancelled);
-            blocks.put(blockWatcher.getBlock(), caller);
-        }
-    }
-
-    void unregisterEvent(Listener listener) {
-        if (listener instanceof BlockWatcher) {
-            BlockWatcher blockWatcher = (BlockWatcher)listener;
-            blocks.remove(blockWatcher.getBlock());
+        if (listener instanceof CustomBlock) {
+            CustomBlock customBlock = (CustomBlock)listener;
+            HandlerCaller<CustomBlock> caller = new HandlerCaller<>(eventClass, customBlock, method, ignoreCancelled);
+            blocks.put(customBlock.getCustomId(), caller);
         }
     }
 

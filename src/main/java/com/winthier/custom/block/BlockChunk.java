@@ -1,17 +1,17 @@
 package com.winthier.custom.block;
 
-import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 
-@Getter
-@RequiredArgsConstructor
+@Getter @RequiredArgsConstructor
 final class BlockChunk {
     @Value
     static final class Vector {
@@ -39,64 +39,71 @@ final class BlockChunk {
         }
     }
 
+    @Data
+    static final class BlockData {
+        private final String customId;
+        private final Object data;
+    }
+
     private final BlockWorld blockWorld;
     private final BlockRegion blockRegion;
-    final Vector position;
-    final Map<BlockVector, CustomConfig> configs = new HashMap<>();
-    private Map<Block, BlockWatcher> blocks = null;
-    long lastUsed = 0;
+    private final Vector position;
+    // Filled by the owning BlockRegion via setBlockData().
+    private final Map<BlockVector, BlockData> dataMap = new HashMap<>();
+    private Map<Block, BlockWatcher> blockWatchers;
+    @Setter private long lastUsed = 0;
 
-    Map<Block, BlockWatcher> getBlocks() {
-        if (blocks == null) {
-            blocks = new HashMap<>();
-            for (Map.Entry<BlockVector, CustomConfig> entry: configs.entrySet()) {
+    /**
+     * Only called by BlockRegion during loading!
+     */
+    void setBlockData(BlockVector vector, String customId, Object customData) {
+        dataMap.put(vector, new BlockData(customId, customData));
+    }
+
+    Map<Block, BlockWatcher> getBlockWatchers() {
+        if (blockWatchers == null) {
+            blockWatchers = new HashMap<>();
+            for (Map.Entry<BlockVector, BlockData> entry: dataMap.entrySet()) {
                 BlockVector bv = entry.getKey();
-                Block block = blockWorld.world.getBlockAt(bv.getX(), bv.getY(), bv.getZ());
-                CustomConfig config = entry.getValue();
-                CustomBlock customBlock = CustomPlugin.getInstance().getBlockManager().getCustomBlock(config);
-                if (customBlock == null) customBlock = new DefaultCustomBlock(config.getCustomId());
-                BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
-                if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
-                blocks.put(block, blockWatcher);
+                Block block = blockWorld.getWorld().getBlockAt(bv.getX(), bv.getY(), bv.getZ());
+                BlockData blockData = entry.getValue();
+                String customId = blockData.getCustomId();
+                CustomBlock customBlock = CustomPlugin.getInstance().getBlockManager().getCustomBlock(customId);
+                if (customBlock == null) {
+                    CustomPlugin.getInstance().getLogger().warning("Encountered unknown block '" + customId + "' in " + blockWorld.getWorld().getName() + " " + bv.getX() + "," + bv.getY() + "," + bv.getZ() + ". Using default implementation.");
+                    customBlock = CustomPlugin.getInstance().getBlockManager().registerDefaultCustomBlock(customId);
+                }
+                BlockWatcher blockWatcher = customBlock.createBlockWatcher(block);
+                blockWatchers.put(block, blockWatcher);
+                blockWatcher.getCustomBlock().blockWasLoaded(blockWatcher);
             }
         }
-        return blocks;
+        return blockWatchers;
     }
 
     BlockWatcher getBlockWatcher(Block block) {
-        return getBlocks().get(block);
+        return getBlockWatchers().get(block);
     }
 
     void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
         removeBlockWatcher(block);
-        getBlocks().put(block, blockWatcher);
-        configs.put(BlockVector.of(block), blockWatcher.getCustomConfig());
-        CustomPlugin.getInstance().getEventManager().registerEvents(blockWatcher);
+        getBlockWatchers().put(block, blockWatcher);
+        dataMap.put(BlockVector.of(block), new BlockData(blockWatcher.getCustomBlock().getCustomId(), null));
     }
 
     void removeBlockWatcher(Block block) {
-        BlockWatcher blockWatcher = getBlocks().remove(block);
+        BlockWatcher blockWatcher = getBlockWatchers().remove(block);
+        dataMap.remove(BlockVector.of(block));
         if (blockWatcher != null) {
-            blockWatcher.blockWillDisappear();
-            CustomPlugin.getInstance().getEventManager().unregisterEvents(blockWatcher);
-            blockWatcher.blockDidDisappear();
-        }
-        configs.remove(BlockVector.of(block));
-    }
-
-    void load() {
-        for (BlockWatcher blockWatcher: getBlocks().values()) {
-            CustomPlugin.getInstance().getEventManager().registerEvents(blockWatcher);
-            blockWatcher.blockWasDiscovered();
+            blockWatcher.getCustomBlock().blockWasRemoved(blockWatcher);
         }
     }
 
     void unload() {
-        if (blocks == null) return;
-        for (BlockWatcher blockWatcher: blocks.values()) {
-            blockWatcher.blockWillUnload();
-            CustomPlugin.getInstance().getEventManager().unregisterEvents(blockWatcher);
+        if (blockWatchers == null) return;
+        for (BlockWatcher blockWatcher: blockWatchers.values()) {
+            blockWatcher.getCustomBlock().blockWillUnload(blockWatcher);
         }
-        blocks = null;
+        blockWatchers = null;
     }
 }

@@ -1,12 +1,28 @@
 package com.winthier.custom.block;
 
-import com.winthier.custom.CustomConfig;
 import org.bukkit.block.Block;
+import org.bukkit.event.Listener;
 
-public interface CustomBlock {
+public interface CustomBlock extends Listener {
     String getCustomId();
 
-    void setBlock(Block block, CustomConfig config);
+    default void setBlock(Block block) { }
 
-    BlockWatcher createBlockWatcher(Block block, CustomConfig config);
+    default BlockWatcher createBlockWatcher(Block block) {
+        final CustomBlock customBlock = this;
+        return new BlockWatcher() {
+            @Override public Block getBlock() {
+                return block;
+            }
+            @Override public CustomBlock getCustomBlock() {
+                return customBlock;
+            }
+        };
+    }
+
+    default void blockWasLoaded(BlockWatcher watcher) { }
+
+    default void blockWillUnload(BlockWatcher watcher) { }
+
+    default void blockWasRemoved(BlockWatcher watcher) { }
 }

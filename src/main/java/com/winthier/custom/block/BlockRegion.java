@@ -1,6 +1,6 @@
 package com.winthier.custom.block;
 
-import com.winthier.custom.CustomConfig;
+import com.winthier.custom.util.Msg;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -9,10 +9,12 @@ import java.io.PrintStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
-@RequiredArgsConstructor
+@Getter @RequiredArgsConstructor
 final class BlockRegion {
     @Value
     static final class Vector {
@@ -31,7 +33,7 @@ final class BlockRegion {
         }
     }
 
-    static final String FOLDER = "Winthier.Custom";
+    static final String FOLDER = "winthier.custom";
     static final Comparator<BlockRegion> LAST_SAVE_COMPARATOR = new Comparator<BlockRegion>() {
         @Override
         public int compare(BlockRegion a, BlockRegion b) {
@@ -41,7 +43,7 @@ final class BlockRegion {
     private final BlockWorld blockWorld;
     private final Vector position;
     private final Map<BlockChunk.Vector, BlockChunk> chunks = new HashMap<>();
-    long lastSave = 0;
+    @Setter private long lastSave = 0;
 
     BlockChunk getBlockChunk(BlockChunk.Vector chunkPosition) {
         BlockChunk result = chunks.get(chunkPosition);
@@ -53,11 +55,11 @@ final class BlockRegion {
     }
 
     String getFileName() {
-        return String.format("Region.%d.%d.Custom", position.x, position.z);
+        return String.format("region.%d.%d.flat", position.x, position.z);
     }
 
     void load() {
-        File dir = new File(blockWorld.world.getWorldFolder(), FOLDER);
+        File dir = new File(blockWorld.getWorld().getWorldFolder(), FOLDER);
         File file = new File(dir, getFileName());
         if (!file.isFile()) return;
         if (!dir.isDirectory()) return;
@@ -82,9 +84,14 @@ final class BlockRegion {
                     int z = Integer.parseInt(tokens[3]);
                     BlockVector blockPosition = BlockVector.of(x, y, z);
                     String customId = tokens[4];
-                    String json = tokens[5];
-                    CustomConfig config = new CustomConfig(customId, json);
-                    chunk.configs.put(blockPosition, config);
+                    String dataString = tokens[5];
+                    Object data;
+                    if (dataString == null || dataString.isEmpty()) {
+                        data = null;
+                    } else {
+                        data = Msg.parseJson(dataString);
+                    }
+                    chunk.setBlockData(blockPosition, customId, data);
                 }
             }
         } catch (IOException ioe) {
@@ -93,18 +100,25 @@ final class BlockRegion {
     }
 
     void save() {
-        File dir = new File(blockWorld.world.getWorldFolder(), FOLDER);
+        File dir = new File(blockWorld.getWorld().getWorldFolder(), FOLDER);
         dir.mkdirs();
         File file = new File(dir, getFileName());
         try {
             PrintStream out = new PrintStream(file);
             for (BlockChunk chunk: chunks.values()) {
-                if (chunk.configs.isEmpty()) continue;
-                out.format("Chunk;%d;%d\n", chunk.position.getX(), chunk.position.getZ());
-                for (Map.Entry<BlockVector, CustomConfig> entry: chunk.configs.entrySet()) {
+                if (chunk.getDataMap().isEmpty()) continue;
+                out.format("Chunk;%d;%d\n", chunk.getPosition().getX(), chunk.getPosition().getZ());
+                for (Map.Entry<BlockVector, BlockChunk.BlockData> entry: chunk.getDataMap().entrySet()) {
                     BlockVector vector = entry.getKey();
-                    CustomConfig config = entry.getValue();
-                    out.format("Block;%d;%d;%d;%s;%s\n", vector.getX(), vector.getY(), vector.getZ(), config.getCustomId(), config.getJsonString());
+                    String customId = entry.getValue().getCustomId();
+                    Object data = entry.getValue().getData();
+                    String dataString;
+                    if (data == null) {
+                        dataString = "";
+                    } else {
+                        dataString = Msg.toJsonString(data);
+                    }
+                    out.format("Block;%d;%d;%d;%s;%s\n", vector.getX(), vector.getY(), vector.getZ(), customId, dataString);
                 }
             }
             out.close();

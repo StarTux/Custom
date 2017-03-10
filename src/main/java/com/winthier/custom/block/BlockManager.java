@@ -1,6 +1,5 @@
 package com.winthier.custom.block;
 
-import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
 import java.util.HashMap;
@@ -28,10 +27,6 @@ public final class BlockManager {
         return customBlockMap.get(id);
     }
 
-    public CustomBlock getCustomBlock(CustomConfig config) {
-        return getCustomBlock(config.getCustomId());
-    }
-
     public BlockWatcher getBlockWatcher(Block block) {
         return getBlockWorld(block.getWorld()).getBlockChunk(block).getBlockWatcher(block);
     }
@@ -43,30 +38,20 @@ public final class BlockManager {
         return clazz.cast(result);
     }
 
-    public BlockWatcher setBlock(Block block, CustomConfig config) {
-        CustomBlock customBlock = getCustomBlock(config);
-        if (customBlock == null) return null;
-        BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
-        if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
-        addBlockWatcher(blockWatcher);
-        return blockWatcher;
-    }
-
     public BlockWatcher setBlock(Block block, String customId) {
-        return setBlock(block, new CustomConfig(customId));
-    }
-
-    public BlockWatcher wrapBlock(Block block, CustomConfig config) {
-        CustomBlock customBlock = getCustomBlock(config);
-        if (customBlock == null) return null;
-        BlockWatcher blockWatcher = customBlock.createBlockWatcher(block, config);
-        if (blockWatcher == null) blockWatcher = new DefaultBlockWatcher(block, customBlock, config);
+        CustomBlock customBlock = getCustomBlock(customId);
+        if (customBlock == null) throw new IllegalArgumentException("Custom block not found: " + customId);
+        BlockWatcher blockWatcher = customBlock.createBlockWatcher(block);
         addBlockWatcher(blockWatcher);
         return blockWatcher;
     }
 
     public BlockWatcher wrapBlock(Block block, String customId) {
-        return wrapBlock(block, new CustomConfig(customId));
+        CustomBlock customBlock = getCustomBlock(customId);
+        if (customBlock == null) throw new IllegalArgumentException("Custom block not found: " + customId);
+        BlockWatcher blockWatcher = customBlock.createBlockWatcher(block);
+        addBlockWatcher(blockWatcher);
+        return blockWatcher;
     }
 
     public void removeBlock(Block block) {
@@ -78,15 +63,23 @@ public final class BlockManager {
     // Internal use methods
 
     public void onCustomRegister(CustomRegisterEvent event) {
-        for (CustomBlock block: event.getBlocks()) {
-            String id = block.getCustomId();
-            if (customBlockMap.containsKey(id)) {
-                plugin.getLogger().warning("Block Manager: Duplicate block ID: " + id);
+        for (CustomBlock customBlock: event.getBlocks()) {
+            String customId = customBlock.getCustomId();
+            if (customBlockMap.containsKey(customId)) {
+                plugin.getLogger().warning("Block Manager: Duplicate block id: " + customId);
             } else {
-                customBlockMap.put(id, block);
-                plugin.getLogger().info("Registered block: " + id);
+                customBlockMap.put(customId, customBlock);
+                plugin.getEventManager().registerEvents(customBlock);
+                plugin.getLogger().info("Registered block: " + customId);
             }
         }
+    }
+
+    CustomBlock registerDefaultCustomBlock(String customId) {
+        CustomBlock customBlock = new DefaultCustomBlock(customId);
+        customBlockMap.put(customId, customBlock);
+        plugin.getEventManager().registerEvents(customBlock);
+        return customBlock;
     }
 
     public void onEnable() {
@@ -150,10 +143,10 @@ public final class BlockManager {
         if (regionSaveList.isEmpty()) return false;
         BlockRegion region = regionSaveList.first();
         long now = System.currentTimeMillis();
-        if (region.lastSave + 10000 > now) return false;
+        if (region.getLastSave() + 10000 > now) return false;
         regionSaveList.remove(region);
         region.save();
-        region.lastSave = now;
+        region.setLastSave(now);
         return true;
     }
 
@@ -166,7 +159,7 @@ public final class BlockManager {
         long now = System.currentTimeMillis();
         for (BlockRegion region: regionSaveList) {
             region.save();
-            region.lastSave = now;
+            region.setLastSave(now);
         }
         regionSaveList.clear();
     }

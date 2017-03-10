@@ -4,6 +4,7 @@ import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.block.BlockContext.Position;
 import com.winthier.custom.block.BlockContext;
 import com.winthier.custom.block.BlockWatcher;
+import com.winthier.custom.block.CustomBlock;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.block.Block;
@@ -17,7 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 @RequiredArgsConstructor
 abstract class BlockEventCaller {
-    final EventDispatcher dispatcher;
+    private final EventDispatcher dispatcher;
     abstract void call(Event event);
 
     protected void callWithBlock(Event event, Block block, Position position) {
@@ -26,16 +27,11 @@ abstract class BlockEventCaller {
         // it if necessary.
         BlockWatcher blockWatcher = CustomPlugin.getInstance().getBlockManager().getBlockWatcher(block);
         if (blockWatcher == null) return;
-        // Fetch the registered handler caller which is now
-        // guaranteed to be registered if the BlockWatcher is
-        // listening for this event.
-        HandlerCaller<BlockWatcher> handlerCaller = dispatcher.blocks.get(block);
+        CustomBlock customBlock = blockWatcher.getCustomBlock();
+        HandlerCaller<CustomBlock> handlerCaller = dispatcher.getBlocks().get(customBlock.getCustomId());
         if (handlerCaller == null) return;
-        if (handlerCaller.listener != blockWatcher) return;
-        BlockContext blockContext = new BlockContext(position);
-        blockContext.save(event);
-        handlerCaller.call(event);
-        blockContext.remove(event);
+        BlockContext blockContext = new BlockContext(block, customBlock, blockWatcher, position);
+        handlerCaller.call(event, blockContext);
     }
 
     protected void callWithBlock(Event event, Block block) {
