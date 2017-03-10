@@ -1,11 +1,13 @@
 package com.winthier.custom.entity;
 
+import com.winthier.custom.CustomPlugin;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -23,7 +25,7 @@ class EntityCrawler {
     private BukkitRunnable task;
 
     public void checkAll() {
-        for (World world: entityManager.plugin.getServer().getWorlds()) {
+        for (World world: Bukkit.getServer().getWorlds()) {
             for (Entity entity: world.getEntities()) {
                 entityManager.getEntityWatcher(entity);
             }
@@ -37,7 +39,7 @@ class EntityCrawler {
                 tick();
             }
         };
-        task.runTaskTimer(entityManager.plugin, 1, 1);
+        task.runTaskTimer(CustomPlugin.getInstance(), 1, 1);
     }
 
     public void stop() {
@@ -52,7 +54,7 @@ class EntityCrawler {
         if (state == State.SERVER) {
             if (serverEntities == null) {
                 List<Entity> list = new ArrayList<>();
-                for (World world: entityManager.plugin.getServer().getWorlds()) {
+                for (World world: Bukkit.getServer().getWorlds()) {
                     for (Entity entity: world.getEntities()) {
                         list.add(entity);
                     }
@@ -74,18 +76,18 @@ class EntityCrawler {
             }
         } else if (state == State.CUSTOM) {
             if (customEntities == null) {
-                List<UUID> list = new ArrayList<>(entityManager.entityWatcherMap.keySet());
+                List<UUID> list = entityManager.getWatchedEntities();
                 customEntities = list.iterator();
             } else {
                 for (int i = 0; i < 100; ++i) {
                     if (customEntities.hasNext()) {
                         UUID uuid = customEntities.next();
-                        EntityWatcher entityWatcher = entityManager.entityWatcherMap.get(uuid);
+                        EntityWatcher entityWatcher = entityManager.getEntityWatcher(uuid);
                         if (entityWatcher != null && !entityWatcher.getEntity().isValid()) {
                             entityManager.removeEntity(entityWatcher);
                             entityWatcher.getCustomEntity().entityDidUnload(entityWatcher);
                             Location loc = entityWatcher.getEntity().getLocation();
-                            entityManager.plugin.getLogger().warning(String.format("Custom entity %s did disappear at %s %d %d %d", entityWatcher.getCustomEntity().getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
+                            CustomPlugin.getInstance().getLogger().warning(String.format("Custom entity %s did disappear at %s %d %d %d", entityWatcher.getCustomEntity().getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
                         }
                     } else {
                         customEntities = null;

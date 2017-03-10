@@ -4,6 +4,7 @@ import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +13,11 @@ import org.bukkit.entity.Entity;
 
 @RequiredArgsConstructor
 public final class EntityManager {
-    final CustomPlugin plugin;
+    private final CustomPlugin plugin;
     private final EntityCrawler entityCrawler = new EntityCrawler(this);
-    final Map<String, CustomEntity> customEntityMap = new HashMap<>();
-    final Map<UUID, EntityWatcher> entityWatcherMap = new HashMap<>();
-    static final String KEY_CUSTOM_ID = "winthier.custom.id=";
+    private final Map<String, CustomEntity> customEntityMap = new HashMap<>();
+    private final Map<UUID, EntityWatcher> entityWatcherMap = new HashMap<>();
+    private static final String KEY_CUSTOM_ID = "winthier.custom.id=";
 
     // Public use methods
 
@@ -51,7 +52,6 @@ public final class EntityManager {
         String customId = getCustomId(entity);
         if (customId == null) return null;
         Location loc = entity.getLocation();
-        plugin.getLogger().info(String.format("Discovered custom entity '%s' at %s %d %d %d", customId, loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
         CustomEntity customEntity = getCustomEntity(customId);
         if (customEntity == null) {
             plugin.getLogger().warning("Encountered unknown entity '" + customId + "'. Using default implementation.");
@@ -100,6 +100,10 @@ public final class EntityManager {
 
     // Internal use methods
 
+    List<UUID> getWatchedEntities() {
+        return new ArrayList<>(entityWatcherMap.keySet());
+    }
+
     private void storeCustomId(Entity entity, String customId) {
         for (String tag: new ArrayList<>(entity.getScoreboardTags())) {
             if (tag.startsWith(KEY_CUSTOM_ID)) {
@@ -146,8 +150,8 @@ public final class EntityManager {
             } else {
                 customEntityMap.put(customEntity.getCustomId(), customEntity);
                 plugin.getEventManager().registerEvents(customEntity);
-                plugin.getLogger().info("Registered entity: " + customEntity.getCustomId());
             }
+            plugin.getLogger().info("Registered " + customEntityMap.size() + " entities.");
         }
     }
 
