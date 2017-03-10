@@ -20,6 +20,8 @@ public interface CustomBlock extends Listener {
         };
     }
 
+    default void blockWasCreated(BlockWatcher watcher) { }
+
     default void blockWasLoaded(BlockWatcher watcher) { }
 
     default void blockWillUnload(BlockWatcher watcher) { }

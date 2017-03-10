@@ -1,6 +1,5 @@
 package com.winthier.custom.block;
 
-import com.winthier.custom.util.Msg;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -84,13 +83,7 @@ final class BlockRegion {
                     int z = Integer.parseInt(tokens[3]);
                     BlockVector blockPosition = BlockVector.of(x, y, z);
                     String customId = tokens[4];
-                    String dataString = tokens[5];
-                    Object data;
-                    if (dataString == null || dataString.isEmpty()) {
-                        data = null;
-                    } else {
-                        data = Msg.parseJson(dataString);
-                    }
+                    String data = tokens[5];
                     chunk.setBlockData(blockPosition, customId, data);
                 }
             }
@@ -111,14 +104,8 @@ final class BlockRegion {
                 for (Map.Entry<BlockVector, BlockChunk.BlockData> entry: chunk.getDataMap().entrySet()) {
                     BlockVector vector = entry.getKey();
                     String customId = entry.getValue().getCustomId();
-                    Object data = entry.getValue().getData();
-                    String dataString;
-                    if (data == null) {
-                        dataString = "";
-                    } else {
-                        dataString = Msg.toJsonString(data);
-                    }
-                    out.format("Block;%d;%d;%d;%s;%s\n", vector.getX(), vector.getY(), vector.getZ(), customId, dataString);
+                    String data = entry.getValue().getData();
+                    out.format("Block;%d;%d;%d;%s;%s\n", vector.getX(), vector.getY(), vector.getZ(), customId, data);
                 }
             }
             out.close();

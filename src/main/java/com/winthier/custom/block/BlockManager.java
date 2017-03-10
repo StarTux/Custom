@@ -41,6 +41,7 @@ public final class BlockManager {
     public BlockWatcher setBlock(Block block, String customId) {
         CustomBlock customBlock = getCustomBlock(customId);
         if (customBlock == null) throw new IllegalArgumentException("Custom block not found: " + customId);
+        customBlock.setBlock(block);
         BlockWatcher blockWatcher = customBlock.createBlockWatcher(block);
         addBlockWatcher(blockWatcher);
         return blockWatcher;
@@ -58,6 +59,18 @@ public final class BlockManager {
         BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
         blockChunk.removeBlockWatcher(block);
         regionSaveList.add(blockChunk.getBlockRegion());
+    }
+
+    public void saveBlockData(BlockWatcher blockWatcher, Object data) {
+        Block block = blockWatcher.getBlock();
+        BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
+        blockChunk.saveBlockData(blockWatcher, data);
+        regionSaveList.add(blockChunk.getBlockRegion());
+    }
+
+    public Object loadBlockData(BlockWatcher blockWatcher) {
+        Block block = blockWatcher.getBlock();
+        return getBlockWorld(block.getWorld()).getBlockChunk(block).loadBlockData(blockWatcher);
     }
 
     // Internal use methods

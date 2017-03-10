@@ -1,8 +1,10 @@
 package com.winthier.custom.block;
 
 import com.winthier.custom.CustomPlugin;
+import com.winthier.custom.util.Msg;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +41,10 @@ final class BlockChunk {
         }
     }
 
-    @Data
+    @Data @AllArgsConstructor
     static final class BlockData {
         private final String customId;
-        private final Object data;
+        private String data;
     }
 
     private final BlockWorld blockWorld;
@@ -56,7 +58,7 @@ final class BlockChunk {
     /**
      * Only called by BlockRegion during loading!
      */
-    void setBlockData(BlockVector vector, String customId, Object customData) {
+    void setBlockData(BlockVector vector, String customId, String customData) {
         dataMap.put(vector, new BlockData(customId, customData));
     }
 
@@ -89,6 +91,7 @@ final class BlockChunk {
         removeBlockWatcher(block);
         getBlockWatchers().put(block, blockWatcher);
         dataMap.put(BlockVector.of(block), new BlockData(blockWatcher.getCustomBlock().getCustomId(), null));
+        blockWatcher.getCustomBlock().blockWasCreated(blockWatcher);
     }
 
     void removeBlockWatcher(Block block) {
@@ -97,6 +100,26 @@ final class BlockChunk {
         if (blockWatcher != null) {
             blockWatcher.getCustomBlock().blockWasRemoved(blockWatcher);
         }
+    }
+
+    void saveBlockData(BlockWatcher blockWatcher, Object data) {
+        BlockData blockData = dataMap.get(BlockVector.of(blockWatcher.getBlock()));
+        if (blockData == null || !blockData.getCustomId().equals(blockWatcher.getCustomBlock().getCustomId())) {
+            throw new IllegalArgumentException(String.format("Block at %s %d,%d,%d is not of type '%s'!", blockWatcher.getBlock().getWorld().getName(), blockWatcher.getBlock().getX(), blockWatcher.getBlock().getY(), blockWatcher.getBlock().getZ(), blockWatcher.getCustomBlock().getCustomId()));
+        }
+        if (data == null) {
+            blockData.setData("");
+        } else {
+            blockData.setData(Msg.toJsonString(data));
+        }
+    }
+
+    Object loadBlockData(BlockWatcher blockWatcher) {
+        BlockData blockData = dataMap.get(BlockVector.of(blockWatcher.getBlock()));
+        if (blockData == null || !blockData.getCustomId().equals(blockWatcher.getCustomBlock().getCustomId())) {
+            throw new IllegalArgumentException(String.format("Block at %s %d,%d,%d is not of type '%s'!", blockWatcher.getBlock().getWorld().getName(), blockWatcher.getBlock().getX(), blockWatcher.getBlock().getY(), blockWatcher.getBlock().getZ(), blockWatcher.getCustomBlock().getCustomId()));
+        }
+        return Msg.parseJson(blockData.getData());
     }
 
     void unload() {
