@@ -121,7 +121,7 @@ abstract class ItemEventCaller {
                     } else if (event.getBow().equals(player.getInventory().getItemInOffHand())) {
                         hand = EquipmentSlot.OFF_HAND;
                     } else {
-                        return; // ???
+                        return;
                     }
                     callWithItemInHand(event, player, hand);
                 }

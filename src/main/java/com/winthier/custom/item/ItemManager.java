@@ -77,7 +77,6 @@ public final class ItemManager {
             } else {
                 registeredItems.put(item.getCustomId(), item);
                 plugin.getEventManager().registerEvents(item);
-                CustomPlugin.getInstance().getLogger().info("Registered Item: " + item.getCustomId());
             }
         }
     }

@@ -6,14 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-@Getter @RequiredArgsConstructor
+@RequiredArgsConstructor
 public final class BlockManager {
     private final CustomPlugin plugin;
     private final Map<String, CustomBlock> customBlockMap = new HashMap<>();
@@ -83,7 +82,6 @@ public final class BlockManager {
             } else {
                 customBlockMap.put(customId, customBlock);
                 plugin.getEventManager().registerEvents(customBlock);
-                plugin.getLogger().info("Registered block: " + customId);
             }
         }
     }

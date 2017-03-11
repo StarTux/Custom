@@ -151,7 +151,6 @@ public final class EntityManager {
                 customEntityMap.put(customEntity.getCustomId(), customEntity);
                 plugin.getEventManager().registerEvents(customEntity);
             }
-            plugin.getLogger().info("Registered " + customEntityMap.size() + " entities.");
         }
     }
 
