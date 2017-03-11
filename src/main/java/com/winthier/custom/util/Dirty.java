@@ -41,18 +41,10 @@ public final class Dirty {
             if (!nmsItem.hasTag()) {
                 nmsItem.setTag(new NBTTagCompound());
             }
-            if (!nmsItem.getTag().hasKeyOfType(KEY_ITEM_CUSTOM, NBT_TYPE_COMPOUND)) {
-                nmsItem.getTag().set(KEY_ITEM_CUSTOM, new NBTTagCompound());
-            }
-            if (customId == null) {
-                nmsItem.getTag().remove(KEY_ITEM_CUSTOM);
-            } else {
-                nmsItem.getTag().setString(KEY_ITEM_CUSTOM, customId);
-            }
+            nmsItem.getTag().setString(KEY_ITEM_CUSTOM, customId);
             return obcItem;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -64,8 +56,7 @@ public final class Dirty {
             ItemStack nmsItem = (ItemStack)fieldCraftItemStackHandle.get(obcItem);
             return nmsItem.getTag();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -76,10 +67,10 @@ public final class Dirty {
             getFieldCraftItemStackHandle().setAccessible(true);
             ItemStack nmsItem = (ItemStack)fieldCraftItemStackHandle.get(obcItem);
             if (!nmsItem.hasTag()) return null;
+            if (!nmsItem.getTag().hasKeyOfType(KEY_ITEM_CUSTOM, NBT_TYPE_STRING)) return null;
             return nmsItem.getTag().getString(KEY_ITEM_CUSTOM);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -110,8 +101,7 @@ public final class Dirty {
             texture.setString("Value", textureString);
             return obcItem;
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }

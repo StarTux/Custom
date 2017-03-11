@@ -37,6 +37,7 @@ public final class ItemManager {
 
     public CustomItem getCustomItem(ItemStack item) {
         String customId = getCustomId(item);
+        if (customId == null) return null;
         CustomItem result = getCustomItem(customId);
         if (result == null) {
             plugin.getLogger().warning("Encountered unknown custom item '" + customId + "'. Using default implementation.");
