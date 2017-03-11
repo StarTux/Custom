@@ -1,6 +1,5 @@
 package com.winthier.custom.event;
 
-import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.item.ItemContext;
@@ -47,31 +46,23 @@ abstract class ItemEventCaller {
             return;
         }
         if (item == null || item.getType() == Material.AIR) return;
-        CustomConfig config = CustomConfig.of(item);
-        if (config == null) return;
-        CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
+        CustomItem customItem = CustomPlugin.getInstance().getItemManager().getCustomItem(item);
         if (customItem == null) return;
         HandlerCaller handlerCaller = dispatcher.getItems().get(customItem.getCustomId());
         if (handlerCaller == null) return;
-        ItemContext context = new ItemContext(player, customItem, item, position, config);
-        context.save(event);
-        handlerCaller.call(event);
-        context.remove(event);
+        ItemContext context = new ItemContext(item, customItem, player, position);
+        handlerCaller.call(event, context);
     }
 
     // Items not in anyone's hand
     protected final void callWithItem(Event event, Player player, ItemStack item, ItemContext.Position position) {
         if (item == null || item.getType() == Material.AIR) return;
-        CustomConfig config = CustomConfig.of(item);
-        if (config == null) return;
-        CustomItem customItem = CustomPlugin.getInstance().getItemManager().getItem(config);
+        CustomItem customItem = CustomPlugin.getInstance().getItemManager().getCustomItem(item);
         if (customItem == null) return;
         HandlerCaller handlerCaller = dispatcher.getItems().get(customItem.getCustomId());
         if (handlerCaller == null) return;
-        ItemContext context = new ItemContext(player, customItem, item, position, config);
-        context.save(event);
-        handlerCaller.call(event);
-        context.remove(event);
+        ItemContext context = new ItemContext(item, customItem, player, position);
+        handlerCaller.call(event, context);
     }
 
     static ItemEventCaller of(EventDispatcher dispatcher, Event event) {

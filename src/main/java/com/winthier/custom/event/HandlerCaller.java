@@ -35,8 +35,4 @@ final class HandlerCaller<L extends Listener> {
             t.printStackTrace();
         }
     }
-
-    void call(Event event) {
-        call(event, null);
-    }
 }

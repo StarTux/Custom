@@ -1,6 +1,5 @@
 package com.winthier.custom.item;
 
-import com.winthier.custom.CustomConfig;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.EventHandler;
@@ -24,10 +23,10 @@ import org.bukkit.inventory.ItemStack;
  */
 @Getter @RequiredArgsConstructor
 public class DefaultCustomItem implements CustomItem {
-    final String customId;
+    private final String customId;
 
     @Override
-    public ItemStack spawnItemStack(int amount, CustomConfig config) {
+    public ItemStack spawnItemStack(int amount) {
         return null;
     }
 

@@ -2,8 +2,7 @@ package com.winthier.custom;
 
 import com.winthier.custom.block.BlockWatcher;
 import com.winthier.custom.entity.EntityWatcher;
-import com.winthier.custom.item.CustomItem;
-import com.winthier.custom.item.ItemContext;
+import com.winthier.custom.util.Dirty;
 import com.winthier.custom.util.Msg;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -12,7 +11,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 final class CustomCommand implements CommandExecutor {
@@ -30,7 +28,7 @@ final class CustomCommand implements CommandExecutor {
                 Msg.warn(sender, "Player not found: %s.", targetName);
                 return true;
             }
-            String itemId = args[2];
+            String customId = args[2];
             int amount = 1;
             if (args.length >= 4) {
                 try {
@@ -41,15 +39,7 @@ final class CustomCommand implements CommandExecutor {
                 }
                 if (amount < 1) amount = 1;
             }
-            CustomItem customItem = CustomPlugin.getInstance().getItemManager().findItem(itemId);
-            if (customItem == null) {
-                Msg.warn(player, "Item not found: %s.", itemId);
-                return true;
-            }
-            CustomConfig config = new CustomConfig(itemId);
-            ItemStack item = customItem.spawnItemStack(amount, config);
-            item = config.save(item);
-            target.getWorld().dropItemNaturally(target.getEyeLocation(), item).setPickupDelay(0);
+            CustomPlugin.getInstance().getItemManager().dropItemStack(target.getEyeLocation(), customId, amount).setPickupDelay(0);
             Msg.info(player, "Item spawned for %s.", target.getName());
         } else if (firstArg.equals("summon") && args.length == 2) {
             String customId = args[1];
@@ -76,10 +66,8 @@ final class CustomCommand implements CommandExecutor {
             plugin.reload();
             Msg.info(sender, "Custom Plugin Reloaded");
         } else if (firstArg.equals("debug")) {
-            ItemContext context = plugin.getItemManager().getItemContext(player.getInventory().getItemInMainHand());
-            if (context == null) return true;
-            CustomConfig config = context.config;
-            player.sendMessage(config.getCustomId() + " " + config.getRaw());
+            Object o = Dirty.getItemTag(player.getInventory().getItemInMainHand());
+            player.sendMessage("Item tag: (" + o + ")");
         }
         return true;
     }

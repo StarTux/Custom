@@ -1,6 +1,5 @@
 package com.winthier.custom.util;
 
-import com.winthier.custom.CustomConfig;
 import java.lang.reflect.Field;
 import java.util.UUID;
 import net.minecraft.server.v1_11_R1.ItemStack;
@@ -11,9 +10,7 @@ import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 public final class Dirty {
     private Dirty() { }
     private static Field fieldCraftItemStackHandle = null;
-    private static final String KEY_ITEM_CUSTOM = "Winthier.Custom";
-    private static final String KEY_ITEM_ID = "id";
-    private static final String KEY_ITEM_TAG = "tag";
+    private static final String KEY_ITEM_CUSTOM = "Winthier.Custom.ID";
     private static final int NBT_TYPE_COMPOUND = 10;
     private static final int NBT_TYPE_STRING = 8;
 
@@ -29,7 +26,7 @@ public final class Dirty {
         return fieldCraftItemStackHandle;
     }
 
-    public static org.bukkit.inventory.ItemStack saveConfig(org.bukkit.inventory.ItemStack bukkitItem, CustomConfig config) {
+    public static org.bukkit.inventory.ItemStack setCustomId(org.bukkit.inventory.ItemStack bukkitItem, String customId) {
         try {
             CraftItemStack obcItem;
             ItemStack nmsItem;
@@ -47,13 +44,10 @@ public final class Dirty {
             if (!nmsItem.getTag().hasKeyOfType(KEY_ITEM_CUSTOM, NBT_TYPE_COMPOUND)) {
                 nmsItem.getTag().set(KEY_ITEM_CUSTOM, new NBTTagCompound());
             }
-            NBTTagCompound tag = nmsItem.getTag().getCompound(KEY_ITEM_CUSTOM);
-            tag.setString(KEY_ITEM_ID, config.getCustomId());
-            String json = config.getJsonString();
-            if (json != null) {
-                tag.setString(KEY_ITEM_TAG, json);
+            if (customId == null) {
+                nmsItem.getTag().remove(KEY_ITEM_CUSTOM);
             } else {
-                tag.remove(KEY_ITEM_TAG);
+                nmsItem.getTag().setString(KEY_ITEM_CUSTOM, customId);
             }
             return obcItem;
         } catch (Exception e) {
@@ -62,25 +56,27 @@ public final class Dirty {
         }
     }
 
-    public static CustomConfig loadConfig(org.bukkit.inventory.ItemStack bukkitItem) {
+    public static Object getItemTag(org.bukkit.inventory.ItemStack bukkitItem) {
         try {
             if (!(bukkitItem instanceof CraftItemStack)) return null;
-            // Not sure which is faster, asNMSCopy() or this reflection bullcrap
+            CraftItemStack obcItem = (CraftItemStack)bukkitItem;
+            getFieldCraftItemStackHandle().setAccessible(true);
+            ItemStack nmsItem = (ItemStack)fieldCraftItemStackHandle.get(obcItem);
+            return nmsItem.getTag();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getCustomId(org.bukkit.inventory.ItemStack bukkitItem) {
+        try {
+            if (!(bukkitItem instanceof CraftItemStack)) return null;
             CraftItemStack obcItem = (CraftItemStack)bukkitItem;
             getFieldCraftItemStackHandle().setAccessible(true);
             ItemStack nmsItem = (ItemStack)fieldCraftItemStackHandle.get(obcItem);
             if (!nmsItem.hasTag()) return null;
-            if (!nmsItem.getTag().hasKeyOfType(KEY_ITEM_CUSTOM, NBT_TYPE_COMPOUND)) return null;
-            NBTTagCompound tag = nmsItem.getTag().getCompound(KEY_ITEM_CUSTOM);
-            if (!tag.hasKeyOfType(KEY_ITEM_ID, NBT_TYPE_STRING)) return null;
-            String id = tag.getString(KEY_ITEM_ID);
-            String json;
-            if (tag.hasKeyOfType(KEY_ITEM_TAG, NBT_TYPE_STRING)) {
-                json = tag.getString(KEY_ITEM_TAG);
-            } else {
-                json = null;
-            }
-            return new CustomConfig(id, json);
+            return nmsItem.getTag().getString(KEY_ITEM_CUSTOM);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

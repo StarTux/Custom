@@ -1,6 +1,5 @@
 package com.winthier.custom.item;
 
-import com.winthier.custom.CustomConfig;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,9 +18,8 @@ public interface CustomItem extends Listener {
 
     /**
      * Create a new item stack with the given amount and JSON
-     * information.  This method is not expected to also store the
-     * config in the item.  Instead the job is to be left to the
-     * caller.
+     * information.  This method is not expected to register the item.
+     * Instead the job is to be left to the caller.
      */
-    ItemStack spawnItemStack(int amount, CustomConfig config);
+    ItemStack spawnItemStack(int amount);
 }

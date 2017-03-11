@@ -17,7 +17,7 @@ public final class EntityManager {
     private final EntityCrawler entityCrawler = new EntityCrawler(this);
     private final Map<String, CustomEntity> customEntityMap = new HashMap<>();
     private final Map<UUID, EntityWatcher> entityWatcherMap = new HashMap<>();
-    private static final String KEY_CUSTOM_ID = "winthier.custom.id=";
+    private static final String KEY_CUSTOM_ID = "Winthier.Custom.ID=";
 
     // Public use methods
 

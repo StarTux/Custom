@@ -1,8 +1,8 @@
 package com.winthier.custom.item;
 
-import com.winthier.custom.CustomConfig;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
+import com.winthier.custom.util.Dirty;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public final class ItemManager {
      * For public use.
      *
      * Returns an ItemContext instance with the following fields
-     * filled: customItem, itemStack, config.  It will set the
+     * filled: customItem, itemStack. It will set the
      * following fields to null: player, position.  Returns null
      * if the item stack is not a custom item, or the custom item
      * cannot be found.  Use this if you must find out if a random
@@ -30,64 +30,54 @@ public final class ItemManager {
      */
     public ItemContext getItemContext(ItemStack item) {
         if (item == null) return null;
-        CustomConfig config = CustomConfig.of(item);
-        if (config == null) return null;
-        CustomItem customItem = findItem(config);
+        CustomItem customItem = getCustomItem(item);
         if (customItem == null) return null;
-        return new ItemContext(null, customItem, item, null, config);
+        return new ItemContext(item, customItem, null, null);
     }
 
-    public ItemStack spawnItemStack(CustomConfig config, int amount) {
-        CustomItem customItem = findItem(config);
-        if (customItem == null) throw new IllegalArgumentException("Unknown custom item id: " + config.getCustomId());
-        ItemStack itemStack = customItem.spawnItemStack(amount, config);
-        config.save(itemStack);
-        return itemStack;
+    public CustomItem getCustomItem(ItemStack item) {
+        String customId = getCustomId(item);
+        CustomItem result = getCustomItem(customId);
+        if (result == null) {
+            plugin.getLogger().warning("Encountered unknown custom item '" + customId + "'. Using default implementation.");
+            result = new DefaultCustomItem(customId);
+            registeredItems.put(customId, result);
+        }
+        return result;
+    }
+
+    public CustomItem getCustomItem(String customId) {
+        return registeredItems.get(customId);
     }
 
     public ItemStack spawnItemStack(String customId, int amount) {
-        return spawnItemStack(new CustomConfig(customId), amount);
-    }
-
-    public Item dropItemStack(Location location, CustomConfig config, int amount) {
-        ItemStack itemStack = spawnItemStack(config, amount);
-        return location.getWorld().dropItem(location, itemStack);
+        CustomItem customItem = getCustomItem(customId);
+        if (customItem == null) throw new IllegalArgumentException("Unknown item id: " + customId);
+        ItemStack itemStack = customItem.spawnItemStack(amount);
+        itemStack = Dirty.setCustomId(itemStack, customId);
+        return itemStack;
     }
 
     public Item dropItemStack(Location location, String customId, int amount) {
-        return dropItemStack(location, new CustomConfig(customId), amount);
+        ItemStack itemStack = spawnItemStack(customId, amount);
+        return location.getWorld().dropItem(location, itemStack);
     }
 
     // Internal use methods
 
+    public String getCustomId(ItemStack item) {
+        return Dirty.getCustomId(item);
+    }
+
     public void onCustomRegister(CustomRegisterEvent event) {
         for (CustomItem item: event.getItems()) {
             if (registeredItems.containsKey(item.getCustomId())) {
-                CustomPlugin.getInstance().getLogger().warning("Item Manager: Duplicate Item ID: " + item.getCustomId());
+                CustomPlugin.getInstance().getLogger().warning("Item Manager: Duplicate Item id: " + item.getCustomId());
             } else {
                 registeredItems.put(item.getCustomId(), item);
                 plugin.getEventManager().registerEvents(item);
                 CustomPlugin.getInstance().getLogger().info("Registered Item: " + item.getCustomId());
             }
         }
-    }
-
-    public CustomItem findItem(String id) {
-        return registeredItems.get(id);
-    }
-
-    public CustomItem findItem(CustomConfig config) {
-        return findItem(config.getCustomId());
-    }
-
-    public CustomItem getItem(CustomConfig config) {
-        String id = config.getCustomId();
-        CustomItem result = findItem(id);
-        if (result == null) {
-            plugin.getLogger().warning("Encountered unknown custom item '" + config.getCustomId() + "'");
-            result = new DefaultCustomItem(id);
-            registeredItems.put(id, result);
-        }
-        return result;
     }
 }

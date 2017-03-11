@@ -1,12 +1,10 @@
 package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
-import com.winthier.custom.item.ItemContext;
 import java.lang.reflect.Method;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.event.Event;
@@ -18,7 +16,6 @@ import org.bukkit.event.Listener;
 public final class EventManager {
     private final CustomPlugin plugin;
     private final Map<Class<? extends Event>, Map<EventPriority, EventDispatcher>> eventMap = new HashMap<>();
-    private final Map<Event, ItemContext> itemContextMap = new WeakHashMap<>();
 
     private EventDispatcher createEventDispatcher(Class<? extends Event> event, EventPriority priority) {
         EventDispatcher result = new EventDispatcher(this, event, priority);
