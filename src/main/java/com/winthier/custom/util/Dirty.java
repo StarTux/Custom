@@ -10,7 +10,8 @@ import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 public final class Dirty {
     private Dirty() { }
     private static Field fieldCraftItemStackHandle = null;
-    private static final String KEY_ITEM_CUSTOM = "Winthier.Custom.ID";
+    private static final String KEY_ITEM_CUSTOM_ID = "Winthier.Custom.ID";
+    private static final String KEY_ITEM_CUSTOM_CONFIG = "Winthier.Custom.Config";
     private static final int NBT_TYPE_COMPOUND = 10;
     private static final int NBT_TYPE_STRING = 8;
 
@@ -41,14 +42,14 @@ public final class Dirty {
             if (!nmsItem.hasTag()) {
                 nmsItem.setTag(new NBTTagCompound());
             }
-            nmsItem.getTag().setString(KEY_ITEM_CUSTOM, customId);
+            nmsItem.getTag().setString(KEY_ITEM_CUSTOM_ID, customId);
             return obcItem;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static Object getItemTag(org.bukkit.inventory.ItemStack bukkitItem) {
+    public static NBTTagCompound getItemTag(org.bukkit.inventory.ItemStack bukkitItem) {
         try {
             if (!(bukkitItem instanceof CraftItemStack)) return null;
             CraftItemStack obcItem = (CraftItemStack)bukkitItem;
@@ -67,8 +68,8 @@ public final class Dirty {
             getFieldCraftItemStackHandle().setAccessible(true);
             ItemStack nmsItem = (ItemStack)fieldCraftItemStackHandle.get(obcItem);
             if (!nmsItem.hasTag()) return null;
-            if (!nmsItem.getTag().hasKeyOfType(KEY_ITEM_CUSTOM, NBT_TYPE_STRING)) return null;
-            return nmsItem.getTag().getString(KEY_ITEM_CUSTOM);
+            if (!nmsItem.getTag().hasKeyOfType(KEY_ITEM_CUSTOM_ID, NBT_TYPE_STRING)) return null;
+            return nmsItem.getTag().getString(KEY_ITEM_CUSTOM_ID);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -102,6 +103,75 @@ public final class Dirty {
             return obcItem;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static final class TagWrapper {
+        private final NBTTagCompound tag;
+
+        TagWrapper(NBTTagCompound tag) {
+            this.tag = tag;
+        }
+
+        public static TagWrapper itemConfigOf(org.bukkit.inventory.ItemStack item) {
+            NBTTagCompound tag = getItemTag(item);
+            if (tag == null) return null;
+            if (!tag.hasKeyOfType(KEY_ITEM_CUSTOM_CONFIG, NBT_TYPE_COMPOUND)) {
+                tag.set(KEY_ITEM_CUSTOM_CONFIG, new NBTTagCompound());
+            }
+            return new TagWrapper(tag.getCompound(KEY_ITEM_CUSTOM_CONFIG));
+        }
+
+        public String getString(String key) {
+            if (!tag.hasKeyOfType(key, NBT_TYPE_STRING)) return null;
+            return tag.getString(key);
+        }
+
+        public void setString(String key, String value) {
+            tag.setString(key, value);
+        }
+
+        public int getInt(String key) {
+            return tag.getInt(key);
+        }
+
+        public void setInt(String key, int value) {
+            tag.setInt(key, value);
+        }
+
+        public float getFloat(String key) {
+            return tag.getFloat(key);
+        }
+
+        public void setFloat(String key, float value) {
+            tag.setFloat(key, value);
+        }
+
+        public double getDouble(String key) {
+            return tag.getDouble(key);
+        }
+
+        public void setDouble(String key, double value) {
+            tag.setDouble(key, value);
+        }
+
+        public boolean getBoolean(String key) {
+            return tag.getBoolean(key);
+        }
+
+        public void setBoolean(String key, boolean value) {
+            tag.setBoolean(key, value);
+        }
+
+        public TagWrapper getCompound(String key) {
+            if (!tag.hasKeyOfType(key, NBT_TYPE_COMPOUND)) return null;
+            return new TagWrapper(tag.getCompound(key));
+        }
+
+        public TagWrapper createCompound(String key) {
+            NBTTagCompound newCompound = new NBTTagCompound();
+            tag.set(key, newCompound);
+            return new TagWrapper(newCompound);
         }
     }
 }
