@@ -1,5 +1,5 @@
 name: Custom
-description: Custom item frameworkd
+description: Custom item framework
 author: StarTux
 version: 0.1
 main: com.winthier.custom.CustomPlugin
