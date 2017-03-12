@@ -12,11 +12,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public interface CustomInventory {
     Inventory getInventory();
-    void onInventoryOpen(InventoryOpenEvent event);
-    void onInventoryClose(InventoryCloseEvent event);
-    void onInventoryInteract(InventoryInteractEvent event);
-    void onInventoryClick(InventoryClickEvent event);
-    void onInventoryDrag(InventoryDragEvent event);
+    default void onInventoryOpen(InventoryOpenEvent event) { }
+    default void onInventoryClose(InventoryCloseEvent event) { }
+    default void onInventoryInteract(InventoryInteractEvent event) { }
+    default void onInventoryClick(InventoryClickEvent event) { }
+    default void onInventoryDrag(InventoryDragEvent event) { }
 
     static void closeInventory(final Player player) {
         new BukkitRunnable() {
