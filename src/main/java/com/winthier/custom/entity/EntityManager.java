@@ -131,7 +131,7 @@ public final class EntityManager {
      *
      * Remove an EntityWatcher from the framework.
      */
-    public void removeEntity(EntityWatcher entityWatcher) {
+    public void removeEntityWatcher(EntityWatcher entityWatcher) {
         entityWatcher.getCustomEntity().entityWatcherWillUnregister(entityWatcher);
         entityWatcherMap.remove(entityWatcher.getEntity().getUniqueId());
     }
