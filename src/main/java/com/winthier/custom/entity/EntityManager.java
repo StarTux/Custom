@@ -95,7 +95,17 @@ public final class EntityManager {
         storeCustomId(entity, customId);
         EntityWatcher entityWatcher = customEntity.createEntityWatcher(entity);
         watchEntity(entityWatcher);
+        customEntity.entityWasSpawned(entityWatcher);
         return entityWatcher;
+    }
+
+    /**
+     * Remove an EntityWatcher from the framework.
+     */
+    public void removeEntityWatcher(EntityWatcher entityWatcher) {
+        entityWatcher.getCustomEntity().entityWatcherWillUnregister(entityWatcher);
+        entityWatcherMap.remove(entityWatcher.getEntity().getUniqueId());
+        removeCustomId(entityWatcher.getEntity());
     }
 
     // Internal use methods
@@ -105,13 +115,17 @@ public final class EntityManager {
     }
 
     private void storeCustomId(Entity entity, String customId) {
+        removeCustomId(entity);
+        entity.addScoreboardTag(KEY_CUSTOM_ID + customId);
+    }
+
+    private void removeCustomId(Entity entity) {
         for (String tag: new ArrayList<>(entity.getScoreboardTags())) {
             if (tag.startsWith(KEY_CUSTOM_ID)) {
                 entity.removeScoreboardTag(tag);
                 break;
             }
         }
-        entity.addScoreboardTag(KEY_CUSTOM_ID + customId);
     }
 
     /**
@@ -124,16 +138,6 @@ public final class EntityManager {
     public void watchEntity(EntityWatcher entityWatcher) {
         entityWatcherMap.put(entityWatcher.getEntity().getUniqueId(), entityWatcher);
         entityWatcher.getCustomEntity().entityWatcherDidRegister(entityWatcher);
-    }
-
-    /**
-     * Internal use only!
-     *
-     * Remove an EntityWatcher from the framework.
-     */
-    public void removeEntityWatcher(EntityWatcher entityWatcher) {
-        entityWatcher.getCustomEntity().entityWatcherWillUnregister(entityWatcher);
-        entityWatcherMap.remove(entityWatcher.getEntity().getUniqueId());
     }
 
     /**
