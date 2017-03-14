@@ -113,7 +113,7 @@ public final class Dirty {
             this.tag = tag;
         }
 
-        public static TagWrapper itemConfigOf(org.bukkit.inventory.ItemStack item) {
+        public static TagWrapper getItemConfigOf(org.bukkit.inventory.ItemStack item) {
             NBTTagCompound tag = getItemTag(item);
             if (tag == null) return null;
             if (!tag.hasKeyOfType(KEY_ITEM_CUSTOM_CONFIG, NBT_TYPE_COMPOUND)) {
@@ -137,6 +137,14 @@ public final class Dirty {
 
         public void setInt(String key, int value) {
             tag.setInt(key, value);
+        }
+
+        public long getLong(String key) {
+            return tag.getLong(key);
+        }
+
+        public void setLong(String key, long value) {
+            tag.setLong(key, value);
         }
 
         public float getFloat(String key) {
