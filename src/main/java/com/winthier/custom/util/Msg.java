@@ -49,10 +49,17 @@ public final class Msg {
         }
     }
 
+    public static void sendActionBar(Player player, String msg, Object... args) {
+        Object o = button(null, format(msg, args), null, null, null);
+        consoleCommand("minecraft:title %s actionbar %s", player.getName(), JSONValue.toJSONString(o));
+    }
+
     public static Object button(ChatColor color, String chat, String insertion, String tooltip, String command) {
         Map<String, Object> map = new HashMap<>();
         map.put("text", format(chat));
-        map.put("color", color.name().toLowerCase());
+        if (color != null) {
+            map.put("color", color.name().toLowerCase());
+        }
         if (insertion != null) {
             map.put("insertion", insertion);
         }
