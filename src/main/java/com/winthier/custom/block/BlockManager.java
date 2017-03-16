@@ -54,7 +54,8 @@ public final class BlockManager {
         return blockWatcher;
     }
 
-    public void removeBlock(Block block) {
+    public void removeBlockWatcher(BlockWatcher blockWatcher) {
+        Block block = blockWatcher.getBlock();
         BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
         blockChunk.removeBlockWatcher(block);
         regionSaveList.add(blockChunk.getBlockRegion());
@@ -132,13 +133,6 @@ public final class BlockManager {
         Block block = blockWatcher.getBlock();
         BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
         blockChunk.setBlockWatcher(block, blockWatcher);
-        regionSaveList.add(blockChunk.getBlockRegion());
-    }
-
-    public void removeBlockWatcher(BlockWatcher blockWatcher) {
-        Block block = blockWatcher.getBlock();
-        BlockChunk blockChunk = getBlockWorld(block.getWorld()).getBlockChunk(block);
-        blockChunk.removeBlockWatcher(block);
         regionSaveList.add(blockChunk.getBlockRegion());
     }
 
