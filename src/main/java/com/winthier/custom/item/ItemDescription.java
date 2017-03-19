@@ -34,7 +34,7 @@ public final class ItemDescription {
             }
             if (usage != null) {
                 lore.add("");
-                List<String> lines = Msg.wrap(Msg.format("&a&lUSAGE&r %s", usage), LINE_LENGTH);
+                List<String> lines = Msg.wrap(Msg.format("&aUSAGE&r %s", usage), LINE_LENGTH);
                 for (int i = 1; i < lines.size(); ++i) lines.set(i, Msg.format("&r%s", lines.get(i)));
                 lore.addAll(lines);
             }
