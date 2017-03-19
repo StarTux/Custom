@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public final class CustomPlugin extends JavaPlugin {
     @Getter private static CustomPlugin instance = null;
     private EventManager eventManager = new EventManager(this);
-    private InventoryManager inventoryManager = new InventoryManager(this);
+    private final InventoryManager inventoryManager = new InventoryManager(this);
     private ItemManager itemManager;
     private EntityManager entityManager;
     private BlockManager blockManager;
