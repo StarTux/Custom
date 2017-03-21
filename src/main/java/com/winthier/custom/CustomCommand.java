@@ -40,7 +40,7 @@ final class CustomCommand implements CommandExecutor {
                 if (amount < 1) amount = 1;
             }
             CustomPlugin.getInstance().getItemManager().dropItemStack(target.getEyeLocation(), customId, amount).setPickupDelay(0);
-            Msg.info(player, "Item spawned for %s.", target.getName());
+            Msg.info(sender, "Item spawned for %s.", target.getName());
         } else if (firstArg.equals("summon") && args.length == 2) {
             String customId = args[1];
             EntityWatcher entityWatcher = plugin.getEntityManager().spawnEntity(player.getLocation(), customId);
