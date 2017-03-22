@@ -51,7 +51,7 @@ public class DefaultCustomItem implements CustomItem {
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
-    public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
+    public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         event.setCancelled(true);
     }
 
