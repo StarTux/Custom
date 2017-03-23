@@ -13,7 +13,7 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
  * from changing the name, enchantments, or crafting it into something
  * else, breaking the item in the process.
  */
-public interface NoCraftingItem {
+public interface UncraftableItem {
     @EventHandler
     default void onEnchantItem(EnchantItemEvent event, ItemContext context) {
         event.setCancelled(true);
