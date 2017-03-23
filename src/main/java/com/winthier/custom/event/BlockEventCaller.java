@@ -12,6 +12,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -34,16 +37,12 @@ abstract class BlockEventCaller {
         handlerCaller.call(event, blockContext);
     }
 
-    protected void callWithBlock(Event event, Block block) {
-        callWithBlock(event, block, Position.BLOCK);
-    }
-
     static BlockEventCaller of(EventDispatcher dispatcher, Class<? extends Event> eventClass) {
         if (BlockFromToEvent.class.isAssignableFrom(eventClass)) {
             return new BlockEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     BlockFromToEvent event = (BlockFromToEvent)ev;
-                    callWithBlock(event, event.getBlock());
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
                     callWithBlock(event, event.getToBlock(), Position.TO);
                 }
             };
@@ -51,7 +50,7 @@ abstract class BlockEventCaller {
             return new BlockEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     BlockExplodeEvent event = (BlockExplodeEvent)ev;
-                    callWithBlock(event, event.getBlock());
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
                     for (Block block: new ArrayList<>(event.blockList())) {
                         callWithBlock(event, block, Position.EXPLODE_LIST);
                     }
@@ -66,11 +65,39 @@ abstract class BlockEventCaller {
                     }
                 }
             };
+        } else if (BlockPistonExtendEvent.class.isAssignableFrom(eventClass)) {
+            return new BlockEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    BlockPistonExtendEvent event = (BlockPistonExtendEvent)ev;
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
+                    for (Block block: event.getBlocks()) {
+                        callWithBlock(event, block, Position.PISTON_EXTEND_LIST);
+                    }
+                }
+            };
+        } else if (BlockPistonRetractEvent.class.isAssignableFrom(eventClass)) {
+            return new BlockEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    BlockPistonRetractEvent event = (BlockPistonRetractEvent)ev;
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
+                    for (Block block: event.getBlocks()) {
+                        callWithBlock(event, block, Position.PISTON_RETRACT_LIST);
+                    }
+                }
+            };
+        } else if (BlockSpreadEvent.class.isAssignableFrom(eventClass)) {
+            return new BlockEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    BlockSpreadEvent event = (BlockSpreadEvent)ev;
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
+                    callWithBlock(event, event.getSource(), Position.SPREAD_SOURCE);
+                }
+            };
         } else if (BlockEvent.class.isAssignableFrom(eventClass)) {
             return new BlockEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     BlockEvent event = (BlockEvent)ev;
-                    callWithBlock(event, event.getBlock());
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
                 }
             };
         } else if (PlayerInteractEvent.class.isAssignableFrom(eventClass)) {
@@ -78,14 +105,14 @@ abstract class BlockEventCaller {
                 @Override void call(Event ev) {
                     PlayerInteractEvent event = (PlayerInteractEvent)ev;
                     if (!event.hasBlock()) return;
-                    callWithBlock(event, event.getClickedBlock());
+                    callWithBlock(event, event.getClickedBlock(), Position.BLOCK);
                 }
             };
         } else if (EntityChangeBlockEvent.class.isAssignableFrom(eventClass)) {
             return new BlockEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     EntityChangeBlockEvent event = (EntityChangeBlockEvent)ev;
-                    callWithBlock(event, event.getBlock());
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
                 }
             };
         } else {

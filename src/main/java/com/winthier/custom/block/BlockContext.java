@@ -7,18 +7,18 @@ import org.bukkit.block.Block;
 @Getter @RequiredArgsConstructor
 public final class BlockContext {
     public enum Position {
-        /**
-         * BlockEvent.getBlock()
-         */
+        /** BlockEvent.getBlock() */
         BLOCK,
-        /**
-         * BlockFromToEvent.getToBlock()
-         */
+        /** BlockFromToEvent.getToBlock() */
         TO,
-        /**
-         * *ExplodeEvent.blockList()
-         */
+        /** ExplodeEvent.blockList() */
         EXPLODE_LIST,
+        /** PistonExtendEvent.getBlocks() */
+        PISTON_EXTEND_LIST,
+        /** PistonRetractEvent.getBlocks() */
+        PISTON_RETRACT_LIST,
+        /** BlockSpreadEvent.getSource() */
+        SPREAD_SOURCE,
     }
 
     private final Block block;
