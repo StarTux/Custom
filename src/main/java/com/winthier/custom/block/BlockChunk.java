@@ -90,7 +90,7 @@ final class BlockChunk {
     void setBlockWatcher(Block block, BlockWatcher blockWatcher) {
         removeBlockWatcher(block);
         getBlockWatchers().put(block, blockWatcher);
-        dataMap.put(BlockVector.of(block), new BlockData(blockWatcher.getCustomBlock().getCustomId(), null));
+        dataMap.put(BlockVector.of(block), new BlockData(blockWatcher.getCustomBlock().getCustomId(), ""));
         blockWatcher.getCustomBlock().blockWasCreated(blockWatcher);
     }
 
