@@ -227,10 +227,10 @@ abstract class ItemEventCaller {
             Method method = null;
             try {
                 method = eventClass.getMethod("getItem");
-            } catch (NoSuchMethodException nsme) {}
+            } catch (NoSuchMethodException nsme) { }
             try {
                 if (method == null) method = eventClass.getMethod("getItemStack");
-            } catch (NoSuchMethodException nsme) {}
+            } catch (NoSuchMethodException nsme) { }
             if (method != null && ItemStack.class.isAssignableFrom(method.getReturnType())) {
                 final Method getterMethod = method;
                 return new ItemEventCaller(dispatcher) {
