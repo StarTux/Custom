@@ -35,7 +35,7 @@ public interface UncraftableItem {
     }
 
     @EventHandler
-    default void PrepareItemCraft(PrepareItemCraftEvent event, ItemContext context) {
+    default void onPrepareItemCraft(PrepareItemCraftEvent event, ItemContext context) {
         event.getInventory().setResult(null);
     }
 }
