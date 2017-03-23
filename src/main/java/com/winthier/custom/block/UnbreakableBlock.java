@@ -19,6 +19,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  * Convenience interface to make a custom block unbreakable.  Add this
@@ -113,5 +114,10 @@ public interface UnbreakableBlock {
     @EventHandler
     default void onEntityExplode(EntityExplodeEvent event, BlockContext context) {
         event.blockList().remove(context.getBlock());
+    }
+
+    @EventHandler
+    default void onPlayerInteract(PlayerInteractEvent event, BlockContext context) {
+        event.setCancelled(true);
     }
 }
