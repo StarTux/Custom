@@ -21,6 +21,15 @@ public final class ItemDescription {
     private List<String> lore;
     private static final int LINE_LENGTH = 32;
 
+    public ItemDescription() { }
+
+    public ItemDescription(ItemDescription orig) {
+        this.category = orig.category;
+        this.description = orig.description;
+        this.usage = orig.description;
+        this.lore = new ArrayList(orig.lore);
+    }
+
     public List<String> getLore() {
         if (lore == null) {
             lore = new ArrayList<>();
@@ -63,5 +72,9 @@ public final class ItemDescription {
         ItemMeta meta = item.getItemMeta();
         meta.setLore(getLore());
         item.setItemMeta(meta);
+    }
+
+    public ItemDescription clone() {
+        return new ItemDescription(this);
     }
 }
