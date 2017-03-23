@@ -113,6 +113,16 @@ public final class Dirty {
             this.tag = tag;
         }
 
+        public static boolean hasItemConfig(org.bukkit.inventory.ItemStack item) {
+            NBTTagCompound tag = getItemTag(item);
+            if (tag == null) return false;
+            return tag.hasKeyOfType(KEY_ITEM_CUSTOM_CONFIG, NBT_TYPE_COMPOUND);
+        }
+
+        /**
+         * This will create an item config if it is not present.  May
+         * return null if the item is not customized.
+         */
         public static TagWrapper getItemConfigOf(org.bukkit.inventory.ItemStack item) {
             NBTTagCompound tag = getItemTag(item);
             if (tag == null) return null;
