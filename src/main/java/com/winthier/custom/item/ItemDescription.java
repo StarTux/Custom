@@ -29,7 +29,7 @@ public final class ItemDescription {
     public ItemDescription(ItemDescription orig) {
         this.category = orig.category;
         this.description = orig.description;
-        this.usage = orig.description;
+        this.usage = orig.usage;
         this.stats.putAll(orig.stats);
     }
 
