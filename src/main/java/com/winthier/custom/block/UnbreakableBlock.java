@@ -20,6 +20,10 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
+/**
+ * Convenience interface to make a custom block unbreakable.  Add this
+ * interface to your CustomBlock to prevent breakage from any source.
+ */
 public interface UnbreakableBlock {
     @EventHandler
     default void onBlockBreak(BlockBreakEvent event, BlockContext context) {
