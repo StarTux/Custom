@@ -2,7 +2,9 @@ package com.winthier.custom.item;
 
 import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Data;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -18,6 +20,7 @@ public final class ItemDescription {
     private String category;
     private String description;
     private String usage;
+    private final Map<String, String> stats = new LinkedHashMap<>();
     private List<String> lore;
     private static final int LINE_LENGTH = 32;
 
@@ -27,7 +30,7 @@ public final class ItemDescription {
         this.category = orig.category;
         this.description = orig.description;
         this.usage = orig.description;
-        this.lore = new ArrayList(orig.lore);
+        this.stats.putAll(orig.stats);
     }
 
     public List<String> getLore() {
@@ -46,6 +49,12 @@ public final class ItemDescription {
                 List<String> lines = Msg.wrap(Msg.format("&aUSAGE&r %s", usage), LINE_LENGTH);
                 for (int i = 1; i < lines.size(); ++i) lines.set(i, Msg.format("&r%s", lines.get(i)));
                 lore.addAll(lines);
+            }
+            if (stats != null) {
+                lore.add("");
+                for (Map.Entry<String, String> entry: stats.entrySet()) {
+                    lore.add(Msg.format("&a%s: &r%s", entry.getKey(), entry.getValue()));
+                }
             }
         }
         return lore;
