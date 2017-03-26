@@ -6,6 +6,7 @@ import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
 import com.winthier.custom.inventory.InventoryManager;
+import com.winthier.custom.item.ItemFinder;
 import com.winthier.custom.item.ItemManager;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -30,6 +31,7 @@ public final class CustomPlugin extends JavaPlugin {
             }
         }.runTask(this);
         getServer().getPluginManager().registerEvents(new EntityFinder(this), this);
+        getServer().getPluginManager().registerEvents(new ItemFinder(this), this);
         getServer().getPluginManager().registerEvents(inventoryManager, this);
     }
 
