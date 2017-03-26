@@ -37,7 +37,7 @@ public final class ItemDescription {
         if (lore == null) {
             lore = new ArrayList<>();
             if (category != null) {
-                lore.add(Msg.format("&o%s", category));
+                lore.add(Msg.format("&9%s", category));
             }
             if (description != null) {
                 List<String> lines = Msg.wrap(description, LINE_LENGTH);
@@ -50,7 +50,7 @@ public final class ItemDescription {
                 for (int i = 1; i < lines.size(); ++i) lines.set(i, Msg.format("&r%s", lines.get(i)));
                 lore.addAll(lines);
             }
-            if (stats != null) {
+            if (!stats.isEmpty()) {
                 lore.add("");
                 for (Map.Entry<String, String> entry: stats.entrySet()) {
                     lore.add(Msg.format("&a%s: &r%s", entry.getKey(), entry.getValue()));
