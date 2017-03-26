@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.block.Block;
 import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockFromToEvent;
@@ -91,6 +92,13 @@ abstract class BlockEventCaller {
                     BlockSpreadEvent event = (BlockSpreadEvent)ev;
                     callWithBlock(event, event.getBlock(), Position.BLOCK);
                     callWithBlock(event, event.getSource(), Position.SPREAD_SOURCE);
+                }
+            };
+        } else if (BlockDispenseEvent.class.isAssignableFrom(eventClass)) {
+            return new BlockEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    BlockDispenseEvent event = (BlockDispenseEvent)ev;
+                    callWithBlock(event, event.getBlock(), Position.BLOCK);
                 }
             };
         } else if (BlockEvent.class.isAssignableFrom(eventClass)) {

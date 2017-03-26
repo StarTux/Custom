@@ -2,6 +2,7 @@ package com.winthier.custom.event;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.item.CustomItem;
+import com.winthier.custom.item.ItemContext.Position;
 import com.winthier.custom.item.ItemContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -11,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDamageEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
@@ -37,13 +39,13 @@ abstract class ItemEventCaller {
 
     protected final void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
         ItemStack item;
-        ItemContext.Position position;
+        Position position;
         if (hand == EquipmentSlot.HAND) {
             item = player.getInventory().getItemInMainHand();
-            position = ItemContext.Position.HAND;
+            position = Position.HAND;
         } else if (hand == EquipmentSlot.OFF_HAND) {
             item = player.getInventory().getItemInOffHand();
-            position = ItemContext.Position.OFF_HAND;
+            position = Position.OFF_HAND;
         } else {
             return;
         }
@@ -57,7 +59,7 @@ abstract class ItemEventCaller {
     }
 
     // Items not in anyone's hand
-    protected final void callWithItem(Event event, Player player, ItemStack item, ItemContext.Position position) {
+    protected final void callWithItem(Event event, Player player, ItemStack item, Position position) {
         if (item == null || item.getType() == Material.AIR) return;
         CustomItem customItem = CustomPlugin.getInstance().getItemManager().getCustomItem(item);
         if (customItem == null) return;
@@ -140,28 +142,28 @@ abstract class ItemEventCaller {
             return new ItemEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     InventoryPickupItemEvent event = (InventoryPickupItemEvent)ev;
-                    callWithItem(event, null, event.getItem().getItemStack(), ItemContext.Position.ITEM);
+                    callWithItem(event, null, event.getItem().getItemStack(), Position.ITEM);
                 }
             };
         } else if (PlayerPickupItemEvent.class.isAssignableFrom(eventClass)) {
             return new ItemEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     PlayerPickupItemEvent event = (PlayerPickupItemEvent)ev;
-                    callWithItem(event, event.getPlayer(), event.getItem().getItemStack(), ItemContext.Position.ITEM);
+                    callWithItem(event, event.getPlayer(), event.getItem().getItemStack(), Position.ITEM);
                 }
             };
         } else if (EnchantItemEvent.class.isAssignableFrom(eventClass)) {
             return new ItemEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     EnchantItemEvent event = (EnchantItemEvent)ev;
-                    callWithItem(event, event.getEnchanter(), event.getItem(), ItemContext.Position.ITEM);
+                    callWithItem(event, event.getEnchanter(), event.getItem(), Position.ITEM);
                 }
             };
         } else if (PrepareItemEnchantEvent.class.isAssignableFrom(eventClass)) {
             return new ItemEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     PrepareItemEnchantEvent event = (PrepareItemEnchantEvent)ev;
-                    callWithItem(event, event.getEnchanter(), event.getItem(), ItemContext.Position.ITEM);
+                    callWithItem(event, event.getEnchanter(), event.getItem(), Position.ITEM);
                 }
             };
         } else if (PrepareAnvilEvent.class.isAssignableFrom(eventClass)) {
@@ -169,8 +171,8 @@ abstract class ItemEventCaller {
                 @Override public void call(Event ev) {
                     PrepareAnvilEvent event = (PrepareAnvilEvent)ev;
                     Player player = event.getViewers().isEmpty() ? null : (Player)event.getViewers().get(0);
-                    callWithItem(event, player, event.getInventory().getItem(0), ItemContext.Position.ANVIL_LEFT);
-                    callWithItem(event, player, event.getInventory().getItem(1), ItemContext.Position.ANVIL_RIGHT);
+                    callWithItem(event, player, event.getInventory().getItem(0), Position.ANVIL_LEFT);
+                    callWithItem(event, player, event.getInventory().getItem(1), Position.ANVIL_RIGHT);
                 }
             };
         } else if (PrepareItemCraftEvent.class.isAssignableFrom(eventClass)) {
@@ -180,7 +182,7 @@ abstract class ItemEventCaller {
                     InventoryHolder holder = event.getInventory().getHolder();
                     Player player = holder instanceof Player ? (Player)holder : null;
                     for (ItemStack item: event.getInventory().getMatrix()) {
-                        callWithItem(event, player, item, ItemContext.Position.CRAFTING_MATRIX);
+                        callWithItem(event, player, item, Position.CRAFTING_MATRIX);
                     }
                 }
             };
@@ -191,7 +193,7 @@ abstract class ItemEventCaller {
                     InventoryHolder holder = event.getInventory().getHolder();
                     Player player = holder instanceof Player ? (Player)holder : null;
                     for (ItemStack item: event.getInventory().getMatrix()) {
-                        callWithItem(event, player, item, ItemContext.Position.CRAFTING_MATRIX);
+                        callWithItem(event, player, item, Position.CRAFTING_MATRIX);
                     }
                 }
             };
@@ -223,6 +225,13 @@ abstract class ItemEventCaller {
                     callWithItemInHand(event, player, hand);
                 }
             };
+        } else if (BlockDispenseEvent.class.isAssignableFrom(eventClass)) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    BlockDispenseEvent event = (BlockDispenseEvent)ev;
+                    callWithItem(event, null, event.getItem(), Position.ITEM);
+                }
+            };
         } else {
             Method method = null;
             try {
@@ -237,7 +246,7 @@ abstract class ItemEventCaller {
                     @Override public void call(Event ev) {
                         try {
                             ItemStack item = (ItemStack)getterMethod.invoke(ev);
-                            callWithItem(ev, null, item, ItemContext.Position.ITEM);
+                            callWithItem(ev, null, item, Position.ITEM);
                         } catch (IllegalAccessException iae) {
                             iae.printStackTrace();
                         } catch (InvocationTargetException ite) {
