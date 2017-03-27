@@ -3,7 +3,9 @@ package com.winthier.custom.item;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.util.Dirty;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
@@ -62,6 +64,10 @@ public final class ItemManager {
     public Item dropItemStack(Location location, String customId, int amount) {
         ItemStack itemStack = spawnItemStack(customId, amount);
         return location.getWorld().dropItem(location, itemStack);
+    }
+
+    public List<CustomItem> getRegisteredItems() {
+        return new ArrayList<>(registeredItems.values());
     }
 
     // Internal use methods
