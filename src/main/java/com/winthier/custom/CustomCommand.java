@@ -6,6 +6,8 @@ import com.winthier.custom.inventory.CustomInventory;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.util.Dirty;
 import com.winthier.custom.util.Msg;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -71,18 +73,20 @@ final class CustomCommand implements CommandExecutor {
             plugin.reload();
             Msg.info(sender, "Custom Plugin Reloaded");
         } else if (firstArg.equals("items")) {
-            final List<CustomItem> items = plugin.getItemManager().getRegisteredItems();
+            final List<String> items = new ArrayList<>();
+            for (CustomItem item: plugin.getItemManager().getRegisteredItems()) items.add(item.getCustomId());
+            Collections.sort(items);
             if (items.isEmpty()) {
                 sender.sendMessage("Nothing found.");
                 return true;
             }
-            StringBuilder sb = new StringBuilder().append(items.size()).append(" items:");
-            for (CustomItem item: items) sb.append(" ").append(item.getCustomId());
+            StringBuilder sb = new StringBuilder().append(items.size()).append(" CustomItems:");
+            for (String item: items) sb.append(" ").append(item);
             sender.sendMessage(sb.toString());
             if (player != null) {
                 int size = ((items.size() - 1) / 9 + 1) * 9;
                 final Inventory inventory = plugin.getServer().createInventory(player, size, "Custom Items");
-                for (CustomItem item: items) inventory.addItem(item.spawnItemStack(1));
+                for (String item: items) inventory.addItem(plugin.getItemManager().spawnItemStack(item, 1));
                 plugin.getInventoryManager().openInventory(player, new CustomInventory() {
                         @Override public Inventory getInventory() {
                             return inventory;
@@ -91,7 +95,7 @@ final class CustomCommand implements CommandExecutor {
                             if (!event.getInventory().equals(inventory)) return;
                             int index = event.getSlot();
                             if (index < 0 || index >= items.size()) return;
-                            String customId = items.get(index).getCustomId();
+                            String customId = items.get(index);
                             int stackSize = event.isShiftClick() ? inventory.getItem(index).getType().getMaxStackSize() : 1;
                             plugin.getItemManager().dropItemStack(player.getEyeLocation(), customId, stackSize).setPickupDelay(0);
                             player.sendMessage("Spawned " + customId + ".");
