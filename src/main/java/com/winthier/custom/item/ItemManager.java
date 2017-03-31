@@ -58,6 +58,7 @@ public final class ItemManager {
         if (customItem == null) throw new IllegalArgumentException("Unknown item id: " + customId);
         ItemStack itemStack = customItem.spawnItemStack(amount);
         itemStack = Dirty.setCustomId(itemStack, customId);
+        customItem.itemStackWasSpawned(itemStack);
         return itemStack;
     }
 
