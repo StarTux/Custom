@@ -74,7 +74,7 @@ public interface CustomEntity extends Listener {
     default void entityWatcherDidRegister(EntityWatcher water) { }
 
     /**
-     * Called right before an EntityManager will be unregistered from
+     * Called right before an EntityWatcher will be unregistered from
      * EntityManager and is therefore invalid.
      */
     default void entityWatcherWillUnregister(EntityWatcher water) { }

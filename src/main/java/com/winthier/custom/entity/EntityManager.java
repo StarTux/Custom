@@ -105,7 +105,8 @@ public final class EntityManager {
     public void removeEntityWatcher(EntityWatcher entityWatcher) {
         entityWatcher.getCustomEntity().entityWatcherWillUnregister(entityWatcher);
         entityWatcherMap.remove(entityWatcher.getEntity().getUniqueId());
-        removeCustomId(entityWatcher.getEntity());
+        Entity entity = entityWatcher.getEntity();
+        if (entity.isValid()) removeCustomId(entityWatcher.getEntity());
     }
 
     // Internal use methods
@@ -138,6 +139,17 @@ public final class EntityManager {
     public void watchEntity(EntityWatcher entityWatcher) {
         entityWatcherMap.put(entityWatcher.getEntity().getUniqueId(), entityWatcher);
         entityWatcher.getCustomEntity().entityWatcherDidRegister(entityWatcher);
+    }
+
+    /**
+     * Internal use only!
+     *
+     * Forget about an entity, without attempting to delete its
+     * customId.
+     */
+    void unwatchEntity(EntityWatcher entityWatcher) {
+        entityWatcher.getCustomEntity().entityWatcherWillUnregister(entityWatcher);
+        entityWatcherMap.remove(entityWatcher.getEntity().getUniqueId());
     }
 
     /**
@@ -177,5 +189,9 @@ public final class EntityManager {
      */
     public void onDisable() {
         entityCrawler.stop();
+        for (EntityWatcher entityWatcher: entityWatcherMap.values()) {
+            entityWatcher.getCustomEntity().entityWatcherWillUnregister(entityWatcher);
+        }
+        entityWatcherMap.clear();
     }
 }

@@ -18,10 +18,6 @@ class EntityCrawler {
     private final EntityManager entityManager;
     private Iterator<Entity> serverEntities;
     private Iterator<UUID> customEntities;
-    enum State {
-        SERVER, CUSTOM;
-    }
-    private State state = State.SERVER;
     private BukkitRunnable task;
 
     public void checkAll() {
@@ -35,10 +31,10 @@ class EntityCrawler {
     public void start() {
         stop();
         task = new BukkitRunnable() {
-            @Override public void run() {
-                tick();
-            }
-        };
+                @Override public void run() {
+                    tick();
+                }
+            };
         task.runTaskTimer(CustomPlugin.getInstance(), 1, 1);
     }
 
@@ -51,50 +47,30 @@ class EntityCrawler {
     }
 
     void tick() {
-        if (state == State.SERVER) {
-            if (serverEntities == null) {
-                List<Entity> list = new ArrayList<>();
-                for (World world: Bukkit.getServer().getWorlds()) {
-                    for (Entity entity: world.getEntities()) {
-                        list.add(entity);
-                    }
-                }
-                serverEntities = list.iterator();
-            } else {
-                for (int i = 0; i < 100; ++i) {
-                    if (serverEntities.hasNext()) {
-                        Entity entity = serverEntities.next();
-                        if (entity.isValid()) {
-                            entityManager.getEntityWatcher(entity);
-                        }
-                    } else {
-                        serverEntities = null;
-                        state = State.CUSTOM;
-                        return;
-                    }
+        if (serverEntities == null || !serverEntities.hasNext()) {
+            List<Entity> list = new ArrayList<>();
+            for (World world: Bukkit.getServer().getWorlds()) {
+                for (Entity entity: world.getEntities()) {
+                    list.add(entity);
                 }
             }
-        } else if (state == State.CUSTOM) {
-            if (customEntities == null) {
-                List<UUID> list = entityManager.getWatchedEntities();
-                customEntities = list.iterator();
-            } else {
-                for (int i = 0; i < 100; ++i) {
-                    if (customEntities.hasNext()) {
-                        UUID uuid = customEntities.next();
-                        EntityWatcher entityWatcher = entityManager.getEntityWatcher(uuid);
-                        if (entityWatcher != null && !entityWatcher.getEntity().isValid()) {
-                            entityManager.removeEntityWatcher(entityWatcher);
-                            entityWatcher.getCustomEntity().entityDidUnload(entityWatcher);
-                            Location loc = entityWatcher.getEntity().getLocation();
-                            CustomPlugin.getInstance().getLogger().warning(String.format("Custom entity %s did disappear at %s %d %d %d", entityWatcher.getCustomEntity().getCustomId(), loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
-                        }
-                    } else {
-                        customEntities = null;
-                        state = State.SERVER;
-                        return;
-                    }
-                }
+            serverEntities = list.iterator();
+        }
+        for (int i = 0; i < 100; ++i) {
+            if (!serverEntities.hasNext()) break;
+            Entity entity = serverEntities.next();
+            if (!entity.isValid()) continue;
+            entityManager.getEntityWatcher(entity);
+        }
+        for (UUID uuid: entityManager.getWatchedEntities()) {
+            EntityWatcher entityWatcher = entityManager.getEntityWatcher(uuid);
+            if (entityWatcher == null) continue;
+            CustomEntity customEntity = entityWatcher.getCustomEntity();
+            if (!entityWatcher.getEntity().isValid()) {
+                customEntity.entityDidUnload(entityWatcher);
+                entityManager.unwatchEntity(entityWatcher);
+            } else if (customEntity instanceof TickableEntity) {
+                ((TickableEntity)customEntity).onTick(entityWatcher);
             }
         }
     }

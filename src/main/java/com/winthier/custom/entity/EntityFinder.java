@@ -213,7 +213,7 @@ public class EntityFinder implements Listener {
             if (entityWatcher == null) continue;
             CustomEntity customEntity = entityWatcher.getCustomEntity();
             customEntity.entityWillUnload(entityWatcher);
-            plugin.getEntityManager().removeEntityWatcher(entityWatcher);
+            plugin.getEntityManager().unwatchEntity(entityWatcher);
             customEntity.entityDidUnload(entityWatcher);
         }
     }
