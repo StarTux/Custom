@@ -65,9 +65,9 @@ public final class ItemDescription {
     }
 
     public void load(ConfigurationSection config) {
-        category = config.getString("Category", category);
-        description = config.getString("Description", description);
-        usage = config.getString("Usage", usage);
+        category = config.getString("Category");
+        description = config.getString("Description");
+        usage = config.getString("Usage");
         lore = null;
     }
 
