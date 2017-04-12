@@ -22,13 +22,13 @@ import com.winthier.custom.item.CustomItem;
 
 public class MyCustomItem implements CustomItem {
   @Override
-  public String getCustomString() {
+  public String getCustomId() {
     return "my:awesome_item";
   }
 
   @Override
-  public ItemStack spawnItemStack() {
-    return new ItemStack(Material.IRON_SWORD);
+  public ItemStack spawnItemStack(int amount) {
+    return new ItemStack(Material.STICK, amount);
   }
 }
 ```
