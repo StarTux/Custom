@@ -35,7 +35,7 @@ public final class Msg {
         to.sendMessage(format("&r[&cCustom&r] &c") + format(msg, args));
     }
 
-    static void consoleCommand(String cmd, Object... args) {
+    public static void consoleCommand(String cmd, Object... args) {
         if (args.length > 0) cmd = String.format(cmd, args);
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd);
     }
