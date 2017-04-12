@@ -104,7 +104,7 @@ public final class Msg {
         return JSONValue.toJSONString(o);
     }
 
-    public static List<String> wrap(String what, int maxLineLength) {
+    private static List<String> wrapInternal(String what, int maxLineLength) {
         String[] words = what.split(" ");
         List<String> lines = new ArrayList<>();
         if (words.length == 0) return lines;
@@ -124,6 +124,18 @@ public final class Msg {
             }
         }
         if (line.length() > 0) lines.add(line.toString());
+        return lines;
+    }
+
+    public static List<String> wrap(String what, int maxLineLength) {
+        List<String> lines = new ArrayList<>();
+        for (String string: what.split("\n")) {
+            if (string.isEmpty()) {
+                lines.add("");
+            } else {
+                lines.addAll(wrapInternal(string, maxLineLength));
+            }
+        }
         return lines;
     }
 
