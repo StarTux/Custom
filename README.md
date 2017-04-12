@@ -18,12 +18,14 @@ depend: [ Custom ]
 ```
 #### Implement CustomItem, CustomBlock, or CustomEntity
 ```java
-import com.winthier.custom.item.CustomItem
+import com.winthier.custom.item.CustomItem;
+
 public class MyCustomItem implements CustomItem {
   @Override
   public String getCustomString() {
     return "my:awesome_item";
   }
+
   @Override
   public ItemStack spawnItemStack() {
     return new ItemStack(Material.IRON_SWORD);
