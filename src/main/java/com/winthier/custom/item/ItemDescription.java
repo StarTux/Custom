@@ -17,6 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
  */
 @Data
 public final class ItemDescription {
+    private String displayName;
     private String category;
     private String description;
     private String usage;
@@ -27,6 +28,7 @@ public final class ItemDescription {
     public ItemDescription() { }
 
     public ItemDescription(ItemDescription orig) {
+        this.displayName = orig.displayName;
         this.category = orig.category;
         this.description = orig.description;
         this.usage = orig.usage;
@@ -65,6 +67,7 @@ public final class ItemDescription {
     }
 
     public void load(ConfigurationSection config) {
+        displayName = config.getString("DisplayName");
         category = config.getString("Category");
         description = config.getString("Description");
         usage = config.getString("Usage");
@@ -79,6 +82,7 @@ public final class ItemDescription {
 
     public void apply(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
+        if (displayName != null) meta.setDisplayName(Msg.format("&r%s", displayName));
         meta.setLore(getLore());
         item.setItemMeta(meta);
     }
