@@ -34,12 +34,19 @@ public class MyCustomItem implements CustomItem {
 ```
 #### Listen to CustomRegisterEvent and add your item, block, or entity.
 ```java
+public class MyPlugin extends JavaPlugin implements Listener {
+  @Override
+  public void onEnable() {
+    getServer().getPluginManager().registerEvents(this, this);
+  }
+
   @EventHandler
   public void onCustomRegister(CustomRegisterEvent event) {
     event.addItem(new MyCustomItem());
     event.addBlock(new MyCustomBlock());
     event.addEntity(new MyCustomEntity());
   }
+}
 ```
 #### Spawn them in-game
 - /custom give YourNameHere my:awesome_item
