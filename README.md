@@ -56,6 +56,7 @@ public class MyPlugin extends JavaPlugin implements Listener {
   }
 }
 ```
+The event is called on the tick after the Custom plugin is enabled.  Should your client plugin be loaded or reloaded later, e.g. via *PlugMan*, issue the `/custom reload` command to trigger the calling of the event again.  This event handler method is also a great place to reload your plugin configuration.
 #### Spawn them in-game
 - `/custom give YourNameHere my:awesome_item`
 - `/custom summon my:awesome_entity`
