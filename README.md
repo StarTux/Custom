@@ -98,7 +98,7 @@ config.setInt("level");
 ```
 `Dirty.TagWrapper` reads and writes directly from and to hidden NBT tags within the item, so there is no need to explicitly save and load.  It is **inadvisable** to ever keep an instance of the `TagWrapper` around longer than necessary.  All other changes done to a Bukkit `ItemStack` may invalidate the instance of `TagWrapper` and vice versa.  **Always make a fresh copy!**
 #### CustomBlock
-The block framework comes with its own data storage that can hold any Java data structures, provided they can be serialized with JSON.  Therefore it is recommended to store a `Map<String, Object` to hold your custom data.  The corresponding load function will return an `Object` that needs to be cast, or `null`.  `@SuppressWarnings` is your friend.
+The block framework comes with its own data storage that can hold any Java data structures, provided they can be serialized with JSON.  Therefore it is recommended to store a `Map<String, Object>` to hold your custom data.  The corresponding load function will return an `Object` that needs to be cast, or `null`.  `@SuppressWarnings` is your friend.
 ```java
 BlockWatcher watcher;
 @SuppressWarnings("unchecked")
@@ -119,6 +119,7 @@ String myData = null;
 for (String string: entity.getScoreboardTags()) {
   if (string.startsWith("MyCustomEntityData=") {
     myData = string;
+    break;
   }
 }
 if (myData != null) {
