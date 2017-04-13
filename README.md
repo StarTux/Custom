@@ -61,11 +61,12 @@ public class MyPlugin extends JavaPlugin implements Listener {
 - `/custom summon my:awesome_entity`
 - `/custom setblock my:awesome_block`
 ## Event Handling
-`CustomItem`, `CustomBlock`, and `CustomEntity` can listen to events.  There is no need to register them as the framework will scan all registered custom things for event handling methods.  They work mostly like in Bukkit:
+`CustomItem`, `CustomBlock`, and `CustomEntity` can listen to events.  There is no need to register them as the framework will scan all registered custom things for event handling methods.  They work mostly like in Bukkit.
 - Annotate it with `@EventHandler`
 - `EventPriority` and `ignoreCancelled` are respected, with the same defaults as Bukkit.
 - First argument must be a subclass of `Event`
-With some minor restrictions:
+
+There are some minor differences.
 - Method must be public
 - Only one event handler per event and priority
 - There is a second (optional) argument, depending on the custom thing, providing additional information not contained in the event itself:
