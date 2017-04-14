@@ -38,12 +38,13 @@ public final class CustomPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         unload();
-        inventoryManager.onDisable();
         instance = null;
     }
 
     void unload() {
+        inventoryManager.onDisable();
         eventManager.clear();
+        if (itemManager != null) itemManager.onDisable();
         if (entityManager != null) entityManager.onDisable();
         if (blockManager != null) blockManager.onDisable();
     }
@@ -58,6 +59,7 @@ public final class CustomPlugin extends JavaPlugin {
         itemManager.onCustomRegister(event);
         entityManager.onCustomRegister(event);
         blockManager.onCustomRegister(event);
+        itemManager.onEnable();
         entityManager.onEnable();
         blockManager.onEnable();
     }

@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 public final class ItemManager {
     private final CustomPlugin plugin;
     private final Map<String, CustomItem> registeredItems = new HashMap<>();
+    private final ItemCrawler itemCrawler = new ItemCrawler(this);
 
     // Public use methods
 
@@ -34,7 +35,7 @@ public final class ItemManager {
         if (item == null) return null;
         CustomItem customItem = getCustomItem(item);
         if (customItem == null) return null;
-        return new ItemContext(item, customItem, null, null);
+        return new ItemContext(item, customItem, null, null, 0);
     }
 
     public CustomItem getCustomItem(ItemStack item) {
@@ -76,6 +77,14 @@ public final class ItemManager {
     }
 
     // Internal use methods
+
+    public void onEnable() {
+        itemCrawler.start();
+    }
+
+    public void onDisable() {
+        itemCrawler.stop();
+    }
 
     public String getCustomId(ItemStack item) {
         return Dirty.getCustomId(item);

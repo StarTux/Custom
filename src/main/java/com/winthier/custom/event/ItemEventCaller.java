@@ -40,12 +40,15 @@ abstract class ItemEventCaller {
     protected final void callWithItemInHand(Event event, Player player, EquipmentSlot hand) {
         ItemStack item;
         Position position;
+        int slot;
         if (hand == EquipmentSlot.HAND) {
             item = player.getInventory().getItemInMainHand();
             position = Position.HAND;
+            slot = player.getInventory().getHeldItemSlot();
         } else if (hand == EquipmentSlot.OFF_HAND) {
             item = player.getInventory().getItemInOffHand();
             position = Position.OFF_HAND;
+            slot = 40;
         } else {
             return;
         }
@@ -54,7 +57,7 @@ abstract class ItemEventCaller {
         if (customItem == null) return;
         HandlerCaller handlerCaller = dispatcher.getItems().get(customItem.getCustomId());
         if (handlerCaller == null) return;
-        ItemContext context = new ItemContext(item, customItem, player, position);
+        ItemContext context = new ItemContext(item, customItem, player, position, slot);
         handlerCaller.call(event, context);
     }
 
@@ -65,7 +68,8 @@ abstract class ItemEventCaller {
         if (customItem == null) return;
         HandlerCaller handlerCaller = dispatcher.getItems().get(customItem.getCustomId());
         if (handlerCaller == null) return;
-        ItemContext context = new ItemContext(item, customItem, player, position);
+        int slot = position == Position.HAND ? player.getInventory().getHeldItemSlot() : position.slot;
+        ItemContext context = new ItemContext(item, customItem, player, position, slot);
         handlerCaller.call(event, context);
     }
 

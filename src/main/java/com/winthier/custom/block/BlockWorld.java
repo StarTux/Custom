@@ -66,7 +66,7 @@ class BlockWorld {
         }
         long now = System.currentTimeMillis();
         for (BlockChunk.Vector vec: chunksToLoad) {
-            getBlockChunk(vec).getBlockWatchers();
+            getBlockChunk(vec).tick();
             getBlockChunk(vec).setLastUsed(now);
         }
         // Unload obsolete chunks

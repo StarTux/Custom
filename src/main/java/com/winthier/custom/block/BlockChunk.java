@@ -129,4 +129,12 @@ final class BlockChunk {
         }
         blockWatchers = null;
     }
+
+    void tick() {
+        for (BlockWatcher blockWatcher: getBlockWatchers().values()) {
+            if (blockWatcher.getCustomBlock() instanceof TickableBlock) {
+                ((TickableBlock)blockWatcher.getCustomBlock()).onTick(blockWatcher);
+            }
+        }
+    }
 }
