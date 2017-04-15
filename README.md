@@ -6,6 +6,8 @@
 [EntityContext]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/entity/EntityContext.java
 [TagWrapper]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/util/Dirty.java#L109
 [BlockManager]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/block/BlockManager.java
+[BlockWatcher]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/block/BlockWatcher.java
+[EntityWatcher]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/entity/EntityWatcher.java
 # Custom
 Customize items, blocks, and entities on the server.  This plugin provides a protocol to mark these things as customized, persistently.  There is support for event handling.
 ## How to write a client plugin
@@ -130,5 +132,56 @@ if (myData != null) {
   entity.addScoreboardTag("MyCustomEntityData=" + (myValue + 1));
 } else {
   entity.addScoreboardTag("MyCustomEntityData=1");
+}
+```
+## [`BlockWatcher`][BlockWatcher] and [`EntityWatcher`][EntityWatcher]
+Custom blocks and entities that are alive in the world are kept track of by means of watchers.  Both are required to hold a reference to the block or entity instance as well as the registered custom thing.  Many API calls and hooks use the watcher instead of just a block.  `BlockContext` and `EntityContext` contain a reference to the watcher of the object in question.  It is possible and recommended to override these watchers in order to cache persistent data or store transient values.
+- Override `BlockWatcher` or `EntityWatcher`
+- Override `CustomBlock.createBlockWatcher()` or `CustomEntity.createEntityWatcher()` to return an instance in your subclass.
+
+```java
+/** This block needs to be broken 100 times before it disappears. */
+public class MyAwesomeBlock implements CustomBlock {
+  @Override public String getCustomId() { return "my:awesome_block"; }
+  @Override public void setBlock(Block block) { block.setType(Material.GLASS) }
+  
+  class Watcher implements BlockWatcher {
+    private final Block block;
+    private final MyAwesomeBlock myAwesomeBlock;
+    private int health = 100;
+
+    Watcher(Block block, MyAwesomeBlock myAwesomeBlock, int health) {
+      this.block = block;
+      this.myAwesomeBlock = myAwesomeBlock;
+      this.health = health;
+    }
+    @Override public Block getBlock() { return block; }
+    @Override public CustomBlock getBlockWatcher() { return myAweomeBlock; }
+  }
+
+  @Override
+  public void createEntityWatcher(Block block) {
+    return new Watcher(block, this);
+  }
+  
+  @Override public void blockWasLoaded(BlockWatcher blockWatcher) {
+    Integer data = (Integer)CustomPlugin.getInstance().getBlockManager().loadBlockData(blockWatcher);
+    if (data != null) ((Watcher)blockWatcher).health = data;
+  }
+  
+  @Override public void blockWillUnload(BlockWatcher blockWatcher) {
+    CustomPlugin.getInstance().getBlockManager().saveBlockData(blockWatcher, ((Watcher)blockWatcher).health);
+  }
+  
+  @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
+  public void onBlockBreak(BlockBreakEvent event, BlockContext context) {
+    Watcher watcher = (Watcher)context.getBlockWatcher();
+    watcher.health -= 1;
+    if (watcher.health == 0) {
+      CustomPlugin.getInstance().getBlockManager().removeBlockWatcher(watcher);
+    } else {
+      event.setCancelled(true);
+    }
+  }
 }
 ```
