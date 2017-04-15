@@ -136,7 +136,7 @@ if (myData != null) {
 ```
 ## [`BlockWatcher`][BlockWatcher] and [`EntityWatcher`][EntityWatcher]
 Custom blocks and entities that are alive in the world are kept track of by means of watchers.  Both are required to hold a reference to the block or entity instance as well as the registered custom thing.  Many API calls and hooks use the watcher instead of just a block.  `BlockContext` and `EntityContext` contain a reference to the watcher of the object in question.  It is possible and recommended to override these watchers in order to cache persistent data or store transient values.
-- Override `BlockWatcher` or `EntityWatcher`
+- Subclass `BlockWatcher` or `EntityWatcher`
 - Override `CustomBlock.createBlockWatcher()` or `CustomEntity.createEntityWatcher()` to return an instance in your subclass.
 
 ```java
