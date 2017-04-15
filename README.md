@@ -143,7 +143,7 @@ Custom blocks and entities that are alive in the world are kept track of by mean
 /** This block needs to be broken 100 times before it disappears. */
 public class MyAwesomeBlock implements CustomBlock {
   @Override public String getCustomId() { return "my:awesome_block"; }
-  @Override public void setBlock(Block block) { block.setType(Material.GLASS) }
+  @Override public void setBlock(Block block) { block.setType(Material.GLASS); }
   
   class Watcher implements BlockWatcher {
     private final Block block;
