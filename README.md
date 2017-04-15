@@ -150,10 +150,9 @@ public class MyAwesomeBlock implements CustomBlock {
     private final MyAwesomeBlock myAwesomeBlock;
     private int health = 100;
 
-    Watcher(Block block, MyAwesomeBlock myAwesomeBlock, int health) {
+    Watcher(Block block, MyAwesomeBlock myAwesomeBlock) {
       this.block = block;
       this.myAwesomeBlock = myAwesomeBlock;
-      this.health = health;
     }
     @Override public Block getBlock() { return block; }
     @Override public CustomBlock getBlockWatcher() { return myAweomeBlock; }
