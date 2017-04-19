@@ -94,23 +94,34 @@ All custom things are able to store additional data persistently.  How to do so 
 - `CustomEntity` should use `Entity` `addScoreboardTag()` and `getScoreboardTags()`
 #### CustomItem
 ```java
-ItemStack item;
-Dirty.TagWrapper config = Dirty.TagWrapper.getItemConfigOf(item);
-int level = config.getInt("level");
-level += 1;
-config.setInt("level");
+public class MyAwesomeItem implements CustomItem {
+  @EventHandler
+  public void onEntityDamageByEntity(EntityDamageByEntityEvent event, ItemContext context) {
+    ItemStack item = context.getItemStack();
+    Dirty.TagWrapper config = Dirty.TagWrapper.getItemConfigOf(item);
+    int level = config.getInt("level");
+    level += 1;
+    config.setInt("level");
+  }
+}
 ```
 `Dirty.TagWrapper` reads and writes directly from and to hidden NBT tags within the item, so there is no need to explicitly save and load.  It is **inadvisable** to ever keep an instance of the `TagWrapper` around longer than necessary.  All other changes done to a Bukkit `ItemStack` may invalidate the instance of `TagWrapper` and vice versa.  **Always make a fresh copy!**
 #### CustomBlock
 The block framework comes with its own data storage that can hold any Java data structures, provided they can be serialized with JSON.  Therefore it is recommended to store a `Map<String, Object>` to hold your custom data.  The corresponding load function will return an `Object` that needs to be cast, or `null`.  `@SuppressWarnings` is your friend.
 ```java
-BlockWatcher watcher;
-@SuppressWarnings("unchecked")
-Map<String, Object> map = (Map<String, Object>)CustomPlugin.getInstance().getBlockManager().loadBlockData(watcher);
-if (map == null) map = new HashMap<>();
-String name = (String)map.get("name");
-map.put("level", 1);
-CustomPlugin.getInstance().getBlockManager().saveBlockData(watcher, map);
+public class MyAwesomeBlock implements CustomBlock {
+  @EventHandler
+  public void onBlockDamage(BlockDamageEvent event, BlockContext context) {
+    BlockWatcher watcher = context.getBlockWatcher();
+    @SuppressWarnings("unchecked")
+    Map<String, Object> map = (Map<String, Object>)CustomPlugin.getInstance().getBlockManager().loadBlockData(watcher);
+    if (map == null) map = new HashMap<>();
+    Integer level = (Integer)map.get("level");
+    if (level == null) level = 0;
+    map.put("level", level + 1);
+    CustomPlugin.getInstance().getBlockManager().saveBlockData(watcher, map);
+  }
+}
 ```
 #### CustomEntity
 Because Minecraft provides a method to persistently store strings in any entity via scoreboard tags, this framework provides no further support for entity data storage.  Make sure not to remove the tags of other plugins, including and especially this framework.  For further information, refer to the Bukkit/Spigot documentation.
@@ -118,21 +129,24 @@ Because Minecraft provides a method to persistently store strings in any entity 
 - [`getScoreboardTags()`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Entity.html#getScoreboardTags())
 - [`removeScoreboardTag()`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Entity.html#removeScoreboardTag(java.lang.String))
 ```java
-void myExampleCode() {
-  Entity entity;
-  String myData = null;
-  for (String string: entity.getScoreboardTags()) {
-    if (string.startsWith("MyCustomEntityData=") {
-      myData = string;
-      break;
+public class MyAwesomeEntity implements CustomEntity {
+  @EventHandler
+  void onEntityDamage(EntityDamageEvent event, EntityContext context) {
+    Entity entity = context.getEntity();
+    String myData = null;
+    for (String string: entity.getScoreboardTags()) {
+      if (string.startsWith("MyCustomEntityData=") {
+        myData = string;
+        break;
+      }
     }
-  }
-  if (myData != null) {
-    entity.removeScoreboardTag(myData);
-    int myValue = Integer.parseInt(myData.split("=", 2)[1]);
-    entity.addScoreboardTag("MyCustomEntityData=" + (myValue + 1));
-  } else {
-    entity.addScoreboardTag("MyCustomEntityData=1");
+    if (myData != null) {
+      entity.removeScoreboardTag(myData);
+      int myValue = Integer.parseInt(myData.split("=", 2)[1]);
+      entity.addScoreboardTag("MyCustomEntityData=" + (myValue + 1));
+    } else {
+      entity.addScoreboardTag("MyCustomEntityData=1");
+    }
   }
 }
 ```
