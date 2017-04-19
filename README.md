@@ -118,20 +118,22 @@ Because Minecraft provides a method to persistently store strings in any entity 
 - [`getScoreboardTags()`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Entity.html#getScoreboardTags())
 - [`removeScoreboardTag()`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Entity.html#removeScoreboardTag(java.lang.String))
 ```java
-Entity entity;
-String myData = null;
-for (String string: entity.getScoreboardTags()) {
-  if (string.startsWith("MyCustomEntityData=") {
-    myData = string;
-    break;
+void myExampleCode() {
+  Entity entity;
+  String myData = null;
+  for (String string: entity.getScoreboardTags()) {
+    if (string.startsWith("MyCustomEntityData=") {
+      myData = string;
+      break;
+    }
   }
-}
-if (myData != null) {
-  entity.removeScoreboardTag(myData);
-  int myValue = Integer.parseInt(myData.split("=", 2)[1]);
-  entity.addScoreboardTag("MyCustomEntityData=" + (myValue + 1));
-} else {
-  entity.addScoreboardTag("MyCustomEntityData=1");
+  if (myData != null) {
+    entity.removeScoreboardTag(myData);
+    int myValue = Integer.parseInt(myData.split("=", 2)[1]);
+    entity.addScoreboardTag("MyCustomEntityData=" + (myValue + 1));
+  } else {
+    entity.addScoreboardTag("MyCustomEntityData=1");
+  }
 }
 ```
 ## [`BlockWatcher`][BlockWatcher] and [`EntityWatcher`][EntityWatcher]
