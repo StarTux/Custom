@@ -72,8 +72,8 @@ public final class ItemManager {
         return new ArrayList<>(registeredItems.values());
     }
 
-    public void wrapItemStack(ItemStack itemStack, String customId) {
-        Dirty.setCustomId(itemStack, customId);
+    public ItemStack wrapItemStack(ItemStack itemStack, String customId) {
+        return Dirty.setCustomId(itemStack, customId);
     }
 
     // Internal use methods
