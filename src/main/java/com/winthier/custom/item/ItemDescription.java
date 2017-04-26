@@ -23,7 +23,7 @@ public final class ItemDescription {
     private String usage;
     private final Map<String, String> stats = new LinkedHashMap<>();
     private List<String> lore;
-    private static final int LINE_LENGTH = 32;
+    private static final int LINE_LENGTH = 28;
 
     public ItemDescription() { }
 

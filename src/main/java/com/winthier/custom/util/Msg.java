@@ -105,7 +105,7 @@ public final class Msg {
     }
 
     private static List<String> wrapInternal(String what, int maxLineLength) {
-        String[] words = what.split(" ");
+        String[] words = what.split("\\s+");
         List<String> lines = new ArrayList<>();
         if (words.length == 0) return lines;
         StringBuilder line = new StringBuilder(words[0]);
@@ -113,7 +113,7 @@ public final class Msg {
         for (int i = 1; i < words.length; ++i) {
             String word = words[i];
             int wordLength = ChatColor.stripColor(word).length();
-            if (lineLength + wordLength > maxLineLength) {
+            if (lineLength + wordLength + 1 > maxLineLength) {
                 lines.add(line.toString());
                 line = new StringBuilder(word);
                 lineLength = wordLength;
