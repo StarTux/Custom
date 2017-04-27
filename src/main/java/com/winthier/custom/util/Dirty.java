@@ -1,10 +1,13 @@
 package com.winthier.custom.util;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import net.minecraft.server.v1_11_R1.ItemStack;
 import net.minecraft.server.v1_11_R1.NBTTagCompound;
 import net.minecraft.server.v1_11_R1.NBTTagList;
+import net.minecraft.server.v1_11_R1.NBTTagString;
 import org.bukkit.craftbukkit.v1_11_R1.inventory.CraftItemStack;
 
 public final class Dirty {
@@ -13,6 +16,7 @@ public final class Dirty {
     private static final String KEY_ITEM_CUSTOM_ID = "Winthier.Custom.ID";
     private static final String KEY_ITEM_CUSTOM_CONFIG = "Winthier.Custom.Config";
     private static final int NBT_TYPE_COMPOUND = 10;
+    private static final int NBT_TYPE_LIST = 9;
     private static final int NBT_TYPE_STRING = 8;
 
     static Field getFieldCraftItemStackHandle() {
@@ -184,6 +188,19 @@ public final class Dirty {
         public TagWrapper getCompound(String key) {
             if (!tag.hasKeyOfType(key, NBT_TYPE_COMPOUND)) return null;
             return new TagWrapper(tag.getCompound(key));
+        }
+
+        public void setStringList(String key, List<String> value) {
+            NBTTagList list = new NBTTagList();
+            for (String string: value) list.add(new NBTTagString(string));
+            tag.set(key, list);
+        }
+
+        public List<String> getStringList(String key) {
+            NBTTagList list = tag.getList(key, NBT_TYPE_STRING);
+            List<String> result = new ArrayList<>(list.size());
+            for (int i = 0; i < list.size(); i += 1) result.add(list.getString(i));
+            return result;
         }
 
         public TagWrapper createCompound(String key) {
