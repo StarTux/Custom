@@ -35,16 +35,34 @@ public final class CustomRegisterEvent extends Event {
     private final List<CustomEntity> entities = new ArrayList<>();
     @Getter
     private final List<CustomBlock> blocks = new ArrayList<>();
+    @Getter
+    private final List<Runnable> tasks = new ArrayList<>();
 
+    /**
+     * Add a CustomItem to be registered after the event has passed.
+     */
     public void addItem(CustomItem item) {
         items.add(item);
     }
 
+    /**
+     * Add a CustomEntity to be registered after the event has passed.
+     */
     public void addEntity(CustomEntity entity) {
         entities.add(entity);
     }
 
+    /**
+     * Add a CustomBlock to be registered after the event has passed.
+     */
     public void addBlock(CustomBlock block) {
         blocks.add(block);
+    }
+
+    /**
+     * Add a Runnable to be called after the event has passed.
+     */
+    public void addTask(Runnable task) {
+        tasks.add(task);
     }
 }

@@ -59,6 +59,10 @@ public final class CustomPlugin extends JavaPlugin {
         itemManager.onCustomRegister(event);
         entityManager.onCustomRegister(event);
         blockManager.onCustomRegister(event);
+        getServer().resetRecipes();
+        for (Runnable task: event.getTasks()) {
+            task.run();
+        }
         itemManager.onEnable();
         entityManager.onEnable();
         blockManager.onEnable();
