@@ -20,25 +20,16 @@ public class EntityContext {
      * the specific event call is referring to.
      */
     public enum Position {
-        /**
-         * EntityEvent.getEntity()
-         */
+        /** EntityEvent.getEntity() */
         ENTITY,
-        /**
-         * EntityDamageByEntityEvent.getDamager()
-         */
+        /** EntityDamageByEntityEvent.getDamager()
+         *  HangingBreakByEntityEvent.getRemover() */
         DAMAGER,
-        /**
-         * Entity(Mount/Dismount)Event.get(Mount/Dismounted)()
-         */
+        /** Entity(Mount/Dismount)Event.get(Mount/Dismounted)() */
         MOUNT,
-        /**
-         * ProjectileHitEvent.getHitEntity()
-         */
+        /** ProjectileHitEvent.getHitEntity() */
         PROJECTILE_TARGET,
-        /**
-         * PotionSplashEvent.getAffectedEntities()
-         */
+        /** PotionSplashEvent.getAffectedEntities() */
         SPLASHED,
     }
 
