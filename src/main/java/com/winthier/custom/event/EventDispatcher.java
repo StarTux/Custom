@@ -41,7 +41,7 @@ class EventDispatcher implements Listener, EventExecutor {
             itemEventCaller.call(event);
         }
         if (!entities.isEmpty()) {
-            if (entityEventCaller == null) entityEventCaller = EntityEventCaller.of(this, event);
+            if (entityEventCaller == null) entityEventCaller = EntityEventCaller.of(this, eventClass);
             entityEventCaller.call(event);
         }
         if (!blocks.isEmpty()) {

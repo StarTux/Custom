@@ -40,58 +40,80 @@ abstract class EntityEventCaller {
         callWithEntity(event, entity, EntityContext.Position.ENTITY);
     }
 
-    static EntityEventCaller of(EventDispatcher dispatcher, Event event) {
-        if (event instanceof EntityEvent) {
+    static EntityEventCaller of(EventDispatcher dispatcher, Class<? extends Event> eventClass) {
+        if (EntityDamageByEntityEvent.class.isAssignableFrom(eventClass)) {
+            return new EntityEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    EntityDamageByEntityEvent event = (EntityDamageByEntityEvent)ev;
+                    callWithEntity(event, event.getEntity());
+                    callWithEntity(event, ((EntityDamageByEntityEvent)event).getDamager(), EntityContext.Position.DAMAGER);
+                }
+            };
+        } else if (EntityMountEvent.class.isAssignableFrom(eventClass)) {
+            return new EntityEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    EntityMountEvent event = (EntityMountEvent)ev;
+                    callWithEntity(event, event.getEntity());
+                    callWithEntity(event, ((EntityMountEvent)event).getMount(), EntityContext.Position.MOUNT);
+                }
+            };
+        } else if (EntityDismountEvent.class.isAssignableFrom(eventClass)) {
+            return new EntityEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    EntityDismountEvent event = (EntityDismountEvent)ev;
+                    callWithEntity(event, event.getEntity());
+                    callWithEntity(event, ((EntityDismountEvent)event).getDismounted(), EntityContext.Position.MOUNT);
+                }
+            };
+        } else if (PotionSplashEvent.class.isAssignableFrom(eventClass)) {
+            return new EntityEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    PotionSplashEvent event = (PotionSplashEvent)ev;
+                    callWithEntity(event, event.getEntity());
+                    PotionSplashEvent splashEvent = (PotionSplashEvent)event;
+                    for (LivingEntity affected: splashEvent.getAffectedEntities()) {
+                        callWithEntity(event, affected, EntityContext.Position.SPLASHED);
+                    }
+                }
+            };
+        } else if (ProjectileHitEvent.class.isAssignableFrom(eventClass)) {
+            return new EntityEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    ProjectileHitEvent event = (ProjectileHitEvent)ev;
+                    callWithEntity(event, event.getEntity());
+                    Entity hitEntity = ((ProjectileHitEvent)event).getHitEntity();
+                    if (hitEntity != null) callWithEntity(event, hitEntity, EntityContext.Position.PROJECTILE_TARGET);
+                }
+            };
+        } else if (EntityEvent.class.isAssignableFrom(eventClass)) {
             return new EntityEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     EntityEvent event = (EntityEvent)ev;
                     callWithEntity(event, event.getEntity());
-                    // We have to check subclasses in the final
-                    // class because we could get unlucky and get
-                    // the subclass on the first call when we were
-                    // expecting a superclass.
-                    // Perhaps replace instanceof with the Class
-                    // check?
-                    if (event instanceof EntityDamageByEntityEvent) {
-                        callWithEntity(event, ((EntityDamageByEntityEvent)event).getDamager(), EntityContext.Position.DAMAGER);
-                    } else if (event instanceof EntityMountEvent) {
-                        callWithEntity(event, ((EntityMountEvent)event).getMount(), EntityContext.Position.MOUNT);
-                    } else if (event instanceof EntityDismountEvent) {
-                        callWithEntity(event, ((EntityDismountEvent)event).getDismounted(), EntityContext.Position.MOUNT);
-                    } else if (event instanceof ProjectileHitEvent) {
-                        Entity hitEntity = ((ProjectileHitEvent)event).getHitEntity();
-                        if (hitEntity != null) callWithEntity(event, hitEntity, EntityContext.Position.PROJECTILE_TARGET);
-                        if (event instanceof PotionSplashEvent) {
-                            PotionSplashEvent splashEvent = (PotionSplashEvent)event;
-                            for (LivingEntity affected: splashEvent.getAffectedEntities()) {
-                                callWithEntity(event, affected, EntityContext.Position.SPLASHED);
-                            }
-                        }
-                    }
                 }
             };
-        } else if (event instanceof PlayerInteractEntityEvent) {
+        } else if (PlayerInteractEntityEvent.class.isAssignableFrom(eventClass)) {
             return new EntityEventCaller(dispatcher) {
                 @Override void call(Event ev) {
-                    callWithEntity(event, ((PlayerInteractEntityEvent)ev).getRightClicked());
+                    callWithEntity(ev, ((PlayerInteractEntityEvent)ev).getRightClicked());
                 }
             };
-        } else if (event instanceof ChunkEvent) {
+        } else if (ChunkEvent.class.isAssignableFrom(eventClass)) {
             return new EntityEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     for (Entity entity: ((ChunkEvent)ev).getChunk().getEntities()) {
-                        callWithEntity(event, entity);
+                        callWithEntity(ev, entity);
                     }
                 }
             };
-        } else if (event instanceof InventoryPickupItemEvent) {
+        } else if (InventoryPickupItemEvent.class.isAssignableFrom(eventClass)) {
             return new EntityEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     InventoryPickupItemEvent event = (InventoryPickupItemEvent)ev;
                     callWithEntity(event, event.getItem());
                 }
             };
-        } else if (event instanceof PlayerPickupItemEvent) {
+        } else if (PlayerPickupItemEvent.class.isAssignableFrom(eventClass)) {
             return new EntityEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     PlayerPickupItemEvent event = (PlayerPickupItemEvent)ev;
@@ -99,7 +121,7 @@ abstract class EntityEventCaller {
                 }
             };
         } else {
-            CustomPlugin.getInstance().getLogger().warning("No EntityEventCaller found for " + event.getEventName());
+            CustomPlugin.getInstance().getLogger().warning("No EntityEventCaller found for " + eventClass.getName());
             return new EntityEventCaller(dispatcher) {
                 @Override void call(Event ev) {
                     // Do nothing
