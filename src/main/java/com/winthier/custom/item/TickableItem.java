@@ -6,5 +6,5 @@ package com.winthier.custom.item;
  * this item being found in a player inventory.
  */
 public interface TickableItem {
-    void onTick(ItemContext itemContext);
+    void onTick(ItemContext itemContext, int ticks);
 }

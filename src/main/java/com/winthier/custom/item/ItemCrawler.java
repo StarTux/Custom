@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @RequiredArgsConstructor
 public final class ItemCrawler extends BukkitRunnable {
     private final ItemManager itemManager;
+    private int ticks;
 
     void start() {
         try {
@@ -46,9 +47,10 @@ public final class ItemCrawler extends BukkitRunnable {
                         position = ItemContext.Position.fromPlayerInventorySlot(i);
                     }
                     ItemContext context = new ItemContext(item, customItem, player, position, i);
-                    ((TickableItem)customItem).onTick(context);
+                    ((TickableItem)customItem).onTick(context, ticks);
                 }
             }
         }
+        ticks += 1;
     }
 }
