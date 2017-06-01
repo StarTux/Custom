@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -234,6 +235,13 @@ abstract class ItemEventCaller {
                 @Override public void call(Event ev) {
                     BlockDispenseEvent event = (BlockDispenseEvent)ev;
                     callWithItem(event, null, event.getItem(), Position.ITEM);
+                }
+            };
+        } else if (PlayerItemDamageEvent.class.isAssignableFrom(eventClass)) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PlayerItemDamageEvent event = (PlayerItemDamageEvent)ev;
+                    callWithItem(event, event.getPlayer(), event.getItem(), Position.ITEM);
                 }
             };
         } else {
