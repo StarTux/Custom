@@ -65,6 +65,12 @@ public final class EntityManager {
         return watcher;
     }
 
+    public CustomEntity getCustomEntity(Entity entity) {
+        EntityWatcher entityWatcher = getEntityWatcher(entity);
+        if (entityWatcher == null) return null;
+        return entityWatcher.getCustomEntity();
+    }
+
     public EntityWatcher getEntityWatcher(UUID uuid) {
         return entityWatcherMap.get(uuid);
     }
