@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,19 +44,19 @@ public final class ItemDescription {
             }
             if (description != null) {
                 List<String> lines = Msg.wrap(description, LINE_LENGTH);
-                for (int i = 0; i < lines.size(); ++i) lines.set(i, Msg.format("&r%s", lines.get(i)));
+                for (int i = 0; i < lines.size(); ++i) lines.set(i, ChatColor.RESET + lines.get(i));
                 lore.addAll(lines);
             }
             if (usage != null) {
                 lore.add("");
-                List<String> lines = Msg.wrap(Msg.format("&aUSAGE&r %s", usage), LINE_LENGTH);
-                for (int i = 1; i < lines.size(); ++i) lines.set(i, Msg.format("&r%s", lines.get(i)));
+                List<String> lines = Msg.wrap(ChatColor.GREEN + "USAGE" + ChatColor.RESET + " " + usage, LINE_LENGTH);
+                for (int i = 1; i < lines.size(); ++i) lines.set(i, ChatColor.RESET + lines.get(i));
                 lore.addAll(lines);
             }
             if (!stats.isEmpty()) {
                 lore.add("");
                 for (Map.Entry<String, String> entry: stats.entrySet()) {
-                    lore.add(Msg.format("&a%s: &r%s", entry.getKey(), entry.getValue()));
+                    lore.add(ChatColor.GREEN + entry.getKey() + ": " + ChatColor.RESET + entry.getValue());
                 }
             }
         }
@@ -67,10 +68,10 @@ public final class ItemDescription {
     }
 
     public void load(ConfigurationSection config) {
-        displayName = config.getString("DisplayName");
-        category = config.getString("Category");
-        description = config.getString("Description");
-        usage = config.getString("Usage");
+        displayName = ChatColor.translateAlternateColorCodes('&', config.getString("DisplayName"));
+        category = ChatColor.translateAlternateColorCodes('&', config.getString("Category"));
+        description = ChatColor.translateAlternateColorCodes('&', config.getString("Description"));
+        usage = ChatColor.translateAlternateColorCodes('&', config.getString("Usage"));
         lore = null;
     }
 
@@ -82,7 +83,7 @@ public final class ItemDescription {
 
     public void apply(ItemStack item) {
         ItemMeta meta = item.getItemMeta();
-        if (displayName != null) meta.setDisplayName(Msg.format("&r%s", displayName));
+        if (displayName != null) meta.setDisplayName(ChatColor.RESET + displayName);
         meta.setLore(getLore());
         item.setItemMeta(meta);
     }
