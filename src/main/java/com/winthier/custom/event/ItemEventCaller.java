@@ -18,6 +18,7 @@ import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -242,6 +243,16 @@ abstract class ItemEventCaller {
                 @Override public void call(Event ev) {
                     PlayerItemDamageEvent event = (PlayerItemDamageEvent)ev;
                     callWithItem(event, event.getPlayer(), event.getItem(), Position.ITEM);
+                }
+            };
+        } else if (EntityToggleGlideEvent.class.isAssignableFrom(eventClass)) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    EntityToggleGlideEvent event = (EntityToggleGlideEvent)ev;
+                    if (event.getEntity() instanceof Player) {
+                        Player player = (Player)event.getEntity();
+                        callWithItem(event, player, player.getEquipment().getChestplate(), Position.CHESTPLATE);
+                    }
                 }
             };
         } else {
