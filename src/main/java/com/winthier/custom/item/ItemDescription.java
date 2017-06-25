@@ -68,10 +68,14 @@ public final class ItemDescription {
     }
 
     public void load(ConfigurationSection config) {
-        displayName = ChatColor.translateAlternateColorCodes('&', config.getString("DisplayName"));
-        category = ChatColor.translateAlternateColorCodes('&', config.getString("Category"));
-        description = ChatColor.translateAlternateColorCodes('&', config.getString("Description"));
-        usage = ChatColor.translateAlternateColorCodes('&', config.getString("Usage"));
+        displayName = config.getString("DisplayName");
+        category = config.getString("Category");
+        description = config.getString("Description");
+        usage = config.getString("Usage");
+        if (displayName != null) displayName = ChatColor.translateAlternateColorCodes('&', displayName);
+        if (category != null) category = ChatColor.translateAlternateColorCodes('&', category);
+        if (description != null) description = ChatColor.translateAlternateColorCodes('&', description);
+        if (usage != null) usage = ChatColor.translateAlternateColorCodes('&', usage);
         lore = null;
     }
 
