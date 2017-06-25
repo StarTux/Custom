@@ -7,20 +7,22 @@ import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.util.Dirty;
 import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
 @RequiredArgsConstructor
-final class CustomCommand implements CommandExecutor {
+final class CustomCommand implements TabExecutor {
     private final CustomPlugin plugin;
 
     @Override
@@ -107,5 +109,20 @@ final class CustomCommand implements CommandExecutor {
             player.sendMessage("Item tag: (" + o + ")");
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
+        if (args.length == 1) {
+            return Arrays.asList("give", "summon", "getblock", "setblock", "reload", "items", "debug").stream().filter(i -> i.startsWith(args[0])).collect(Collectors.toList());
+        } if (args.length == 3 && args[0].equals("give")) {
+            return plugin.getItemManager().getRegisteredItems().stream().map(i -> i.getCustomId()).filter(i -> i.startsWith(args[2])).collect(Collectors.toList());
+        } if (args.length == 2 && args[0].equals("summon")) {
+            return plugin.getEntityManager().getRegisteredEntities().stream().map(i -> i.getCustomId()).filter(i -> i.startsWith(args[1])).collect(Collectors.toList());
+        } if (args.length == 2 && args[0].equals("setblock")) {
+            return plugin.getBlockManager().getRegisteredBlocks().stream().map(i -> i.getCustomId()).filter(i -> i.startsWith(args[1])).collect(Collectors.toList());
+        } else {
+            return null;
+        }
     }
 }

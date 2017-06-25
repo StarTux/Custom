@@ -115,6 +115,10 @@ public final class EntityManager {
         if (entity.isValid()) removeCustomId(entityWatcher.getEntity());
     }
 
+    public List<CustomEntity> getRegisteredEntities() {
+        return new ArrayList<>(customEntityMap.values());
+    }
+
     // Internal use methods
 
     List<UUID> getWatchedEntities() {

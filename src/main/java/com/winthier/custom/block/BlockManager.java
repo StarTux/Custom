@@ -2,6 +2,7 @@ package com.winthier.custom.block;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,10 @@ public final class BlockManager {
     public Object loadBlockData(BlockWatcher blockWatcher) {
         Block block = blockWatcher.getBlock();
         return getBlockWorld(block.getWorld()).getBlockChunk(block).loadBlockData(blockWatcher);
+    }
+
+    public List<CustomBlock> getRegisteredBlocks() {
+        return new ArrayList<>(customBlockMap.values());
     }
 
     // Internal use methods
