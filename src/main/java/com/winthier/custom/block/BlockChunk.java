@@ -2,6 +2,7 @@ package com.winthier.custom.block;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.util.Msg;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -124,7 +125,7 @@ final class BlockChunk {
 
     void unload() {
         if (blockWatchers == null) return;
-        for (BlockWatcher blockWatcher: blockWatchers.values()) {
+        for (BlockWatcher blockWatcher: new ArrayList<>(blockWatchers.values())) {
             blockWatcher.getCustomBlock().blockWillUnload(blockWatcher);
         }
         blockWatchers = null;

@@ -103,7 +103,11 @@ public final class BlockManager {
     public void onEnable() {
         task = new BukkitRunnable() {
             @Override public void run() {
-                tick();
+                try {
+                    tick();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         };
         task.runTaskTimer(plugin, 1, 1);
