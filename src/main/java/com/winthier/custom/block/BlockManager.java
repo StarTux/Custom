@@ -2,6 +2,7 @@ package com.winthier.custom.block;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
+import com.winthier.custom.event.CustomTickEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,11 +118,13 @@ public final class BlockManager {
     }
 
     void tick() {
+        CustomTickEvent.Type.WILL_TICK_BLOCKS.call();
         for (World world: plugin.getServer().getWorlds()) {
             List<Player> players = world.getPlayers();
             if (players.isEmpty()) continue;
             getBlockWorld(world).tick(players);
         }
+        CustomTickEvent.Type.DID_TICK_BLOCKS.call();
         saveOldest();
     }
 
