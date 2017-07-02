@@ -17,6 +17,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.enchantment.PrepareItemEnchantEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -94,8 +95,29 @@ abstract class ItemEventCaller {
             return new ItemEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     EntityDamageByEntityEvent event = (EntityDamageByEntityEvent)ev;
-                    if (!(event.getDamager() instanceof Player)) return;
-                    callWithItemInHand(event, (Player)event.getDamager(), EquipmentSlot.HAND);
+                    if (event.getDamager() instanceof Player) {
+                        callWithItemInHand(event, (Player)event.getDamager(), EquipmentSlot.HAND);
+                    }
+                    if (event.getEntity() instanceof Player) {
+                        Player player = (Player)event.getEntity();
+                        callWithItem(event, player, player.getInventory().getHelmet(), Position.HELMET);
+                        callWithItem(event, player, player.getInventory().getChestplate(), Position.CHESTPLATE);
+                        callWithItem(event, player, player.getInventory().getLeggings(), Position.LEGGINGS);
+                        callWithItem(event, player, player.getInventory().getBoots(), Position.BOOTS);
+                    }
+                }
+            };
+        } else if (EntityDamageEvent.class.isAssignableFrom(eventClass)) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    EntityDamageEvent event = (EntityDamageEvent)ev;
+                    if (event.getEntity() instanceof Player) {
+                        Player player = (Player)event.getEntity();
+                        callWithItem(event, player, player.getInventory().getHelmet(), Position.HELMET);
+                        callWithItem(event, player, player.getInventory().getChestplate(), Position.CHESTPLATE);
+                        callWithItem(event, player, player.getInventory().getLeggings(), Position.LEGGINGS);
+                        callWithItem(event, player, player.getInventory().getBoots(), Position.BOOTS);
+                    }
                 }
             };
         } else if (BlockDamageEvent.class.isAssignableFrom(eventClass)) {
