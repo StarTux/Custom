@@ -18,6 +18,7 @@ import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 @RequiredArgsConstructor
@@ -121,6 +122,13 @@ abstract class BlockEventCaller {
                 @Override void call(Event ev) {
                     EntityChangeBlockEvent event = (EntityChangeBlockEvent)ev;
                     callWithBlock(event, event.getBlock(), Position.BLOCK);
+                }
+            };
+        } else if (SpawnerSpawnEvent.class.isAssignableFrom(eventClass)) {
+            return new BlockEventCaller(dispatcher) {
+                @Override void call(Event ev) {
+                    SpawnerSpawnEvent event = (SpawnerSpawnEvent)ev;
+                    callWithBlock(event, event.getSpawner().getBlock(), Position.BLOCK);
                 }
             };
         } else {
