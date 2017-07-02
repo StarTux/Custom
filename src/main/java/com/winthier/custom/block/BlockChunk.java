@@ -132,7 +132,7 @@ final class BlockChunk {
     }
 
     void tick() {
-        for (BlockWatcher blockWatcher: getBlockWatchers().values()) {
+        for (BlockWatcher blockWatcher: new ArrayList<>(getBlockWatchers().values())) {
             if (blockWatcher.getCustomBlock() instanceof TickableBlock) {
                 ((TickableBlock)blockWatcher.getCustomBlock()).onTick(blockWatcher);
             }
