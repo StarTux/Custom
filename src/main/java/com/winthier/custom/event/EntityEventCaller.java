@@ -5,6 +5,7 @@ import com.winthier.custom.entity.CustomEntity;
 import com.winthier.custom.entity.EntityContext.Position;
 import com.winthier.custom.entity.EntityContext;
 import com.winthier.custom.entity.EntityWatcher;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -74,7 +75,7 @@ abstract class EntityEventCaller {
                 @Override void call(Event ev) {
                     PotionSplashEvent event = (PotionSplashEvent)ev;
                     callWithEntity(event, event.getEntity());
-                    for (LivingEntity affected: event.getAffectedEntities()) {
+                    for (LivingEntity affected: new ArrayList<>(event.getAffectedEntities())) {
                         callWithEntity(event, affected, Position.SPLASHED);
                     }
                 }
@@ -84,7 +85,7 @@ abstract class EntityEventCaller {
                 @Override public void call(Event ev) {
                     AreaEffectCloudApplyEvent event = (AreaEffectCloudApplyEvent)ev;
                     callWithEntity(event, event.getEntity());
-                    for (LivingEntity affected: event.getAffectedEntities()) {
+                    for (LivingEntity affected: new ArrayList<>(event.getAffectedEntities())) {
                         callWithEntity(event, affected, Position.SPLASHED);
                     }
                 }
