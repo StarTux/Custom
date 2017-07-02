@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.Event;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
@@ -73,8 +74,17 @@ abstract class EntityEventCaller {
                 @Override void call(Event ev) {
                     PotionSplashEvent event = (PotionSplashEvent)ev;
                     callWithEntity(event, event.getEntity());
-                    PotionSplashEvent splashEvent = (PotionSplashEvent)event;
-                    for (LivingEntity affected: splashEvent.getAffectedEntities()) {
+                    for (LivingEntity affected: event.getAffectedEntities()) {
+                        callWithEntity(event, affected, Position.SPLASHED);
+                    }
+                }
+            };
+        } else if (AreaEffectCloudApplyEvent.class.isAssignableFrom(eventClass)) {
+            return new EntityEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    AreaEffectCloudApplyEvent event = (AreaEffectCloudApplyEvent)ev;
+                    callWithEntity(event, event.getEntity());
+                    for (LivingEntity affected: event.getAffectedEntities()) {
                         callWithEntity(event, affected, Position.SPLASHED);
                     }
                 }

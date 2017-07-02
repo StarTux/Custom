@@ -29,7 +29,8 @@ public class EntityContext {
         MOUNT,
         /** ProjectileHitEvent.getHitEntity() */
         PROJECTILE_TARGET,
-        /** PotionSplashEvent.getAffectedEntities() */
+        /** PotionSplashEvent.getAffectedEntities()
+            AreaEffectCloudApplyEvent.getAffectedEntities() */
         SPLASHED,
     }
 
