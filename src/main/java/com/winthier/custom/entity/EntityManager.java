@@ -93,16 +93,25 @@ public final class EntityManager {
         return entityWatcher;
     }
 
-    public EntityWatcher spawnEntity(Location location, String customId) {
+    public EntityWatcher spawnEntity(Location location, String customId, Object conf) {
         CustomEntity customEntity = getCustomEntity(customId);
         if (customEntity == null) throw new IllegalArgumentException("Unknown custom entity: " + customId);
-        Entity entity = customEntity.spawnEntity(location);
+        Entity entity;
+        if (conf != null) {
+            entity = customEntity.spawnEntity(location, conf);
+        } else {
+            entity = customEntity.spawnEntity(location);
+        }
         if (entity == null) return null;
         storeCustomId(entity, customId);
         EntityWatcher entityWatcher = customEntity.createEntityWatcher(entity);
         watchEntity(entityWatcher);
         customEntity.entityWasSpawned(entityWatcher);
         return entityWatcher;
+    }
+
+    public EntityWatcher spawnEntity(Location location, String customId) {
+        return spawnEntity(location, customId, null);
     }
 
     /**

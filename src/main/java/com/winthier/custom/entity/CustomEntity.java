@@ -17,6 +17,10 @@ public interface CustomEntity extends Listener {
      */
     Entity spawnEntity(Location location);
 
+    default Entity spawnEntity(Location location, Object conf) {
+        return spawnEntity(location);
+    }
+
     /**
      * Wrap around a discovered or created entity.  That is, return a
      * new EntityWatcher with the given Entity and CustomEntity.  This

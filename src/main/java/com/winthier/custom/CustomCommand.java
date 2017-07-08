@@ -50,9 +50,27 @@ final class CustomCommand implements TabExecutor {
             }
             CustomPlugin.getInstance().getItemManager().dropItemStack(target.getEyeLocation(), customId, amount).setPickupDelay(0);
             Msg.info(sender, "Item spawned for %s.", target.getName());
-        } else if (firstArg.equals("summon") && args.length == 2) {
+        } else if (firstArg.equals("summon") && args.length >= 2) {
+            if (player == null) {
+                Msg.warn(sender, "Player expected");
+                return true;
+            }
             String customId = args[1];
-            EntityWatcher entityWatcher = plugin.getEntityManager().spawnEntity(player.getLocation(), customId);
+            EntityWatcher entityWatcher;
+            if (args.length < 3) {
+                entityWatcher = plugin.getEntityManager().spawnEntity(player.getLocation(), customId);
+            } else {
+                StringBuilder sb = new StringBuilder(args[2]);
+                for (int i = 3; i < args.length; i += 1) {
+                    sb.append(" ").append(args[i]);
+                }
+                Object conf = Msg.parseJson(sb.toString());
+                if (conf == null) {
+                    Msg.warn(sender, "Invalid JSON: " + sb.toString());
+                    return true;
+                }
+                entityWatcher = plugin.getEntityManager().spawnEntity(player.getLocation(), customId, conf);
+            }
             if (entityWatcher == null) {
                 Msg.warn(sender, "Failed to spawn custom entity: %s.", customId);
                 return true;
