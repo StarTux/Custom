@@ -89,6 +89,7 @@ public final class EntityManager {
         CustomEntity customEntity = getCustomEntity(customId);
         if (customEntity == null) throw new IllegalArgumentException("Unknown custom entity: " + customId);
         EntityWatcher entityWatcher = customEntity.createEntityWatcher(entity);
+        storeCustomId(entity, customId);
         watchEntity(entityWatcher);
         return entityWatcher;
     }
@@ -208,7 +209,7 @@ public final class EntityManager {
      */
     public void onDisable() {
         entityCrawler.stop();
-        for (EntityWatcher entityWatcher: entityWatcherMap.values()) {
+        for (EntityWatcher entityWatcher: new ArrayList<>(entityWatcherMap.values())) {
             entityWatcher.getCustomEntity().entityWatcherWillUnregister(entityWatcher);
         }
         entityWatcherMap.clear();
