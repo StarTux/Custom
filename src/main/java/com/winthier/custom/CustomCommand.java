@@ -5,6 +5,7 @@ import com.winthier.custom.entity.EntityWatcher;
 import com.winthier.custom.inventory.CustomInventory;
 import com.winthier.custom.item.CustomItem;
 import com.winthier.custom.util.Dirty;
+import com.winthier.custom.util.Items;
 import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 @RequiredArgsConstructor
 final class CustomCommand implements TabExecutor {
@@ -48,7 +50,8 @@ final class CustomCommand implements TabExecutor {
                 }
                 if (amount < 1) amount = 1;
             }
-            CustomPlugin.getInstance().getItemManager().dropItemStack(target.getEyeLocation(), customId, amount).setPickupDelay(0);
+            ItemStack item = CustomPlugin.getInstance().getItemManager().spawnItemStack(customId, amount);
+            Items.give(item, target);
             Msg.info(sender, "Item spawned for %s.", target.getName());
         } else if (firstArg.equals("summon") && args.length >= 2) {
             if (player == null) {
@@ -117,7 +120,8 @@ final class CustomCommand implements TabExecutor {
                             if (index < 0 || index >= items.size()) return;
                             String customId = items.get(index);
                             int stackSize = event.isShiftClick() ? inventory.getItem(index).getType().getMaxStackSize() : 1;
-                            plugin.getItemManager().dropItemStack(player.getEyeLocation(), customId, stackSize).setPickupDelay(0);
+                            ItemStack item = plugin.getItemManager().spawnItemStack(customId, stackSize);
+                            Items.give(item, player);
                             player.sendMessage("Spawned " + customId + ".");
                         }
                     });
