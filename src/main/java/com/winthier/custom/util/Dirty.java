@@ -73,6 +73,7 @@ public final class Dirty {
             CraftItemStack obcItem = (CraftItemStack)bukkitItem;
             getFieldCraftItemStackHandle().setAccessible(true);
             ItemStack nmsItem = (ItemStack)fieldCraftItemStackHandle.get(obcItem);
+            if (nmsItem == null) return null;
             if (!nmsItem.hasTag()) return null;
             if (!nmsItem.getTag().hasKeyOfType(KEY_ITEM_CUSTOM_ID, NBT_TYPE_STRING)) return null;
             return nmsItem.getTag().getString(KEY_ITEM_CUSTOM_ID);
