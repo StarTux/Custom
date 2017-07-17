@@ -9,30 +9,31 @@ import com.winthier.custom.inventory.InventoryManager;
 import com.winthier.custom.item.ItemFinder;
 import com.winthier.custom.item.ItemManager;
 import lombok.Getter;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
-public final class CustomPlugin extends JavaPlugin {
+public final class CustomPlugin extends JavaPlugin implements Listener {
     @Getter private static CustomPlugin instance = null;
     private EventManager eventManager = new EventManager(this);
     private final InventoryManager inventoryManager = new InventoryManager(this);
     private ItemManager itemManager;
     private EntityManager entityManager;
     private BlockManager blockManager;
+    private boolean reloadScheduled;
 
     @Override
     public void onEnable() {
         instance = this;
         getCommand("custom").setExecutor(new CustomCommand(this));
-        new BukkitRunnable() {
-            @Override public void run() {
-                reload();
-            }
-        }.runTask(this);
         getServer().getPluginManager().registerEvents(new EntityFinder(this), this);
         getServer().getPluginManager().registerEvents(new ItemFinder(this), this);
         getServer().getPluginManager().registerEvents(inventoryManager, this);
+        getServer().getPluginManager().registerEvents(this, this);
+        scheduleReload();
     }
 
     @Override
@@ -50,6 +51,7 @@ public final class CustomPlugin extends JavaPlugin {
     }
 
     void reload() {
+        getLogger().info("Reloading...");
         unload();
         itemManager = new ItemManager(this);
         entityManager = new EntityManager(this);
@@ -66,5 +68,32 @@ public final class CustomPlugin extends JavaPlugin {
         itemManager.onEnable();
         entityManager.onEnable();
         blockManager.onEnable();
+    }
+
+    void scheduleReload() {
+        if (reloadScheduled) return;
+        getServer().getScheduler().runTask(this, () -> {
+                if (reloadScheduled) {
+                    reloadScheduled = false;
+                    reload();
+                }
+            });
+        reloadScheduled = true;
+    }
+
+    @EventHandler
+    void onPluginEnable(PluginEnableEvent event) {
+        if (event.getPlugin().getDescription().getDepend().contains(getName())
+            || event.getPlugin().getDescription().getSoftDepend().contains(getName())) {
+            scheduleReload();
+        }
+    }
+
+    @EventHandler
+    void onPluginDisable(PluginDisableEvent event) {
+        if (event.getPlugin().getDescription().getDepend().contains(getName())
+            || event.getPlugin().getDescription().getSoftDepend().contains(getName())) {
+            scheduleReload();
+        }
     }
 }
