@@ -23,11 +23,15 @@ public final class CustomTickEvent extends Event {
     // My Stuff
 
     public enum Type {
+        WILL_TICK_ITEMS,
+        DID_TICK_ITEMS,
         WILL_TICK_BLOCKS,
-        DID_TICK_BLOCKS;
+        DID_TICK_BLOCKS,
+        WILL_TICK_ENTITIES,
+        DID_TICK_ENTITIES;
 
-        public CustomTickEvent call() {
-            CustomTickEvent event = new CustomTickEvent(this);
+        public CustomTickEvent call(int ticks) {
+            CustomTickEvent event = new CustomTickEvent(this, ticks);
             Bukkit.getServer().getPluginManager().callEvent(event);
             return event;
         }
@@ -35,4 +39,6 @@ public final class CustomTickEvent extends Event {
 
     @Getter
     private final Type type;
+    @Getter
+    private final int ticks;
 }

@@ -1,6 +1,7 @@
 package com.winthier.custom.entity;
 
 import com.winthier.custom.CustomPlugin;
+import com.winthier.custom.event.CustomTickEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,6 +19,7 @@ class EntityCrawler {
     private Iterator<Entity> serverEntities;
     private Iterator<UUID> customEntities;
     private BukkitRunnable task;
+    private int ticks = 0;
 
     public void checkAll() {
         for (World world: Bukkit.getServer().getWorlds()) {
@@ -61,6 +63,8 @@ class EntityCrawler {
             if (!entity.isValid()) continue;
             entityManager.getEntityWatcher(entity);
         }
+        int ticks = this.ticks++;
+        CustomTickEvent.Type.WILL_TICK_ENTITIES.call(ticks);
         for (UUID uuid: entityManager.getWatchedEntities()) {
             EntityWatcher entityWatcher = entityManager.getEntityWatcher(uuid);
             if (entityWatcher == null) continue;
@@ -72,5 +76,6 @@ class EntityCrawler {
                 ((TickableEntity)customEntity).onTick(entityWatcher);
             }
         }
+        CustomTickEvent.Type.DID_TICK_ENTITIES.call(ticks);
     }
 }

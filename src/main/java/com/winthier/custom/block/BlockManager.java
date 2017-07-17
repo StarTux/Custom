@@ -21,6 +21,7 @@ public final class BlockManager {
     private final Map<String, BlockWorld> worlds = new HashMap<>();
     private final TreeSet<BlockRegion> regionSaveList = new TreeSet<>(BlockRegion.LAST_SAVE_COMPARATOR);
     private BukkitRunnable task = null;
+    private int ticks = 0;
 
     // Public use methods
 
@@ -122,13 +123,14 @@ public final class BlockManager {
     }
 
     void tick() {
-        CustomTickEvent.Type.WILL_TICK_BLOCKS.call();
+        int ticks = this.ticks++;
+        CustomTickEvent.Type.WILL_TICK_BLOCKS.call(ticks);
         for (World world: plugin.getServer().getWorlds()) {
             List<Player> players = world.getPlayers();
             if (players.isEmpty()) continue;
             getBlockWorld(world).tick(players);
         }
-        CustomTickEvent.Type.DID_TICK_BLOCKS.call();
+        CustomTickEvent.Type.DID_TICK_BLOCKS.call(ticks);
         saveOldest();
     }
 

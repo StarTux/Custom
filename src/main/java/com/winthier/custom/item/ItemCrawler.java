@@ -1,6 +1,7 @@
 package com.winthier.custom.item;
 
 import com.winthier.custom.CustomPlugin;
+import com.winthier.custom.event.CustomTickEvent;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,7 +12,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 @RequiredArgsConstructor
 public final class ItemCrawler extends BukkitRunnable {
     private final ItemManager itemManager;
-    private int ticks;
+    private int ticks = 0;
 
     void start() {
         try {
@@ -31,6 +32,7 @@ public final class ItemCrawler extends BukkitRunnable {
 
     @Override
     public void run() {
+        CustomTickEvent.Type.WILL_TICK_ITEMS.call(ticks);
         for (Player player: Bukkit.getServer().getOnlinePlayers()) {
             PlayerInventory inv = player.getInventory();
             int heldItemSlot = inv.getHeldItemSlot();
@@ -52,5 +54,6 @@ public final class ItemCrawler extends BukkitRunnable {
             }
         }
         ticks += 1;
+        CustomTickEvent.Type.DID_TICK_ITEMS.call(ticks);
     }
 }
