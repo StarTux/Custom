@@ -137,11 +137,11 @@ final class CustomCommand implements TabExecutor {
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
             return Arrays.asList("give", "summon", "getblock", "setblock", "reload", "items", "debug").stream().filter(i -> i.startsWith(args[0])).collect(Collectors.toList());
-        } if (args.length == 3 && args[0].equals("give")) {
+        } else if (args.length == 3 && args[0].equals("give")) {
             return plugin.getItemManager().getRegisteredItems().stream().map(i -> i.getCustomId()).filter(i -> i.startsWith(args[2])).collect(Collectors.toList());
-        } if (args.length == 2 && args[0].equals("summon")) {
+        } else if (args.length == 2 && args[0].equals("summon")) {
             return plugin.getEntityManager().getRegisteredEntities().stream().map(i -> i.getCustomId()).filter(i -> i.startsWith(args[1])).collect(Collectors.toList());
-        } if (args.length == 2 && args[0].equals("setblock")) {
+        } else if (args.length == 2 && args[0].equals("setblock")) {
             return plugin.getBlockManager().getRegisteredBlocks().stream().map(i -> i.getCustomId()).filter(i -> i.startsWith(args[1])).collect(Collectors.toList());
         } else {
             return null;

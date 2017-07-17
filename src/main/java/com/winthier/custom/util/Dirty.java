@@ -2,7 +2,6 @@ package com.winthier.custom.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.server.v1_12_R1.ItemStack;
