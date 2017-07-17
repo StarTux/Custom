@@ -2,10 +2,12 @@ package com.winthier.custom.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import net.minecraft.server.v1_12_R1.ItemStack;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
+import net.minecraft.server.v1_12_R1.NBTTagIntArray;
 import net.minecraft.server.v1_12_R1.NBTTagList;
 import net.minecraft.server.v1_12_R1.NBTTagString;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
@@ -15,6 +17,7 @@ public final class Dirty {
     private static Field fieldCraftItemStackHandle = null;
     private static final String KEY_ITEM_CUSTOM_ID = "Winthier.Custom.ID";
     private static final String KEY_ITEM_CUSTOM_CONFIG = "Winthier.Custom.Config";
+    private static final int NBT_TYPE_INT_ARRAY = 11;
     private static final int NBT_TYPE_COMPOUND = 10;
     private static final int NBT_TYPE_LIST = 9;
     private static final int NBT_TYPE_STRING = 8;
@@ -136,6 +139,10 @@ public final class Dirty {
             return new TagWrapper(tag.getCompound(KEY_ITEM_CUSTOM_CONFIG));
         }
 
+        public boolean isSet(String key) {
+            return tag.hasKey(key);
+        }
+
         public String getString(String key) {
             if (!tag.hasKeyOfType(key, NBT_TYPE_STRING)) return null;
             return tag.getString(key);
@@ -200,6 +207,18 @@ public final class Dirty {
             NBTTagList list = tag.getList(key, NBT_TYPE_STRING);
             List<String> result = new ArrayList<>(list.size());
             for (int i = 0; i < list.size(); i += 1) result.add(list.getString(i));
+            return result;
+        }
+
+        public void setIntList(String key, List<Integer> value) {
+            NBTTagIntArray list = new NBTTagIntArray(value);
+            tag.set(key, list);
+        }
+
+        public List<Integer> getIntList(String key) {
+            int[] array = tag.getIntArray(key);
+            List<Integer> result = new ArrayList<>(array.length);
+            for (int i: array) result.add(i);
             return result;
         }
 
