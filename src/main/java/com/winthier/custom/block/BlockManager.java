@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -18,7 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public final class BlockManager {
     private final CustomPlugin plugin;
     private final Map<String, CustomBlock> customBlockMap = new HashMap<>();
-    private final Map<String, BlockWorld> worlds = new HashMap<>();
+    private final Map<UUID, BlockWorld> worlds = new HashMap<>();
     private final TreeSet<BlockRegion> regionSaveList = new TreeSet<>(BlockRegion.LAST_SAVE_COMPARATOR);
     private BukkitRunnable task = null;
     private int ticks = 0;
@@ -135,10 +136,10 @@ public final class BlockManager {
     }
 
     BlockWorld getBlockWorld(World world) {
-        BlockWorld result = worlds.get(world.getName());
+        BlockWorld result = worlds.get(world.getUID());
         if (result == null) {
             result = new BlockWorld(this, world);
-            worlds.put(world.getName(), result);
+            worlds.put(world.getUID(), result);
         }
         return result;
     }
@@ -181,5 +182,16 @@ public final class BlockManager {
             region.setLastSave(now);
         }
         regionSaveList.clear();
+    }
+
+    /**
+     * Internal use only!
+     */
+    public void onWorldUnload(World world) {
+        BlockWorld blockWorld = worlds.get(world.getUID());
+        if (blockWorld != null) {
+            saveAll();
+            worlds.remove(world.getUID());
+        }
     }
 }

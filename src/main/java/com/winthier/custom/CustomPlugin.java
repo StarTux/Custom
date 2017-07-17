@@ -10,9 +10,11 @@ import com.winthier.custom.item.ItemFinder;
 import com.winthier.custom.item.ItemManager;
 import lombok.Getter;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.server.PluginEnableEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -95,5 +97,10 @@ public final class CustomPlugin extends JavaPlugin implements Listener {
             || event.getPlugin().getDescription().getSoftDepend().contains(getName())) {
             scheduleReload();
         }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onWorldUnload(WorldUnloadEvent event) {
+        if (blockManager != null) blockManager.onWorldUnload(event.getWorld());
     }
 }
