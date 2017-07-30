@@ -30,8 +30,8 @@ public final class CustomTickEvent extends Event {
         WILL_TICK_ENTITIES,
         DID_TICK_ENTITIES;
 
-        public CustomTickEvent call(int ticks) {
-            CustomTickEvent event = new CustomTickEvent(this, ticks);
+        public CustomTickEvent call(int showTicks) {
+            CustomTickEvent event = new CustomTickEvent(this, showTicks);
             Bukkit.getServer().getPluginManager().callEvent(event);
             return event;
         }

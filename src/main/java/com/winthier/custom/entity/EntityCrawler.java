@@ -63,8 +63,8 @@ class EntityCrawler {
             if (!entity.isValid()) continue;
             entityManager.getEntityWatcher(entity);
         }
-        int ticks = this.ticks++;
-        CustomTickEvent.Type.WILL_TICK_ENTITIES.call(ticks);
+        int showTicks = this.ticks++;
+        CustomTickEvent.Type.WILL_TICK_ENTITIES.call(showTicks);
         for (UUID uuid: entityManager.getWatchedEntities()) {
             EntityWatcher entityWatcher = entityManager.getEntityWatcher(uuid);
             if (entityWatcher == null) continue;
@@ -76,6 +76,6 @@ class EntityCrawler {
                 ((TickableEntity)customEntity).onTick(entityWatcher);
             }
         }
-        CustomTickEvent.Type.DID_TICK_ENTITIES.call(ticks);
+        CustomTickEvent.Type.DID_TICK_ENTITIES.call(showTicks);
     }
 }

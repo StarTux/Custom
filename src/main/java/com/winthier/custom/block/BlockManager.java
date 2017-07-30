@@ -124,14 +124,14 @@ public final class BlockManager {
     }
 
     void tick() {
-        int ticks = this.ticks++;
-        CustomTickEvent.Type.WILL_TICK_BLOCKS.call(ticks);
+        int showTicks = this.ticks++;
+        CustomTickEvent.Type.WILL_TICK_BLOCKS.call(showTicks);
         for (World world: plugin.getServer().getWorlds()) {
             List<Player> players = world.getPlayers();
             if (players.isEmpty()) continue;
             getBlockWorld(world).tick(players);
         }
-        CustomTickEvent.Type.DID_TICK_BLOCKS.call(ticks);
+        CustomTickEvent.Type.DID_TICK_BLOCKS.call(showTicks);
         saveOldest();
     }
 
