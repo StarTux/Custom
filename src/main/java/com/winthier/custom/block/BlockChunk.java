@@ -20,16 +20,8 @@ final class BlockChunk {
     static final class Vector {
         private final int x, z;
 
-        static int ofBlock(int v) {
-            if (v < 0) {
-                return (v + 1) / 16 - 1;
-            } else {
-                return v / 16;
-            }
-        }
-
         static Vector of(Block block) {
-            return new Vector(ofBlock(block.getX()), ofBlock(block.getZ()));
+            return new Vector(block.getX() >> 4, block.getZ() >> 4);
         }
 
         static Vector of(Chunk chunk) {

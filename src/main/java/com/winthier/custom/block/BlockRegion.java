@@ -19,16 +19,8 @@ final class BlockRegion {
     static final class Vector {
         private final int x, z;
 
-        static int ofChunk(int v) {
-            if (v < 0) {
-                return (v + 1) / 32 - 1;
-            } else {
-                return v / 32;
-            }
-        }
-
         static Vector of(BlockChunk.Vector chunk) {
-            return new Vector(ofChunk(chunk.getX()), ofChunk(chunk.getZ()));
+            return new Vector(chunk.getX() >> 5, chunk.getZ() >> 5);
         }
     }
 

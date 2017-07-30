@@ -52,7 +52,7 @@ class BlockWorld {
     void tick(List<Player> players) {
         playerChunks.clear();
         chunksToLoad.clear();
-        final int radius = 5;
+        final int radius = 4;
         for (Player player: players) {
             if (!player.getWorld().equals(world)) continue;
             playerChunks.add(BlockChunk.Vector.of(player.getLocation().getBlock()));
@@ -60,7 +60,10 @@ class BlockWorld {
         for (BlockChunk.Vector vec: playerChunks) {
             for (int z = -radius; z <= radius; ++z) {
                 for (int x = -radius; x <= radius; ++x) {
-                    chunksToLoad.add(vec.relative(x, z));
+                    BlockChunk.Vector vecChunk = vec.relative(x, z);
+                    if (world.isChunkLoaded(vecChunk.getX(), vecChunk.getZ())) {
+                        chunksToLoad.add(vecChunk);
+                    }
                 }
             }
         }
