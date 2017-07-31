@@ -32,6 +32,11 @@ final class HandlerCaller<L extends Listener> {
                 method.invoke(listener, event);
             }
         } catch (Throwable t) {
+            if (context != null) {
+                try {
+                    System.err.println("Custom Context=" + context);
+                } catch (Throwable tIgnore) {}
+            }
             t.printStackTrace();
         }
     }

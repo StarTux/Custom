@@ -46,4 +46,9 @@ public final class ItemContext {
     private final Player player;
     private final Position position;
     private final int slot;
+
+    @Override
+    public String toString() {
+        return "ItemContext(" + itemStack + ", " + customItem.getClass().getName() + ", " + player + ", " + position + "," + slot + ")";
+    }
 }

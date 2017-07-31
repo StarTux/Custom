@@ -38,4 +38,9 @@ public class EntityContext {
     private final CustomEntity customEntity;
     private final EntityWatcher entityWatcher;
     private final Position position;
+
+    @Override
+    public String toString() {
+        return "EntityContext(" + entity + ", " + customEntity.getClass().getName() + ", " + entityWatcher.getClass().getName() + ", " + position + ")";
+    }
 }

@@ -25,4 +25,9 @@ public final class BlockContext {
     private final CustomBlock customBlock;
     private final BlockWatcher blockWatcher;
     private final Position position;
+
+    @Override
+    public String toString() {
+        return "BlockContext(" + block + ", " + customBlock.getClass().getName() + ", " + blockWatcher.getClass().getName() + ", " + position + ")";
+    }
 }
