@@ -26,11 +26,13 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 public final class InventoryManager implements Listener {
     private final CustomPlugin plugin;
     private final Map<UUID, CustomInventory> inventories = new HashMap<>();
+    private final Map<UUID, CustomInventory> pending = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOW)
     void onInventoryOpen(InventoryOpenEvent event) {
-        CustomInventory inv = inventories.get(event.getPlayer().getUniqueId());
+        CustomInventory inv = pending.remove(event.getPlayer().getUniqueId());
         if (inv == null) return;
+        inventories.put(event.getPlayer().getUniqueId(), inv);
         inv.onInventoryOpen(event);
     }
 
@@ -80,8 +82,7 @@ public final class InventoryManager implements Listener {
     }
 
     public void openInventory(Player player, CustomInventory inv) {
-        player.closeInventory();
-        inventories.put(player.getUniqueId(), inv);
+        pending.put(player.getUniqueId(), inv);
         player.openInventory(inv.getInventory());
     }
 }
