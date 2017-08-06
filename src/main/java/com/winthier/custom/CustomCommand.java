@@ -91,7 +91,7 @@ final class CustomCommand implements TabExecutor {
                 Msg.warn(player, "No custom block found: %d %d %d", block.getX(), block.getY(), block.getZ());
                 return true;
             }
-            Msg.info(player, "Custom block found: %s", blockWatcher.getCustomBlock().getCustomId());
+            Msg.info(player, "Custom block found: %s %s", blockWatcher.getCustomBlock().getCustomId(), plugin.getBlockManager().loadBlockData(blockWatcher));
         } else if (firstArg.equals("reload") && args.length == 1) {
             plugin.reload();
             Msg.info(sender, "Custom Plugin Reloaded");
