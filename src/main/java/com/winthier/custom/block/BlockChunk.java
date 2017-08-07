@@ -58,7 +58,7 @@ final class BlockChunk {
     Map<Block, BlockWatcher> getBlockWatchers() {
         if (blockWatchers == null) {
             blockWatchers = new HashMap<>();
-            for (Map.Entry<BlockVector, BlockData> entry: dataMap.entrySet()) {
+            for (Map.Entry<BlockVector, BlockData> entry: new ArrayList<>(dataMap.entrySet())) {
                 BlockVector bv = entry.getKey();
                 Block block = blockWorld.getWorld().getBlockAt(bv.getX(), bv.getY(), bv.getZ());
                 BlockData blockData = entry.getValue();
