@@ -21,6 +21,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
@@ -274,6 +275,16 @@ abstract class ItemEventCaller {
                     if (event.getEntity() instanceof Player) {
                         Player player = (Player)event.getEntity();
                         callWithItem(event, player, player.getEquipment().getChestplate(), Position.CHESTPLATE);
+                    }
+                }
+            };
+        } else if (InventoryClickEvent.class.isAssignableFrom(eventClass)) {
+            return new ItemEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    InventoryClickEvent event = (InventoryClickEvent)ev;
+                    if (event.getWhoClicked() instanceof Player) {
+                        Player player = (Player)event.getWhoClicked();
+                        callWithItem(event, player, event.getCurrentItem(), Position.ITEM);
                     }
                 }
             };
