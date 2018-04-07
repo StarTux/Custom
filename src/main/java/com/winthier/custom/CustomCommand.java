@@ -84,6 +84,15 @@ final class CustomCommand implements TabExecutor {
             Block block = player.getLocation().getBlock();
             BlockWatcher blockWatcher = plugin.getBlockManager().setBlock(block, customId);
             Msg.info(player, "Custom block '%s' created at: %d %d %d", blockWatcher.getCustomBlock().getCustomId(), block.getX(), block.getY(), block.getZ());
+        } else if (firstArg.equals("removeblock") && args.length == 1) {
+            Block block = player.getLocation().getBlock();
+            BlockWatcher blockWatcher = plugin.getBlockManager().getBlockWatcher(block);
+            if (blockWatcher == null) {
+                Msg.info(player, "No custom block found at: %d %d %d!", block.getX(), block.getY(), block.getZ());
+            } else {
+                plugin.getBlockManager().removeBlockWatcher(blockWatcher);
+                Msg.info(player, "Custom block '%s' removed at: %d %d %d", blockWatcher.getCustomBlock().getCustomId(), block.getX(), block.getY(), block.getZ());
+            }
         } else if (firstArg.equals("getblock") && args.length == 1) {
             Block block = player.getLocation().getBlock();
             BlockWatcher blockWatcher = plugin.getBlockManager().getBlockWatcher(block);
