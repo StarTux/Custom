@@ -55,6 +55,27 @@ public final class Dirty {
         }
     }
 
+    public static org.bukkit.inventory.ItemStack assertItemTag(org.bukkit.inventory.ItemStack bukkitItem) {
+        try {
+            CraftItemStack obcItem;
+            ItemStack nmsItem;
+            if (bukkitItem instanceof CraftItemStack) {
+                obcItem = (CraftItemStack)bukkitItem;
+                getFieldCraftItemStackHandle().setAccessible(true);
+                nmsItem = (ItemStack)fieldCraftItemStackHandle.get(obcItem);
+            } else {
+                nmsItem = CraftItemStack.asNMSCopy(bukkitItem);
+                obcItem = CraftItemStack.asCraftMirror(nmsItem);
+            }
+            if (!nmsItem.hasTag()) {
+                nmsItem.setTag(new NBTTagCompound());
+            }
+            return obcItem;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static NBTTagCompound getItemTag(org.bukkit.inventory.ItemStack bukkitItem) {
         try {
             if (!(bukkitItem instanceof CraftItemStack)) return null;
@@ -113,6 +134,33 @@ public final class Dirty {
         }
     }
 
+    public static final class TagListWrapper {
+        private final NBTTagList list;
+
+        TagListWrapper(NBTTagList list) {
+            this.list = list;
+        }
+
+        public TagWrapper getCompound(int i) {
+            if (i < 0 || i >= list.size()) return null;
+            return new TagWrapper(list.get(i));
+        }
+
+        public TagWrapper createCompound() {
+            NBTTagCompound compound = new NBTTagCompound();
+            list.add(compound);
+            return new TagWrapper(compound);
+        }
+
+        public int size() {
+            return list.size();
+        }
+
+        public void remove(int i) {
+            list.remove(i);
+        }
+    }
+
     public static final class TagWrapper {
         private final NBTTagCompound tag;
 
@@ -137,6 +185,12 @@ public final class Dirty {
                 tag.set(KEY_ITEM_CUSTOM_CONFIG, new NBTTagCompound());
             }
             return new TagWrapper(tag.getCompound(KEY_ITEM_CUSTOM_CONFIG));
+        }
+
+        public static TagWrapper getItemTagOf(org.bukkit.inventory.ItemStack item) {
+            NBTTagCompound tag = getItemTag(item);
+            if (tag == null) return null;
+            return new TagWrapper(tag);
         }
 
         public boolean isSet(String key) {
@@ -226,6 +280,21 @@ public final class Dirty {
             NBTTagCompound newCompound = new NBTTagCompound();
             tag.set(key, newCompound);
             return new TagWrapper(newCompound);
+        }
+
+        public TagListWrapper getList(String key) {
+            if (!tag.hasKeyOfType(key, NBT_TYPE_LIST)) return null;
+            return new TagListWrapper(tag.getList(key, NBT_TYPE_COMPOUND));
+        }
+
+        public TagListWrapper createList(String key) {
+            NBTTagList newList = new NBTTagList();
+            tag.set(key, newList);
+            return new TagListWrapper(newList);
+        }
+
+        public void remove(String key) {
+            tag.remove(key);
         }
     }
 }
