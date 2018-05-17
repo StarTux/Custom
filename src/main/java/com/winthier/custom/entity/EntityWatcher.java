@@ -1,5 +1,6 @@
 package com.winthier.custom.entity;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 
 public interface EntityWatcher {
@@ -14,4 +15,7 @@ public interface EntityWatcher {
      * instance.
      */
     CustomEntity getCustomEntity();
+
+    default void handleMessage(CommandSender sender, String message) {
+    }
 }

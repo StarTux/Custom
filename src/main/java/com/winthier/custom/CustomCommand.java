@@ -18,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
@@ -135,6 +136,25 @@ final class CustomCommand implements TabExecutor {
                         }
                     });
             }
+        } else if (firstArg.equals("entitymessage") && args.length >= 2) {
+            if (player == null) {
+                sender.sendMessage("Player expected");
+                return true;
+            }
+            List<String> entityList = new ArrayList<>();
+            StringBuilder sb = new StringBuilder(args[1]);
+            for (int i = 2; i < args.length; i += 1) sb.append(" ").append(args[i]);
+            String message = sb.toString();
+            for (Entity e: player.getNearbyEntities(4.0, 4.0, 4.0)) {
+                EntityWatcher watcher = plugin.getEntityManager().getEntityWatcher(e);
+                if (watcher != null) {
+                    entityList.add(watcher.getCustomEntity().getCustomId());
+                    watcher.handleMessage(player, message);
+                }
+            }
+            sb = new StringBuilder("Sent to ").append(entityList.size()).append(" entities:");
+            for (String entity: entityList) sb.append(" ").append(entity);
+            player.sendMessage(sb.toString());
         } else if (firstArg.equals("debug")) {
             Object o = Dirty.getItemTag(player.getInventory().getItemInMainHand());
             player.sendMessage("Item tag: (" + o + ")");
@@ -145,7 +165,7 @@ final class CustomCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("give", "summon", "getblock", "setblock", "reload", "items", "debug").stream().filter(i -> i.startsWith(args[0])).collect(Collectors.toList());
+            return Arrays.asList("give", "summon", "getblock", "setblock", "reload", "items", "entitymessage", "debug").stream().filter(i -> i.startsWith(args[0])).collect(Collectors.toList());
         } else if (args.length == 3 && args[0].equals("give")) {
             return plugin.getItemManager().getRegisteredItems().stream().map(i -> i.getCustomId()).filter(i -> i.startsWith(args[2])).collect(Collectors.toList());
         } else if (args.length == 2 && args[0].equals("summon")) {
