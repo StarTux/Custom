@@ -16,6 +16,5 @@ public interface EntityWatcher {
      */
     CustomEntity getCustomEntity();
 
-    default void handleMessage(CommandSender sender, String message) {
-    }
+    default void handleMessage(CommandSender sender, String[] msgs) { }
 }

@@ -142,17 +142,15 @@ final class CustomCommand implements TabExecutor {
                 return true;
             }
             List<String> entityList = new ArrayList<>();
-            StringBuilder sb = new StringBuilder(args[1]);
-            for (int i = 2; i < args.length; i += 1) sb.append(" ").append(args[i]);
-            String message = sb.toString();
+            String[] msgs = Arrays.copyOfRange(args, 1, args.length);
             for (Entity e: player.getNearbyEntities(4.0, 4.0, 4.0)) {
                 EntityWatcher watcher = plugin.getEntityManager().getEntityWatcher(e);
                 if (watcher != null) {
                     entityList.add(watcher.getCustomEntity().getCustomId());
-                    watcher.handleMessage(player, message);
+                    watcher.handleMessage(player, msgs);
                 }
             }
-            sb = new StringBuilder("Sent to ").append(entityList.size()).append(" entities:");
+            StringBuilder sb = new StringBuilder("Sent to ").append(entityList.size()).append(" entities:");
             for (String entity: entityList) sb.append(" ").append(entity);
             player.sendMessage(sb.toString());
         } else if (firstArg.equals("debug")) {
