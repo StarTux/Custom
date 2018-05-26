@@ -20,6 +20,7 @@ import org.bukkit.event.hanging.HangingEvent;
 import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerShearEntityEvent;
 import org.bukkit.event.world.ChunkEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import org.spigotmc.event.entity.EntityMountEvent;
@@ -146,6 +147,13 @@ abstract class EntityEventCaller {
             return new EntityEventCaller(dispatcher) {
                 @Override public void call(Event ev) {
                     HangingEvent event = (HangingEvent)ev;
+                    callWithEntity(event, event.getEntity());
+                }
+            };
+        } else if (PlayerShearEntityEvent.class.isAssignableFrom(eventClass)) {
+            return new EntityEventCaller(dispatcher) {
+                @Override public void call(Event ev) {
+                    PlayerShearEntityEvent event = (PlayerShearEntityEvent)ev;
                     callWithEntity(event, event.getEntity());
                 }
             };
