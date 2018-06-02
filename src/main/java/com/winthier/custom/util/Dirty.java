@@ -3,6 +3,7 @@ package com.winthier.custom.util;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import net.minecraft.server.v1_12_R1.ItemStack;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
@@ -134,11 +135,27 @@ public final class Dirty {
         }
     }
 
+    public static org.bukkit.inventory.ItemStack applyMap(org.bukkit.inventory.ItemStack item, Map<String, Object> map) {
+        item = assertItemTag(item);
+        TagWrapper.getItemTagOf(item).applyMap(map);
+        return item;
+    }
+
     public static final class TagListWrapper {
         private final NBTTagList list;
 
         TagListWrapper(NBTTagList list) {
             this.list = list;
+        }
+
+        public String getString(int i) {
+            if (i < 0 || i >= list.size()) return null;
+            return list.getString(i);
+        }
+
+        public void addString(String str) {
+            NBTTagString tag = new NBTTagString(str);
+            list.add(tag);
         }
 
         public TagWrapper getCompound(int i) {
@@ -295,6 +312,38 @@ public final class Dirty {
 
         public void remove(String key) {
             tag.remove(key);
+        }
+
+        public void applyMap(Map<String, Object> map) {
+            for (String key: map.keySet()) {
+                Object value = map.get(key);
+                if (value instanceof String) {
+                    setString(key, (String)value);
+                } else if (value instanceof Integer) {
+                    setInt(key, (Integer)value);
+                } else if (value instanceof Long) {
+                    setLong(key, (Long)value);
+                } else if (value instanceof Float) {
+                    setFloat(key, (Float)value);
+                } else if (value instanceof Double) {
+                    setDouble(key, (Double)value);
+                } else if (value instanceof Boolean) {
+                    setBoolean(key, (Boolean)value);
+                } else if (value instanceof Map) {
+                    TagWrapper newTag = createCompound(key);
+                    newTag.applyMap((Map<String, Object>)value);
+                } else if (value instanceof List) {
+                    TagListWrapper newList = createList(key);
+                    for (Object o: (List)value) {
+                        if (o instanceof Map) {
+                            TagWrapper newTag = newList.createCompound();
+                            newTag.applyMap((Map<String, Object>)o);
+                        } else if (o instanceof String) {
+                            newList.addString((String)o);
+                        }
+                    }
+                }
+            }
         }
     }
 }
