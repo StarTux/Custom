@@ -1,5 +1,6 @@
 package com.winthier.custom.item;
 
+import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
@@ -24,4 +25,6 @@ public interface CustomItem extends Listener {
     ItemStack spawnItemStack(int amount);
 
     default void itemStackWasSpawned(ItemStack itemStack) { }
+
+    default void handleMessage(ItemStack item, CommandSender sender, String[] msgs) { }
 }

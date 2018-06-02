@@ -2,6 +2,7 @@ package com.winthier.custom.item;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomTickEvent;
+import com.winthier.custom.util.Dirty;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -41,6 +42,18 @@ public final class ItemCrawler extends BukkitRunnable {
                 if (item == null || item.getAmount() == 0) continue;
                 CustomItem customItem = itemManager.getCustomItem(item);
                 if (customItem == null) continue;
+                if (customItem instanceof UpdatableItem) {
+                    UpdatableItem updatable = (UpdatableItem)customItem;
+                    int updateVersion = updatable.getUpdateVersion(item);
+                    if (updateVersion > 0) {
+                        Dirty.TagWrapper conf = Dirty.TagWrapper.getItemConfigOf(item);
+                        int itemVersion = conf.getInt("UpdateVersion");
+                        if (itemVersion != updateVersion) {
+                            updatable.updateItem(item);
+                            conf.setInt("UpdateVersion", updateVersion);
+                        }
+                    }
+                }
                 if (customItem instanceof TickableItem) {
                     ItemContext.Position position;
                     if (i == heldItemSlot) {

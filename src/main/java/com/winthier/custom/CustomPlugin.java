@@ -6,7 +6,6 @@ import com.winthier.custom.entity.EntityManager;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.event.EventManager;
 import com.winthier.custom.inventory.InventoryManager;
-import com.winthier.custom.item.ItemFinder;
 import com.winthier.custom.item.ItemManager;
 import lombok.Getter;
 import org.bukkit.event.EventHandler;
@@ -32,7 +31,6 @@ public final class CustomPlugin extends JavaPlugin implements Listener {
         instance = this;
         getCommand("custom").setExecutor(new CustomCommand(this));
         getServer().getPluginManager().registerEvents(new EntityFinder(this), this);
-        getServer().getPluginManager().registerEvents(new ItemFinder(this), this);
         getServer().getPluginManager().registerEvents(inventoryManager, this);
         getServer().getPluginManager().registerEvents(this, this);
         scheduleReload();
