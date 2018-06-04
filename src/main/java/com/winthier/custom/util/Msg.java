@@ -104,6 +104,10 @@ public final class Msg {
         return JSONValue.toJSONString(o);
     }
 
+    public static Object fromJsonString(String s) {
+        return JSONValue.parse(s);
+    }
+
     private static List<String> wrapInternal(String what, int maxLineLength) {
         String[] words = what.split("\\s+");
         List<String> lines = new ArrayList<>();

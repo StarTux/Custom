@@ -91,7 +91,7 @@ public class MyCustomItem implements CustomItem {
 All custom things are able to store additional data persistently.  How to do so depends on the type.
 - `CustomItem` should use [`Dirty.TagWrapper`][TagWrapper]
 - `CustomBlock` should use [`BlockManager`][BlockManager] `saveBlockData()` and `loadBlockData()`
-- `CustomEntity` should use `Entity` `addScoreboardTag()` and `getScoreboardTags()`
+- `CustomEntity` should use [`EntityManager`][EntityManager] `saveEntityData()`, `loadEntityData()` and `removeEntityData()`
 #### CustomItem
 ```java
 public class MyAwesomeItem implements CustomItem {
@@ -124,29 +124,25 @@ public class MyAwesomeBlock implements CustomBlock {
 }
 ```
 #### CustomEntity
-Because Minecraft provides a method to persistently store strings in any entity via scoreboard tags, this framework provides no further support for entity data storage.  Make sure not to remove the tags of other plugins, including and especially this framework.  For further information, refer to the Bukkit/Spigot documentation.
-- [`addScoreboardTag()`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Entity.html#addScoreboardTag(java.lang.String))
-- [`getScoreboardTags()`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Entity.html#getScoreboardTags())
-- [`removeScoreboardTag()`](https://hub.spigotmc.org/javadocs/spigot/org/bukkit/entity/Entity.html#removeScoreboardTag(java.lang.String))
+EntityManager provides 3 functions to load and store (and remove) entity data.  They all except a JSON style mapping of Strings to objects.  The map will be split into its keys and stored as JSON serialization in the entity's Scoreboard Tags.  Since scoreboard tags are limited to 1024 characters, it may be advisable to keep the map flat beyond the top level.  The result of attempting to store data which yield in a scoreboard tag which is too long is undefined.
+- `saveEntityData(entity, key, data)` stores the provided data map under a provided key in the scoreboard tags, one tag per key-value pairing in the map.
+- `loadEntityData(entity, key)` retrieves the data stored above in one map which is largely identical to the input.  Keep in mind that JSON likes to change data types; e.g. Integer is turned into Long.
+- `removeEntityData(entity, key)` removed all scoreboard data for the given key.  Useful when the entity is unwrapped.
 ```java
 public class MyAwesomeEntity implements CustomEntity {
   @EventHandler
   void onEntityDamage(EntityDamageEvent event, EntityContext context) {
     Entity entity = context.getEntity();
-    String myData = null;
-    for (String string: entity.getScoreboardTags()) {
-      if (string.startsWith("MyCustomEntityData=") {
-        myData = string;
-        break;
-      }
-    }
-    if (myData != null) {
-      entity.removeScoreboardTag(myData);
-      int myValue = Integer.parseInt(myData.split("=", 2)[1]);
-      entity.addScoreboardTag("MyCustomEntityData=" + (myValue + 1));
+    Map<String, Object> data = CustomPlugin.getInstance().getEntityManager().loadEntityData(entity, "MyAwesomeEntity");
+    int damageTaken;
+    if (data.containsKey("Damage")) {
+      damageTaken = ((Number)data.get("Damage")).intValue();
     } else {
-      entity.addScoreboardTag("MyCustomEntityData=1");
+      damageTaken = 0;
     }
+    damageTaken = event.getFinalDamage();
+    data.put("Damage", damageTaken);
+    CustomPlugin.getEntitymanager().saveEntityData(entity, "MyAwesomeEntity", data);
   }
 }
 ```

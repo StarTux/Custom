@@ -2,6 +2,7 @@ package com.winthier.custom.entity;
 
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
+import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -127,6 +128,44 @@ public final class EntityManager {
 
     public List<CustomEntity> getRegisteredEntities() {
         return new ArrayList<>(customEntityMap.values());
+    }
+
+
+    // Utility for entity data stored in scoreboard tags
+
+    public static Map<String, Object> loadEntityData(Entity entity, String key) {
+        key = key + ":";
+        Map<String, Object> result = new HashMap<>();
+        for (String str: entity.getScoreboardTags()) {
+            if (str.startsWith(key)) {
+                String sub = str.substring(key.length());
+                String[] toks = sub.split("=", 2);
+                if (toks.length != 2) continue;
+                String mapKey = toks[0];
+                Object mapValue = Msg.fromJsonString(toks[1]);
+                result.put(mapKey, mapValue);
+            }
+        }
+        return result;
+    }
+
+    public static int removeEntityData(Entity entity, String key) {
+        key = key + ":";
+        List<String> removes = new ArrayList<>();
+        for (String str: entity.getScoreboardTags()) {
+            if (str.startsWith(key)) removes.add(str);
+        }
+        for (String remove: removes) {
+            entity.removeScoreboardTag(remove);
+        }
+        return removes.size();
+    }
+
+    public static void saveEntityData(Entity entity, String key, Map<String, Object> map) {
+        removeEntityData(entity, key);
+        for (Map.Entry<String, Object> entry: map.entrySet()) {
+            entity.addScoreboardTag(key + ":" + entry.getKey() + "=" + Msg.toJsonString(entry.getValue()));
+        }
     }
 
     // Internal use methods
