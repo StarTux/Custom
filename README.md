@@ -7,6 +7,7 @@
 [TagWrapper]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/util/Dirty.java#L109
 [BlockManager]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/block/BlockManager.java
 [BlockWatcher]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/block/BlockWatcher.java
+[EntityManager]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/entity/EntityManager.java
 [EntityWatcher]:https://github.com/StarTux/Custom/blob/master/src/main/java/com/winthier/custom/entity/EntityWatcher.java
 # Custom
 Customize items, blocks, and entities on the server.  This plugin provides a protocol to mark these things as customized, persistently.  There is support for event handling.
