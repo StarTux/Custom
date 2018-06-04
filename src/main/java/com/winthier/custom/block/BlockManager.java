@@ -24,14 +24,48 @@ public final class BlockManager {
     private BukkitRunnable task = null;
     private int ticks = 0;
 
-    // Public use methods
+    // Block getters
 
-    public CustomBlock getCustomBlock(String id) {
-        return customBlockMap.get(id);
+    public CustomBlock getCustomBlock(String customId) {
+        return customBlockMap.get(customId);
     }
 
     public BlockWatcher getBlockWatcher(Block block) {
         return getBlockWorld(block.getWorld()).getBlockChunk(block).getBlockWatcher(block);
+    }
+
+    /**
+     * Get all loaded BlockWatcher instances within a world.
+     */
+    public List<BlockWatcher> getBlockWatchers(World world, CustomBlock customBlock) {
+        List<BlockWatcher> result = new ArrayList<>();
+        BlockWorld blockWorld = getBlockWorld(world);
+        if (blockWorld == null) return result;
+        for (BlockChunk chunk: blockWorld.getChunks().values()) {
+            for (BlockWatcher watcher: chunk.getBlockWatchers().values()) {
+                if (watcher.getCustomBlock() == customBlock) {
+                    result.add(watcher);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Get all loaded BlockWatcher instances.
+     */
+    public List<BlockWatcher> getBlockWatchers(CustomBlock customBlock) {
+        List<BlockWatcher> result = new ArrayList<>();
+        for (BlockWorld world: worlds.values()) {
+            for (BlockChunk chunk: world.getChunks().values()) {
+                for (BlockWatcher watcher: chunk.getBlockWatchers().values()) {
+                    if (watcher.getCustomBlock() == customBlock) {
+                        result.add(watcher);
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     <T extends BlockWatcher> T getBlockWatcher(Block block, Class<T> clazz) {
@@ -40,6 +74,8 @@ public final class BlockManager {
         if (!clazz.isInstance(result)) return null;
         return clazz.cast(result);
     }
+
+    // Block setters.
 
     public BlockWatcher setBlock(Block block, String customId) {
         CustomBlock customBlock = getCustomBlock(customId);
@@ -57,6 +93,8 @@ public final class BlockManager {
         addBlockWatcher(blockWatcher);
         return blockWatcher;
     }
+
+    // Saving and loading block data
 
     public void removeBlockWatcher(BlockWatcher blockWatcher) {
         Block block = blockWatcher.getBlock();

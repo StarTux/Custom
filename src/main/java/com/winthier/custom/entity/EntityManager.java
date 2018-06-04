@@ -86,6 +86,16 @@ public final class EntityManager {
         return customEntityMap.get(id);
     }
 
+    public List<EntityWatcher> getEntityWatchers(CustomEntity customEntity) {
+        List<EntityWatcher> result = new ArrayList<>();
+        for (EntityWatcher watcher: entityWatcherMap.values()) {
+            if (watcher.getCustomEntity() == customEntity) {
+                result.add(watcher);
+            }
+        }
+        return result;
+    }
+
     public EntityWatcher wrapEntity(Entity entity, String customId) {
         CustomEntity customEntity = getCustomEntity(customId);
         if (customEntity == null) throw new IllegalArgumentException("Unknown custom entity: " + customId);
@@ -129,7 +139,6 @@ public final class EntityManager {
     public List<CustomEntity> getRegisteredEntities() {
         return new ArrayList<>(customEntityMap.values());
     }
-
 
     // Utility for entity data stored in scoreboard tags
 
