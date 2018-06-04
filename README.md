@@ -125,9 +125,9 @@ public class MyAwesomeBlock implements CustomBlock {
 }
 ```
 #### CustomEntity
-EntityManager provides 3 functions to load and store (and remove) entity data.  They all except a JSON style mapping of Strings to objects.  The map will be split into its keys and stored as JSON serialization in the entity's Scoreboard Tags.  Since scoreboard tags are limited to 1024 characters, it may be advisable to keep the map flat beyond the top level.  The result of attempting to store data which yield in a scoreboard tag which is too long is undefined.
+EntityManager provides 3 functions to load and store (and remove) entity data.  They all except a JSON style mapping of `String` to `Object`.  The map will be split into its keys and stored as JSON serialization in the entity's Scoreboard Tags.  Since scoreboard tags are limited to 1024 characters, it is advisable to keep the map flat beyond the top level.  The result of attempting to store data which yield in a scoreboard tag which is too long is undefined.
 - `saveEntityData(entity, key, data)` stores the provided data map under a provided key in the scoreboard tags, one tag per key-value pairing in the map.
-- `loadEntityData(entity, key)` retrieves the data stored above in one map which is largely identical to the input.  Keep in mind that JSON likes to change data types; e.g. Integer is turned into Long.
+- `loadEntityData(entity, key)` retrieves the data stored above in one map which is largely identical to the input.  Keep in mind that JSON likes to change data types; e.g. `Integer` will be turned into `Long`.
 - `removeEntityData(entity, key)` removed all scoreboard data for the given key.  Useful when the entity is unwrapped.
 ```java
 public class MyAwesomeEntity implements CustomEntity {
