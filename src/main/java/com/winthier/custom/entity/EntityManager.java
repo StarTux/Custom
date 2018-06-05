@@ -228,6 +228,7 @@ public final class EntityManager {
      * function.
      */
     public void onCustomRegister(CustomRegisterEvent event) {
+        customEntityMap.put(SimpleScriptEntity.CUSTOM_ID, new SimpleScriptEntity());
         for (CustomEntity customEntity: event.getEntities()) {
             if (customEntityMap.containsKey(customEntity.getCustomId())) {
                 plugin.getLogger().warning("Entity Manager: Duplicate entity ID: " + customEntity.getCustomId());

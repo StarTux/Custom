@@ -36,9 +36,10 @@ abstract class EntityEventCaller {
         EntityWatcher entityWatcher = CustomPlugin.getInstance().getEntityManager().getEntityWatcher(entity);
         if (entityWatcher == null) return;
         CustomEntity customEntity = entityWatcher.getCustomEntity();
+        EntityContext context = new EntityContext(entity, customEntity, entityWatcher, position);
+        entityWatcher.handleEvent(event, context);
         HandlerCaller<CustomEntity> handlerCaller = dispatcher.getEntities().get(customEntity.getCustomId());
         if (handlerCaller == null) return;
-        EntityContext context = new EntityContext(entity, customEntity, entityWatcher, position);
         handlerCaller.call(event, context);
     }
 

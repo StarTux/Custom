@@ -2,6 +2,7 @@ package com.winthier.custom.entity;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.event.Event;
 
 public interface EntityWatcher {
     /**
@@ -17,4 +18,6 @@ public interface EntityWatcher {
     CustomEntity getCustomEntity();
 
     default void handleMessage(CommandSender sender, String[] msgs) { }
+
+    default void handleEvent(Event event, EntityContext context) { }
 }
