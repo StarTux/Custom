@@ -1,5 +1,6 @@
 package com.winthier.custom.item;
 
+import java.util.Map;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
@@ -23,6 +24,8 @@ public interface CustomItem extends Listener {
      * Instead the job is to be left to the caller.
      */
     ItemStack spawnItemStack(int amount);
+
+    default void setItemData(ItemStack item, Map<String, Object> data) { }
 
     default void itemStackWasSpawned(ItemStack itemStack) { }
 

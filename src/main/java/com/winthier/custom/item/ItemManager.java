@@ -3,6 +3,7 @@ package com.winthier.custom.item;
 import com.winthier.custom.CustomPlugin;
 import com.winthier.custom.event.CustomRegisterEvent;
 import com.winthier.custom.util.Dirty;
+import com.winthier.custom.util.Msg;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,6 +62,23 @@ public final class ItemManager {
         itemStack = Dirty.setCustomId(itemStack, customId);
         customItem.itemStackWasSpawned(itemStack);
         return itemStack;
+    }
+
+    public ItemStack spawnItemStack(String customId, int amount, Map<String, Object> data) {
+        CustomItem customItem = getCustomItem(customId);
+        if (customItem == null) throw new IllegalArgumentException("Unknown item id: " + customId);
+        ItemStack itemStack = customItem.spawnItemStack(amount);
+        itemStack = Dirty.setCustomId(itemStack, customId);
+        if (data != null) customItem.setItemData(itemStack, data);
+        customItem.itemStackWasSpawned(itemStack);
+        return itemStack;
+    }
+
+    public ItemStack spawnItemStack(String customId, int amount, String jsonData) {
+        Object o = Msg.parseJson(jsonData);
+        if (o == null || !(o instanceof Map)) return null;
+        final Map<String, Object> data = (Map<String, Object>)o;
+        return spawnItemStack(customId, amount, data);
     }
 
     @Deprecated

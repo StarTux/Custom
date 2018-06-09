@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
@@ -52,9 +53,29 @@ final class CustomCommand implements TabExecutor {
                 }
                 if (amount < 1) amount = 1;
             }
-            ItemStack item = CustomPlugin.getInstance().getItemManager().spawnItemStack(customId, amount);
+            Map<String, Object> data = null;
+            if (args.length >= 5) {
+                StringBuilder sb = new StringBuilder(args[4]);
+                for (int i = 5; i < args.length; i += 1) {
+                    sb.append(" ").append(args[i]);
+                }
+                String json = sb.toString();
+                Object o = Msg.parseJson(json);
+                if (o == null || !(o instanceof Map)) {
+                    Msg.warn(sender, "Invalid JSON: %s", json);
+                    return true;
+                }
+                @SuppressWarnings("unchecked")
+                final Map<String, Object> tmp = (Map<String, Object>)o;
+                data = tmp;
+            }
+            ItemStack item = CustomPlugin.getInstance().getItemManager().spawnItemStack(customId, amount, data);
             Items.give(item, target);
-            Msg.info(sender, "Item spawned for %s.", target.getName());
+            if (data != null) {
+                Msg.info(sender, "Item %s spawned for %s with %s.", customId, target.getName(), Msg.toJsonString(data));
+            } else {
+                Msg.info(sender, "Item %s spawned for %s.", customId, target.getName());
+            }
         } else if (firstArg.equals("summon") && args.length >= 2) {
             if (player == null) {
                 Msg.warn(sender, "Player expected");
