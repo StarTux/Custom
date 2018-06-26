@@ -81,7 +81,6 @@ public final class ItemManager {
         return spawnItemStack(customId, amount, data);
     }
 
-    @Deprecated
     public Item dropItemStack(Location location, String customId, int amount) {
         ItemStack itemStack = spawnItemStack(customId, amount);
         return location.getWorld().dropItem(location, itemStack);
