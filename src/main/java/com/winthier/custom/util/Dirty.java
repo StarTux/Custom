@@ -160,7 +160,6 @@ public final class Dirty {
             Map<String, Object> result = new HashMap<>();
             for (String key: tag.getKeys()) {
                 result.put(key, fromTag(tag.get(key)));
-                System.out.println(key + " => (" + result.get(key).getClass().getName() + ") " + result.get(key).toString());
             }
             return result;
         } else if (value instanceof NBTTagList) {
