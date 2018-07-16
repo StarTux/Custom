@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.server.v1_12_R1.ItemStack;
-import net.minecraft.server.v1_12_R1.NBTTagCompound;
-import net.minecraft.server.v1_12_R1.NBTTagIntArray;
-import net.minecraft.server.v1_12_R1.NBTTagList;
-import net.minecraft.server.v1_12_R1.NBTTagString;
-import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
+import net.minecraft.server.v1_13_R1.ItemStack;
+import net.minecraft.server.v1_13_R1.NBTTagCompound;
+import net.minecraft.server.v1_13_R1.NBTTagIntArray;
+import net.minecraft.server.v1_13_R1.NBTTagList;
+import net.minecraft.server.v1_13_R1.NBTTagString;
+import org.bukkit.craftbukkit.v1_13_R1.inventory.CraftItemStack;
 
 public final class Dirty {
     private Dirty() { }
@@ -127,7 +127,7 @@ public final class Dirty {
             if (!propTag.hasKeyOfType("textures", 9)) propTag.set("textures", new NBTTagList());
             NBTTagList textures = propTag.getList("textures", 9);
             if (textures.size() < 1) textures.add(new NBTTagCompound());
-            NBTTagCompound texture = textures.get(0);
+            NBTTagCompound texture = (NBTTagCompound)textures.get(0); // FIXME: check cast
             texture.setString("Value", textureString);
             return obcItem;
         } catch (Exception e) {
@@ -160,7 +160,7 @@ public final class Dirty {
 
         public TagWrapper getCompound(int i) {
             if (i < 0 || i >= list.size()) return null;
-            return new TagWrapper(list.get(i));
+            return new TagWrapper((NBTTagCompound)list.get(i)); // FIXME: Check cast
         }
 
         public TagWrapper createCompound() {
