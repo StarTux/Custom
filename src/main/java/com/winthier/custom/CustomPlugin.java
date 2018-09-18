@@ -61,7 +61,6 @@ public final class CustomPlugin extends JavaPlugin implements Listener {
         itemManager.onCustomRegister(event);
         entityManager.onCustomRegister(event);
         blockManager.onCustomRegister(event);
-        getServer().resetRecipes();
         for (Runnable task: event.getTasks()) {
             task.run();
         }
